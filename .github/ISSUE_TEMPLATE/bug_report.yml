@@ -1,0 +1,44 @@
+name: Bug Report
+description: Report incorrect or broken content on the website
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: bug_description
+    attributes:
+      label: Bug Description
+      description: Briefly describe what is wrong.
+      placeholder: e.g. The wire tag table on the Wire Tags page shows an incorrect range
+    validations:
+      required: true
+  - type: input
+    id: page
+    attributes:
+      label: Affected Page
+      description: URL or path of the page with the issue.
+      placeholder: e.g. /spec/wire-tags or https://twilic.github.io/website/spec/wire-tags
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Content
+      description: What should the page say or show?
+      placeholder: e.g. The range 0xC4..0xC7 should be listed as uint8/uint16/uint32/uint64
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Content
+      description: What does the page currently say or show?
+      placeholder: e.g. The range is shown as 0xC4..0xC6
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Screenshots, links to the spec, or anything else that might help.
+    validations:
+      required: false

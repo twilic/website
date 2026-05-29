@@ -1,0 +1,43 @@
+name: Feature Request
+description: Propose a new page, section, or improvement to the website
+title: "feat: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Briefly describe what you'd like to see added or improved.
+      placeholder: e.g. Add a comparison page between Twilic and Cap'n Proto
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Why would this improve the website? Who would benefit?
+      placeholder: e.g. Developers evaluating Twilic vs Cap'n Proto have no reference to compare them.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Content
+      description: Describe what the new or updated content should cover.
+      placeholder: e.g. A table comparing wire size, schema requirements, language support, and stateful features.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Any other ways to address this?
+    validations:
+      required: false
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Links, references, or anything else relevant.
+    validations:
+      required: false

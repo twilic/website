@@ -1,0 +1,246 @@
+name: Invisible Characters Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: invisible-chars-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  scan:
+    name: Scan PR diff for invisible characters
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+
+      - name: Fetch base SHA from base repo
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BASE_REPO: ${{ github.event.pull_request.base.repo.full_name }}
+        run: |
+          set -euo pipefail
+          if ! git cat-file -e "$BASE_SHA" 2>/dev/null; then
+            if ! git remote get-url base >/dev/null 2>&1; then
+              git remote add base "https://github.com/${BASE_REPO}.git"
+            fi
+            git fetch --no-tags --depth=1 base "$BASE_SHA"
+          fi
+
+      - name: Scan PR diff and post comment
+        uses: actions/github-script@v7
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        with:
+          script: |
+            const HEADER = "<!-- twilic-website-invisible-chars -->";
+            const MAX_ROWS = 200;
+
+            const INVISIBLE_RANGES = [
+              [0x00ad, 0x00ad],
+              [0x200b, 0x200f],
+              [0x2028, 0x202e],
+              [0x2060, 0x2064],
+              [0x2066, 0x2069],
+              [0xfe00, 0xfe0f],
+              [0xfeff, 0xfeff],
+              [0xe0000, 0xe007f],
+              [0xe0100, 0xe01ef],
+            ];
+
+            const NAMES = new Map([
+              [0x00ad, "SOFT HYPHEN"],
+              [0x200b, "ZERO WIDTH SPACE"],
+              [0x200c, "ZERO WIDTH NON-JOINER"],
+              [0x200d, "ZERO WIDTH JOINER"],
+              [0x200e, "LEFT-TO-RIGHT MARK"],
+              [0x200f, "RIGHT-TO-LEFT MARK"],
+              [0x2028, "LINE SEPARATOR"],
+              [0x2029, "PARAGRAPH SEPARATOR"],
+              [0x202a, "LEFT-TO-RIGHT EMBEDDING"],
+              [0x202b, "RIGHT-TO-LEFT EMBEDDING"],
+              [0x202c, "POP DIRECTIONAL FORMATTING"],
+              [0x202d, "LEFT-TO-RIGHT OVERRIDE"],
+              [0x202e, "RIGHT-TO-LEFT OVERRIDE"],
+              [0x2060, "WORD JOINER"],
+              [0x2061, "FUNCTION APPLICATION"],
+              [0x2062, "INVISIBLE TIMES"],
+              [0x2063, "INVISIBLE SEPARATOR"],
+              [0x2064, "INVISIBLE PLUS"],
+              [0x2066, "LEFT-TO-RIGHT ISOLATE"],
+              [0x2067, "RIGHT-TO-LEFT ISOLATE"],
+              [0x2068, "FIRST STRONG ISOLATE"],
+              [0x2069, "POP DIRECTIONAL ISOLATE"],
+              [0xfeff, "BYTE ORDER MARK"],
+            ]);
+
+            const isInvisible = (cp) => {
+              for (const [lo, hi] of INVISIBLE_RANGES) {
+                if (cp >= lo && cp <= hi) return true;
+              }
+              return false;
+            };
+
+            const describe = (cp) => {
+              if (NAMES.has(cp)) return NAMES.get(cp);
+              if (cp >= 0xfe00 && cp <= 0xfe0f) return "VARIATION SELECTOR";
+              if (cp >= 0xe0100 && cp <= 0xe01ef) return "VARIATION SELECTOR SUPPLEMENT";
+              if (cp >= 0xe0000 && cp <= 0xe007f) return "TAG CHARACTER";
+              return "INVISIBLE CHARACTER";
+            };
+
+            const formatCp = (cp) =>
+              "U+" + cp.toString(16).toUpperCase().padStart(4, "0");
+
+            const escapeTableCell = (value) =>
+              String(value)
+                .replaceAll("\\", "\\\\")
+                .replaceAll("|", "\\|")
+                .replaceAll("`", "\\`")
+                .replaceAll("\n", "\\n")
+                .replaceAll("\r", "\\r");
+
+            const { execFileSync } = require("child_process");
+            const baseSha = process.env.BASE_SHA;
+            const headSha = process.env.HEAD_SHA;
+
+            const localDiff = (filename) => {
+              try {
+                return execFileSync(
+                  "git",
+                  ["diff", "--no-color", "--unified=3", baseSha, headSha, "--", filename],
+                  { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 },
+                );
+              } catch (error) {
+                core.info(`local git diff failed for ${filename}: ${error.message}`);
+                return null;
+              }
+            };
+
+            function* parseAddedLines(patch) {
+              if (!patch) return;
+              const lines = patch.split("\n");
+              let newLine = 0;
+              for (const line of lines) {
+                if (line.startsWith("@@")) {
+                  const m = line.match(/^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/);
+                  if (m) newLine = parseInt(m[1], 10);
+                  continue;
+                }
+                if (line.startsWith("+++") || line.startsWith("---")) continue;
+                if (line.startsWith("\\")) continue;
+                if (line.length === 0) continue;
+                const tag = line[0];
+                if (tag === "+") {
+                  yield { lineNo: newLine, content: line.slice(1) };
+                  newLine += 1;
+                } else if (tag === " ") {
+                  newLine += 1;
+                }
+              }
+            }
+
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const pull_number = context.payload.pull_request.number;
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner,
+              repo,
+              pull_number,
+              per_page: 100,
+            });
+
+            if (files.length >= 3000) {
+              core.setFailed(
+                "PR changes 3000 or more files; please split the PR.",
+              );
+              return;
+            }
+
+            const findings = [];
+
+            for (const file of files) {
+              if (file.status === "removed") continue;
+
+              let col = 0;
+              for (const ch of file.filename) {
+                col += 1;
+                const cp = ch.codePointAt(0);
+                if (isInvisible(cp)) {
+                  findings.push({ file: file.filename, scope: "filename", line: null, column: col, codePoint: cp });
+                }
+              }
+
+              let patch = file.patch;
+              if (!patch) patch = localDiff(file.filename);
+              if (!patch) continue;
+
+              for (const { lineNo, content } of parseAddedLines(patch)) {
+                let column = 0;
+                for (const ch of content) {
+                  column += 1;
+                  const cp = ch.codePointAt(0);
+                  if (isInvisible(cp)) {
+                    findings.push({ file: file.filename, scope: "content", line: lineNo, column, codePoint: cp });
+                  }
+                }
+              }
+            }
+
+            let body;
+            if (findings.length === 0) {
+              body = HEADER + "\n## Invisible characters check\n\nNo suspicious invisible characters detected in the PR diff.\n";
+            } else {
+              const visible = findings.slice(0, MAX_ROWS);
+              const rows = visible
+                .map((f) => {
+                  const location = f.scope === "filename" ? `filename, col ${f.column}` : `${f.line}:${f.column}`;
+                  return `| \`${escapeTableCell(f.file)}\` | ${location} | \`${formatCp(f.codePoint)}\` | ${escapeTableCell(describe(f.codePoint))} |`;
+                })
+                .join("\n");
+              const more = findings.length > MAX_ROWS ? `\n\n_...and ${findings.length - MAX_ROWS} more occurrence(s) omitted._` : "";
+              const noun = findings.length === 1 ? "" : "s";
+              body =
+                HEADER + "\n## Invisible characters check\n\n" +
+                `Found **${findings.length}** invisible / bidi character${noun} in the PR diff. These characters are not visible in most editors and have been abused in trojan-source attacks. Please remove them or document why they are needed.\n\n` +
+                "| file | location | code point | name |\n" +
+                "| --- | --- | --- | --- |\n" +
+                rows + more + "\n";
+            }
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner, repo, issue_number: pull_number, per_page: 100,
+            });
+            const existing = comments.find((c) => typeof c.body === "string" && c.body.includes(HEADER));
+
+            const sameRepo =
+              context.payload.pull_request.head.repo &&
+              context.payload.pull_request.head.repo.full_name === context.payload.repository.full_name;
+
+            if (!sameRepo) {
+              core.info("PR is from a fork; skipping comment (read-only GITHUB_TOKEN).");
+            } else if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number: pull_number, body });
+            }
+
+            core.setOutput("findings", String(findings.length));
+            if (findings.length > 0) {
+              core.setFailed(`Found ${findings.length} invisible character occurrence(s) in PR diff.`);
+            }

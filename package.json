@@ -1,0 +1,25 @@
+{
+  "name": "@twilic/website",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.33.4",
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "preview": "vitepress preview docs",
+    "format": "prettier --write \"{docs/**/*.{md,ts,css},*.{json,md}}\"",
+    "format:check": "prettier --check \"{docs/**/*.{md,ts,css},*.{json,md}}\"",
+    "lint": "markdownlint-cli2 \"docs/**/*.md\""
+  },
+  "devDependencies": {
+    "markdownlint-cli2": "^0.22.1",
+    "prettier": "^3.8.3",
+    "vitepress": "^1.6.3"
+  },
+  "dependencies": {
+    "@lucide/vue": "^1.17.0",
+    "mermaid": "^11.15.0",
+    "vitepress-plugin-mermaid": "^2.0.17"
+  }
+}

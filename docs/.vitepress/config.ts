@@ -1,5 +1,6 @@
 import { defineConfig } from "vitepress";
 import { withMermaid } from "vitepress-plugin-mermaid";
+import llmstxt from "vitepress-plugin-llms";
 
 export default withMermaid(
   defineConfig({
@@ -124,6 +125,7 @@ export default withMermaid(
       optimizeDeps: {
         include: ["mermaid"],
       },
+      plugins: [llmstxt()],
     },
   }),
 );

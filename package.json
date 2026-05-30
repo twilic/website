@@ -10,7 +10,7 @@
     "preview": "vitepress preview docs",
     "format": "prettier --write \"{docs/**/*.{md,ts,css},*.{json,md}}\"",
     "format:check": "prettier --check \"{docs/**/*.{md,ts,css},*.{json,md}}\"",
-    "lint": "markdownlint-cli2 \"docs/**/*.md\""
+    "lint": "markdownlint-cli2 \"docs/**/*.md\" \"!docs/.vitepress/dist/**\" \"!docs/.vitepress/cache/**\""
   },
   "devDependencies": {
     "markdownlint-cli2": "^0.22.1",

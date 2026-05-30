@@ -2,7 +2,6 @@
 
 <template>
   <div class="hero-code">
-    <span class="lang">ts</span>
     <pre class="pre"><code
 ><span class="t-kw">import</span> <span class="t-punc">{ </span><span class="t-fn">encode</span><span class="t-punc">, </span><span class="t-fn">decode</span><span class="t-punc"> }</span> <span class="t-kw">from</span> <span class="t-str">'@twilic/core'</span>
 
@@ -28,6 +27,7 @@
   border-radius: 8px;
   overflow: hidden;
   background-color: var(--vp-code-block-bg);
+  user-select: none;
 }
 
 .lang {

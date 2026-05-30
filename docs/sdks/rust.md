@@ -1,6 +1,6 @@
 # Rust SDK
 
-The Rust crate is the canonical reference implementation for Twilic v2. It provides the highest performance and is used as the foundation for the JavaScript SDK (via N-API and WASM).
+The Rust crate is the canonical reference implementation for Twilic v2. It provides the highest performance and is the foundation for the JavaScript SDK (N-API and WASM builds).
 
 ## Requirements
 
@@ -43,52 +43,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-## API Reference
-
-### Dynamic Encoding
-
-```rust
-// Encode any Value to bytes
-pub fn encode(value: &Value) -> Result<Vec<u8>, TwilicError>
-
-// Decode bytes to a Value
-pub fn decode(bytes: &[u8]) -> Result<Value, TwilicError>
-```
-
-### Schema-Aware Encoding
-
-```rust
-// Encode using Bound Profile with a shared schema
-pub fn encode_with_schema(value: &Value, schema: &Schema) -> Result<Vec<u8>, TwilicError>
-```
-
-### Batch Encoding
-
-```rust
-// Encode a batch of same-shape records
-pub fn encode_batch(records: &[Value]) -> Result<Vec<u8>, TwilicError>
-```
-
-### Session Encoder
-
-For stateful streams:
-
-```rust
-use twilic::SessionEncoder;
-
-let mut encoder = SessionEncoder::new();
-
-// Encode with session state (key/shape/string interning persists)
-let bytes = encoder.encode(&value)?;
-
-// Encode a micro-batch
-let bytes = encoder.encode_micro_batch(&records)?;
-
-// Reset session state
-encoder.reset();
-```
-
-## Value Types
+## Value Model
 
 ```rust
 pub enum Value {
@@ -110,13 +65,129 @@ pub enum Value {
 }
 ```
 
+### Type mapping from Rust primitives
+
+| Rust type | Twilic Value | Notes |
+| --- | --- | --- |
+| `bool` | `Value::Bool` | - |
+| `u8`..`u64` | `Value::U8`..`Value::U64` | Encoder picks smallest width automatically |
+| `i8`..`i64` | `Value::I8`..`Value::I64` | - |
+| `f32` | `Value::F64` | Upcast — no `f32` tag in v2 |
+| `f64` | `Value::F64` | - |
+| `String` / `&str` | `Value::String` | - |
+| `Vec<u8>` / `&[u8]` | `Value::Binary` | Raw bytes, no base64 |
+| `Option<T>` | `Value::Null` or inner value | - |
+| `Vec<Value>` | `Value::Array` | - |
+| `Vec<(String, Value)>` | `Value::Map` | Order is preserved |
+
+## API Reference
+
+### Dynamic Encoding
+
+```rust
+// Encode any Value to bytes (Dynamic Profile)
+pub fn encode(value: &Value) -> Result<Vec<u8>, TwilicError>
+
+// Decode bytes to a Value
+pub fn decode(bytes: &[u8]) -> Result<Value, TwilicError>
+```
+
+### Schema-Aware Encoding
+
+```rust
+// Encode using Bound Profile with a shared schema
+pub fn encode_with_schema(value: &Value, schema: &Schema) -> Result<Vec<u8>, TwilicError>
+```
+
+### Batch Encoding
+
+```rust
+// Encode a slice of same-shape records as row_batch or col_batch
+pub fn encode_batch(records: &[Value]) -> Result<Vec<u8>, TwilicError>
+```
+
+### Session Encoder
+
+For stateful streams — maintains key/shape/string interning state across messages:
+
+```rust
+use twilic::SessionEncoder;
+
+let mut encoder = SessionEncoder::new();
+
+// First call emits full message + intern table registrations
+let bytes = encoder.encode(&value)?;
+
+// Subsequent calls use key_ref / shape_ref / str_ref automatically
+let bytes = encoder.encode(&next_value)?;
+
+// Encode a micro-batch
+let bytes = encoder.encode_micro_batch(&records)?;
+
+// Encode only changed fields (state_patch)
+let bytes = encoder.encode_patch(&updated_value)?;
+
+// Reset all session state — next encode is a full stateless message
+encoder.reset();
+```
+
+## Error Handling
+
+```rust
+use twilic::{decode, encode, TwilicError, Value};
+
+match decode(bytes) {
+    Ok(value) => { /* use value */ }
+    Err(TwilicError::UnknownKeyRef(id)) => {
+        // key_ref referenced an ID not defined in this message
+        eprintln!("unknown key_ref: {id}");
+    }
+    Err(TwilicError::UnknownShapeRef(id)) => {
+        // shape_ref referenced an ID not defined in this message
+    }
+    Err(TwilicError::UnknownStrRef(id)) => {
+        // str_ref referenced an ID not defined in this message
+    }
+    Err(TwilicError::InvalidTag(byte)) => {
+        // Unrecognized first byte
+    }
+    Err(TwilicError::UnexpectedEof) => {
+        // Buffer truncated
+    }
+    Err(e) => eprintln!("decode error: {e}"),
+}
+```
+
+All decode errors are hard failures — unknown references are never silently accepted per the v2 spec.
+
+## Building with Cargo Features
+
+```toml
+[dependencies]
+twilic = { git = "https://github.com/twilic/twilic-rust.git", features = ["session", "schema"] }
+```
+
+| Feature   | Description                                                 |
+| --------- | ----------------------------------------------------------- |
+| `session` | Enables `SessionEncoder` and stateful forms                 |
+| `schema`  | Enables `encode_with_schema` and Bound Profile              |
+| `batch`   | Enables `encode_batch`, `col_batch`, `row_batch`            |
+| `serde`   | Enables `serde::Serialize`/`Deserialize` derive for `Value` |
+
 ## Project Layout
 
 ```text
 twilic-rust/
-  src/          # wire, model, codec, session, protocol, v2
-  tests/        # spec conformance and interop tests
-  scripts/      # interop fixtures and smoke checks
+  src/
+    lib.rs          # public API
+    value.rs        # Value enum
+    encode/         # encoder (dynamic, bound, batch, session)
+    decode/         # decoder
+    codec/          # vector codecs (bitpack, RLE, delta, XOR)
+    session/        # SessionEncoder, state patch, template batch
+    schema/         # Schema, FieldType, presence bitmap
+  tests/            # spec conformance and interop tests
+  scripts/          # interop fixture generation
   docs/
 ```
 

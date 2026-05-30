@@ -49,6 +49,15 @@ export default withMermaid(
               { text: "Quick Start", link: "/guide/quick-start" },
             ],
           },
+          {
+            text: "Deep Dive",
+            items: [
+              { text: "Core Concepts", link: "/guide/concepts" },
+              { text: "Cookbook", link: "/guide/cookbook" },
+              { text: "Comparison", link: "/guide/comparison" },
+              { text: "FAQ", link: "/guide/faq" },
+            ],
+          },
         ],
         "/spec/": [
           {

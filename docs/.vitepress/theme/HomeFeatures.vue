@@ -34,9 +34,9 @@ const features = [
   },
   {
     icon: Code2,
-    title: "Seven language SDKs",
+    title: "Fourteen language SDKs",
     details:
-      "Production-ready implementations in Rust, Go, Python, JavaScript/TypeScript, Java, Ruby, and Zig.",
+      "Official implementations in Rust, Go, Python, JavaScript/TypeScript, Java, Ruby, Zig, PHP, Kotlin, Dart, Elixir, C++, C#, and Swift.",
   },
 ];
 </script>

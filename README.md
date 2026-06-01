@@ -83,6 +83,13 @@ website/
       java.md
       ruby.md
       zig.md
+      php.md
+      kotlin.md
+      dart.md
+      elixir.md
+      cpp.md
+      csharp.md
+      swift.md
     benchmark.md
     public/
       favicon.svg

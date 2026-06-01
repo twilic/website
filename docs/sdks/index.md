@@ -1,6 +1,6 @@
 # SDKs
 
-Twilic has production-ready implementations in seven languages. All SDKs target the [v2 wire format](/spec/overview) and share a consistent API surface.
+Twilic has production-ready implementations in fourteen languages. All SDKs target the [v2 wire format](/spec/overview) and share a consistent API surface.
 
 ## Available SDKs
 
@@ -13,6 +13,13 @@ Twilic has production-ready implementations in seven languages. All SDKs target 
 | [Java](/sdks/java) | `io.twilic` | Java 21+ |
 | [Ruby](/sdks/ruby) | `twilic` (RubyGems) | Ruby 3.3+ |
 | [Zig](/sdks/zig) | `twilic` (build.zig.zon) | Zig 0.15.2+ |
+| [PHP](/sdks/php) | `twilic/twilic` (GitHub) | PHP 8.3+ |
+| [Kotlin](/sdks/kotlin) | `io.twilic:twilic` (GitHub) | JDK 21+ |
+| [Dart](/sdks/dart) | `twilic` (GitHub) | Dart SDK 3.5+ |
+| [Elixir](/sdks/elixir) | `:twilic` (GitHub) | Elixir 1.19+ / OTP 27+ |
+| [C++](/sdks/cpp) | `twilic-cpp` (GitHub) | CMake 3.16+ / C++17 |
+| [C#](/sdks/csharp) | `Twilic` (GitHub) | .NET 8 SDK |
+| [Swift](/sdks/swift) | `Twilic` (SPM) | Swift 5.9+ |
 
 ## Common API Surface
 

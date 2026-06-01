@@ -208,3 +208,162 @@ pub fn main() !void {
 ```
 
 → [Full Zig SDK docs](/sdks/zig)
+
+## PHP
+
+Install with Composer (from GitHub until Packagist):
+
+```bash
+composer require twilic/twilic:@dev
+```
+
+```php
+<?php
+require 'vendor/autoload.php';
+
+use function Twilic\{decode, encode, entry, new_map, new_string, new_u64};
+
+$value = new_map(
+    entry('id', new_u64(1001)),
+    entry('name', new_string('alice')),
+);
+$data = encode($value);
+$decoded = decode($data);
+```
+
+→ [Full PHP SDK docs](/sdks/php)
+
+## Kotlin
+
+Add from GitHub (Maven Central when published):
+
+```kotlin
+dependencies {
+    implementation("io.twilic:twilic:3.0.0")
+}
+```
+
+```kotlin
+import io.twilic.Twilic
+import io.twilic.internal.core.MapEntry
+
+val value = Twilic.newMap(
+    MapEntry("id", Twilic.newU64(1001)),
+    MapEntry("name", Twilic.newString("alice")),
+)
+val encoded = Twilic.encode(value)
+val decoded = Twilic.decode(encoded)
+```
+
+→ [Full Kotlin SDK docs](/sdks/kotlin)
+
+## Dart
+
+Add to `pubspec.yaml`:
+
+```yaml
+dependencies:
+  twilic:
+    git:
+      url: https://github.com/twilic/twilic-dart.git
+```
+
+```dart
+import 'package:twilic/twilic.dart';
+
+final value = newMap([
+  entry('id', newU64(1001)),
+  entry('name', newString('alice')),
+]);
+final bytes = encode(value);
+final decoded = decode(bytes);
+```
+
+→ [Full Dart SDK docs](/sdks/dart)
+
+## Elixir
+
+Add to `mix.exs`:
+
+```elixir
+{:twilic, git: "https://github.com/twilic/twilic-elixir.git"}
+```
+
+```elixir
+value =
+  Twilic.new_map([
+    Twilic.entry("id", Twilic.new_u64(1001)),
+    Twilic.entry("name", Twilic.new_string("alice")),
+  ])
+
+encoded = Twilic.encode(value)
+decoded = Twilic.decode(encoded)
+```
+
+→ [Full Elixir SDK docs](/sdks/elixir)
+
+## C++
+
+Build from source:
+
+```bash
+git clone https://github.com/twilic/twilic-cpp.git
+cd twilic-cpp && cmake -B build && cmake --build build
+```
+
+```cpp
+#include "twilic/twilic.hpp"
+
+auto value = twilic::new_map({
+    twilic::entry("id", twilic::new_u64(1001)),
+    twilic::entry("name", twilic::new_string("alice")),
+});
+auto bytes = twilic::encode(value);
+auto decoded = twilic::decode(bytes);
+```
+
+→ [Full C++ SDK docs](/sdks/cpp)
+
+## C Sharp
+
+Clone and build:
+
+```bash
+git clone https://github.com/twilic/twilic-csharp.git
+cd twilic-csharp && dotnet build
+```
+
+```csharp
+using Twilic;
+
+var value = Twilic.NewMap(
+    Twilic.Entry("id", Twilic.NewU64(1001)),
+    Twilic.Entry("name", Twilic.NewString("alice")));
+byte[] bytes = Twilic.Encode(value);
+var decoded = Twilic.Decode(bytes);
+```
+
+→ [Full C# SDK docs](/sdks/csharp)
+
+## Swift
+
+Add to `Package.swift`:
+
+```swift
+.package(url: "https://github.com/twilic/twilic-swift.git", from: "0.1.0"),
+```
+
+```swift
+import Twilic
+
+let value = newMap([
+    entry("id", newU64(1001)),
+    entry("name", newString("alice")),
+])
+let data = try encode(value)
+let decoded = try decode(data)
+```
+
+→ [Full Swift SDK docs](/sdks/swift)
+
+See the [SDK overview](/sdks/) for requirements, packages, and interoperability notes for all fourteen languages.

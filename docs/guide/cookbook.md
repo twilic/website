@@ -240,7 +240,7 @@ data, _ := os.ReadFile("event.twl")
 value, err := twilic.Decode(data)
 ```
 
-This works across all seven SDKs without any shared schema file or code generation step.
+This works across all fourteen official SDKs without any shared schema file or code generation step.
 
 ## Graceful Degradation: Stateless Fallback
 

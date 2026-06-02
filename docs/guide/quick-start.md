@@ -160,6 +160,29 @@ public class Main {
 
 → [Full Java SDK docs](/sdks/java)
 
+## Scala
+
+Add to `build.sbt`:
+
+```scala
+libraryDependencies += "io.twilic" %% "twilic" % "3.0.0"
+```
+
+```scala
+import io.twilic.Twilic
+import io.twilic.internal.core.*
+
+val value = Twilic.newMap(
+  Twilic.entry("id", Twilic.newU64(1001)),
+  Twilic.entry("name", Twilic.newString("alice")),
+)
+
+val bytes = Twilic.encode(value)
+val decoded = Twilic.decode(bytes)
+```
+
+→ [Full Scala SDK docs](/sdks/scala)
+
 ## Ruby
 
 Install:
@@ -184,6 +207,29 @@ decoded = Twilic.decode(data)
 ```
 
 → [Full Ruby SDK docs](/sdks/ruby)
+
+## R
+
+Install from source:
+
+```bash
+git clone https://github.com/twilic/twilic-r.git
+cd twilic-r && R CMD INSTALL .
+```
+
+```r
+library(twilic)
+
+value <- new_map(
+  entry("id", new_u64(1001)),
+  entry("name", new_string("alice"))
+)
+
+bytes <- encode(value)
+decoded <- decode(bytes)
+```
+
+→ [Full R SDK docs](/sdks/r)
 
 ## Zig
 
@@ -302,6 +348,55 @@ decoded = Twilic.decode(encoded)
 
 → [Full Elixir SDK docs](/sdks/elixir)
 
+## Lua
+
+Install via LuaRocks or set `LUA_PATH` to the source tree:
+
+```bash
+git clone https://github.com/twilic/twilic-lua.git
+cd twilic-lua
+export LUA_PATH="$(pwd)/src/?.lua;$(pwd)/src/?/init.lua;;"
+```
+
+```lua
+local twilic = require("twilic")
+
+local value = twilic.map({
+  id = twilic.u64(1001),
+  name = twilic.string("alice"),
+})
+
+local bytes = twilic.encode(value)
+local decoded = twilic.decode(bytes)
+```
+
+→ [Full Lua SDK docs](/sdks/lua)
+
+## C
+
+Build from source:
+
+```bash
+git clone https://github.com/twilic/twilic-c.git
+cd twilic-c && cmake -B build && cmake --build build
+```
+
+```c
+#include "twilic/twilic.h"
+
+twilic_map_entry_t entries[] = {
+    twilic_entry("id", twilic_u64(1001)),
+    twilic_entry("name", twilic_string("alice")),
+};
+twilic_value_t value = twilic_map(entries, 2);
+
+twilic_buffer_t encoded = {0};
+twilic_error_t err = {0};
+twilic_encode(&value, &encoded, &err);
+```
+
+→ [Full C SDK docs](/sdks/c)
+
 ## C++
 
 Build from source:
@@ -366,4 +461,4 @@ let decoded = try decode(data)
 
 → [Full Swift SDK docs](/sdks/swift)
 
-See the [SDK overview](/sdks/) for requirements, packages, and interoperability notes for all fourteen languages.
+See the [SDK overview](/sdks/) for requirements, packages, and interoperability notes for all eighteen languages.

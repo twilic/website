@@ -19,7 +19,7 @@
     "vitepress-plugin-llms": "^1.13.1"
   },
   "dependencies": {
-    "@lucide/vue": "^1.17.0",
+    "@lucide/vue": "^1.21.0",
     "mermaid": "^11.15.0",
     "vitepress-plugin-mermaid": "^2.0.17"
   }

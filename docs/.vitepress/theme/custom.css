@@ -31,9 +31,31 @@
   --vp-c-brand-soft: rgba(54, 169, 248, 0.16);
 }
 
-@media (max-width: 959px) {
+/* Hero: switch to stacked layout around 1150px */
+@media (max-width: 1149px) {
   .VPHero .image {
     display: none;
+  }
+
+  .VPHero.has-image .container {
+    flex-direction: column !important;
+    text-align: center !important;
+  }
+
+  .VPHero .main {
+    order: 2 !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  .VPHero.has-image .name,
+  .VPHero.has-image .text,
+  .VPHero.has-image .tagline {
+    margin-inline: auto !important;
+  }
+
+  .VPHero.has-image .actions {
+    justify-content: center !important;
   }
 }
 

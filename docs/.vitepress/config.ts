@@ -59,6 +59,7 @@ export default withMermaid(
               { text: "Cookbook", link: "/guide/cookbook" },
               { text: "Comparison", link: "/guide/comparison" },
               { text: "FAQ", link: "/guide/faq" },
+              { text: "Contributing", link: "/guide/contributing" },
             ],
           },
         ],

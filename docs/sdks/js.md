@@ -149,6 +149,15 @@ twilic-js/
   dist/          # Built TypeScript output
 ```
 
+## Web framework integrations
+
+For HTTP APIs, use the official integration packages:
+
+- [`@twilic/express`](https://github.com/twilic/express), [`@twilic/fastify`](https://github.com/twilic/fastify), [`@twilic/hono`](https://github.com/twilic/hono) — server middleware
+- [`@twilic/axios`](https://github.com/twilic/axios), [`@twilic/fetch`](https://github.com/twilic/fetch) — client helpers
+
+See [Web Integrations](/guide/web-integrations) for setup and examples.
+
 ## Source
 
 [github.com/twilic/twilic-js](https://github.com/twilic/twilic-js)

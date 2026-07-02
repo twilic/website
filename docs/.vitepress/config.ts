@@ -48,6 +48,7 @@ export default withMermaid(
               { text: "Introduction", link: "/guide/introduction" },
               { text: "Why Twilic?", link: "/guide/why" },
               { text: "Quick Start", link: "/guide/quick-start" },
+              { text: "Web Integrations", link: "/guide/web-integrations" },
               { text: "Twilic CLI", link: "/guide/cli" },
             ],
           },

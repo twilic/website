@@ -22,7 +22,7 @@ Twilic operates on messages, not streams. However:
 
 ### Can I use Twilic over HTTP?
 
-Yes. Use the Dynamic or Batch Profile in stateless mode. Set `Content-Type: application/octet-stream` (or a custom MIME type like `application/x-twilic`) for Twilic payloads.
+Yes. Use the Dynamic or Batch Profile in stateless mode. Official JavaScript integrations use `Content-Type: application/vnd.twilic`. See [Web Integrations](/guide/web-integrations) for Express, Fastify, Hono, Axios, and Fetch helpers.
 
 Stateful Profile is not appropriate for HTTP request/response because there is no shared persistent session state.
 

@@ -2,6 +2,8 @@
 
 Choose an SDK for your language and follow the steps below.
 
+If you prefer terminal-based workflows, use the [Twilic CLI](/guide/cli) for quick encode/decode and benchmark commands.
+
 ## Rust
 
 Add to `Cargo.toml`:

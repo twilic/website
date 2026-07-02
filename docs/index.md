@@ -15,6 +15,9 @@ hero:
       text: Specification
       link: /spec/overview
     - theme: alt
+      text: Playground
+      link: /guide/playground
+    - theme: alt
       text: View on GitHub
       link: https://github.com/twilic
 ---

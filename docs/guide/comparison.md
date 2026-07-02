@@ -2,6 +2,8 @@
 
 Twilic is not a replacement for every format. This page gives an honest comparison so you can decide when Twilic is the right choice.
 
+Try fixture payloads interactively in the [Playground](/guide/playground).
+
 ## Summary Table
 
 | Feature | JSON | MessagePack | Protobuf | FlatBuffers | Twilic |

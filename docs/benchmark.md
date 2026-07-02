@@ -2,6 +2,8 @@
 
 This page summarizes the benchmark results from the Twilic benchmark harness. Measurements are taken using `@twilic/core` on Node.js 24 (N-API backend) against MessagePack and JSON baselines.
 
+For interactive size comparisons in the browser, see the [Playground](/guide/playground). For quick terminal benchmarks, use [`twilic bench`](/guide/cli#run-benchmarks).
+
 ## Setup
 
 The benchmark harness lives in the `twilic/benchmark` repository. To run it yourself:

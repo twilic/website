@@ -30,6 +30,7 @@ export default withMermaid(
         { text: "Guide", link: "/guide/introduction" },
         { text: "Specification", link: "/spec/overview" },
         { text: "SDKs", link: "/sdks/" },
+        { text: "Tools", link: "/tools/" },
         { text: "Benchmark", link: "/benchmark" },
         {
           text: "v2",
@@ -49,7 +50,6 @@ export default withMermaid(
               { text: "Why Twilic?", link: "/guide/why" },
               { text: "Quick Start", link: "/guide/quick-start" },
               { text: "Web Integrations", link: "/guide/web-integrations" },
-              { text: "Twilic CLI", link: "/guide/cli" },
             ],
           },
           {
@@ -60,6 +60,17 @@ export default withMermaid(
               { text: "Comparison", link: "/guide/comparison" },
               { text: "FAQ", link: "/guide/faq" },
               { text: "Contributing", link: "/guide/contributing" },
+            ],
+          },
+        ],
+        "/tools/": [
+          {
+            text: "Tools",
+            items: [
+              { text: "Overview", link: "/tools/" },
+              { text: "Twilic CLI", link: "/guide/cli" },
+              { text: "Playground", link: "/guide/playground" },
+              { text: "Benchmark", link: "/benchmark" },
             ],
           },
         ],

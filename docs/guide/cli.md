@@ -78,6 +78,7 @@ Options:
 
 ## Links
 
+- [Tools overview](/tools/)
 - npm: [`@twilic/cli`](https://www.npmjs.com/package/@twilic/cli)
 - repository: [`twilic/cli`](https://github.com/twilic/cli)
 - source docs: [`README.md`](https://github.com/twilic/cli/blob/main/README.md)

@@ -1,0 +1,21 @@
+name: Semgrep
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: semgrep-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  semgrep:
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    uses: twilic/.github/.github/workflows/semgrep-reusable.yml@main
+    with:
+      profile: js
+    secrets: inherit

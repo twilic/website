@@ -13,6 +13,7 @@
     "lint": "markdownlint-cli2 \"docs/**/*.md\" \"!docs/.vitepress/dist/**\" \"!docs/.vitepress/cache/**\""
   },
   "devDependencies": {
+    "html-minifier-terser": "^7.2.0",
     "markdownlint-cli2": "^0.22.1",
     "prettier": "^3.8.4",
     "vitepress": "^1.6.3",

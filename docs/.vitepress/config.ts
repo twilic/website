@@ -1,6 +1,7 @@
 import { defineConfig } from "vitepress";
 import { withMermaid } from "vitepress-plugin-mermaid";
 import llmstxt from "vitepress-plugin-llms";
+import { minify } from "html-minifier-terser";
 
 export default withMermaid(
   defineConfig({
@@ -151,6 +152,15 @@ export default withMermaid(
         include: ["mermaid"],
       },
       plugins: [llmstxt()],
+    },
+
+    async transformHtml(code) {
+      return await minify(code, {
+        collapseWhitespace: true,
+        removeComments: false,
+        minifyCSS: true,
+        minifyJS: true,
+      });
     },
   }),
 );

@@ -155,7 +155,12 @@ export default withMermaid(
     },
 
     async transformHtml(code) {
-      return await minify(code, {
+      const preprocessed = code.replace(
+        /<pre\b([^>]*)>([\s\S]*?)<\/pre>/g,
+        (_, attrs, content) =>
+          `<pre${attrs}>${content.replace(/\n/g, "<br>")}</pre>`,
+      );
+      return await minify(preprocessed, {
         collapseWhitespace: true,
         removeComments: false,
         minifyCSS: true,

@@ -9,6 +9,7 @@ export default withMermaid(
     description:
       "A compact binary format for structured data — smaller than MessagePack, schema-less or schema-aware.",
     lang: "en-US",
+    cleanUrls: true,
 
     head: [
       ["link", { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" }],

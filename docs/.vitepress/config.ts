@@ -6,8 +6,9 @@ import { minify } from "html-minifier-terser";
 export default withMermaid(
   defineConfig({
     title: "Twilic",
+    titleTemplate: ":title | Twilic",
     description:
-      "A compact binary format for structured data — smaller than MessagePack, schema-less or schema-aware.",
+      "Twilic is a compact binary serialization format for structured data — smaller than MessagePack, schema-less or schema-aware, with SDKs for Rust, Go, Python, JavaScript, and more.",
     lang: "en-US",
     cleanUrls: true,
 
@@ -15,12 +16,36 @@ export default withMermaid(
       ["link", { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" }],
       ["meta", { name: "theme-color", content: "#36A9F8" }],
       ["meta", { property: "og:type", content: "website" }],
-      ["meta", { property: "og:title", content: "Twilic" }],
+      ["meta", { property: "og:site_name", content: "Twilic" }],
+      [
+        "meta",
+        {
+          property: "og:title",
+          content: "Twilic — Compact Binary Format for Structured Data",
+        },
+      ],
       [
         "meta",
         {
           property: "og:description",
-          content: "A compact binary format for structured data.",
+          content:
+            "MessagePack-like usability with decisively smaller payloads on repeated structure, keys, strings, and homogeneous arrays.",
+        },
+      ],
+      ["meta", { name: "twitter:card", content: "summary" }],
+      [
+        "meta",
+        {
+          name: "twitter:title",
+          content: "Twilic — Compact Binary Format for Structured Data",
+        },
+      ],
+      [
+        "meta",
+        {
+          name: "twitter:description",
+          content:
+            "MessagePack-like usability with decisively smaller payloads on repeated structure, keys, strings, and homogeneous arrays.",
         },
       ],
     ],

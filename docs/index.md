@@ -1,5 +1,27 @@
 ---
 layout: home
+title: Twilic — Compact Binary Format for Structured Data
+titleTemplate: false
+description: Twilic is a compact binary serialization format with MessagePack-like usability. Smaller than MessagePack on repeated structure, keys, strings, and homogeneous arrays. Schema-less or schema-aware, with SDKs for Rust, Go, Python, JavaScript, and more.
+head:
+  - - meta
+    - name: keywords
+      content: Twilic, binary serialization, structured data, MessagePack alternative, compact binary format, schema-less encoding, data interchange
+  - - meta
+    - property: og:title
+      content: Twilic — Compact Binary Format for Structured Data
+  - - meta
+    - property: og:description
+      content: MessagePack-like usability with decisively smaller payloads on repeated structure, keys, strings, and homogeneous arrays.
+  - - meta
+    - name: twitter:card
+      content: summary
+  - - meta
+    - name: twitter:title
+      content: Twilic — Compact Binary Format for Structured Data
+  - - meta
+    - name: twitter:description
+      content: MessagePack-like usability with decisively smaller payloads on repeated structure, keys, strings, and homogeneous arrays.
 
 hero:
   name: Twilic

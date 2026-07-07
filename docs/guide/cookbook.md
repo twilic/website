@@ -2,6 +2,8 @@
 
 Practical patterns for common Twilic use cases.
 
+For runnable projects with size comparisons against JSON and MessagePack, see [Examples](/guide/examples).
+
 ## Telemetry Pipeline
 
 ### Problem

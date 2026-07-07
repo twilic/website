@@ -4,6 +4,7 @@ Utilities for working with Twilic outside of application code.
 
 | Tool | Description |
 | --- | --- |
+| [Examples](/guide/examples) | Runnable use cases — HTTP, WebSocket, telemetry, logs, and cache |
 | [Twilic CLI](/guide/cli) | Encode, decode, and benchmark from the terminal (`@twilic/cli`) |
 | [Playground](/guide/playground) | Compare encoded sizes in the browser |
 | [Benchmark](/benchmark) | Throughput and size measurements with the benchmark harness |

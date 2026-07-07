@@ -84,6 +84,7 @@ export default withMermaid(
             items: [
               { text: "Core Concepts", link: "/guide/concepts" },
               { text: "Cookbook", link: "/guide/cookbook" },
+              { text: "Examples", link: "/guide/examples" },
               { text: "Comparison", link: "/guide/comparison" },
               { text: "FAQ", link: "/guide/faq" },
               { text: "Contributing", link: "/guide/contributing" },
@@ -95,6 +96,7 @@ export default withMermaid(
             text: "Tools",
             items: [
               { text: "Overview", link: "/tools/" },
+              { text: "Examples", link: "/guide/examples" },
               { text: "Twilic CLI", link: "/guide/cli" },
               { text: "Playground", link: "/guide/playground" },
               { text: "Benchmark", link: "/benchmark" },

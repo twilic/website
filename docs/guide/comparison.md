@@ -134,3 +134,9 @@ Do you want schema-aware compression for maximum density?
 Do you have long-lived streams where most fields don't change?
   → Yes: use Twilic Stateful Profile
 ```
+
+## Related
+
+- [Migrating from Protobuf](/guide/articles/migrating-from-protobuf)
+- [Migrating from MessagePack](/guide/articles/migrating-from-messagepack)
+- [Encoder Selection](/guide/encoder-selection)

@@ -42,6 +42,18 @@ Twilic follows six design principles.
 - Defining application semantics
 - Mandating a single transport handshake for every deployment
 
+## Documentation map
+
+| Section | Start here |
+| --- | --- |
+| [Quick Start](/guide/quick-start) | Install an SDK and encode your first value |
+| [API Reference](/reference/) | Function signatures for `@twilic/core`, Rust, Python, Go |
+| [Integrations](/integrations/) | Hono, Express, Fastify, Fetch, Axios |
+| [Encoding Profiles](/guide/encoding-profiles) | Dynamic, Batch, Bound, Stateful |
+| [Cookbook](/guide/cookbook) | Telemetry, WebSocket, API batch, sensor data |
+| [Business Use Cases](/guide/business-use-cases) | Cache, telemetry, internal APIs, streaming |
+| [Specification](/spec/overview) | Normative wire format reference |
+
 ## Current Version
 
 The current release line is **v2**. v2 is a clean break from v1 — a v2 decoder is not required to decode v1 payloads.

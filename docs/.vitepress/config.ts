@@ -80,6 +80,13 @@ export default withMermaid(
             ],
           },
           {
+            text: "Enterprise",
+            items: [
+              { text: "Use Cases", link: "/guide/enterprise-use-cases" },
+              { text: "Articles", link: "/guide/articles/" },
+            ],
+          },
+          {
             text: "Deep Dive",
             items: [
               { text: "Core Concepts", link: "/guide/concepts" },
@@ -88,6 +95,53 @@ export default withMermaid(
               { text: "Comparison", link: "/guide/comparison" },
               { text: "FAQ", link: "/guide/faq" },
               { text: "Contributing", link: "/guide/contributing" },
+            ],
+          },
+        ],
+        "/guide/articles/": [
+          {
+            text: "Articles",
+            items: [
+              { text: "Overview", link: "/guide/articles/" },
+              {
+                text: "Infrastructure",
+                items: [
+                  {
+                    text: "Cut Cache & Redis Costs",
+                    link: "/guide/articles/cut-infrastructure-costs-with-safer-caching",
+                  },
+                  {
+                    text: "Build the Business Case",
+                    link: "/guide/articles/building-the-adoption-business-case",
+                  },
+                ],
+              },
+              {
+                text: "Architecture",
+                items: [
+                  {
+                    text: "Telemetry at Scale",
+                    link: "/guide/articles/telemetry-and-event-pipelines-at-scale",
+                  },
+                  {
+                    text: "Internal APIs",
+                    link: "/guide/articles/internal-apis-without-protobuf-overhead",
+                  },
+                  {
+                    text: "Real-Time Streaming",
+                    link: "/guide/articles/real-time-dashboards-and-streaming",
+                  },
+                ],
+              },
+              {
+                text: "Migration",
+                items: [
+                  {
+                    text: "From MessagePack",
+                    link: "/guide/articles/migrating-from-messagepack",
+                  },
+                ],
+              },
             ],
           },
         ],

@@ -2,6 +2,15 @@
 
 Twilic has production-ready implementations in eighteen languages. All SDKs target the [v2 wire format](/spec/overview) and share a consistent API surface.
 
+## Documentation
+
+| Resource | Description |
+| --- | --- |
+| [API Reference](/reference/) | Complete function signatures for JS, Rust, Python, Go |
+| [Integrations](/integrations/) | HTTP packages for Hono, Express, Fastify, Fetch, Axios |
+| [Encoding Profiles](/guide/encoding-profiles) | Dynamic, Batch, Bound, Stateful |
+| [Quick Start](/guide/quick-start) | Install and first encode in every language |
+
 ## Available SDKs
 
 | Language | Package | Requirements |
@@ -29,18 +38,27 @@ Twilic has production-ready implementations in eighteen languages. All SDKs targ
 
 All SDKs expose the same logical operations:
 
-| Operation | Description |
-| --- | --- |
-| `encode(value)` | Encode a value to Twilic v2 bytes (Dynamic Profile) |
-| `decode(bytes)` | Decode Twilic v2 bytes to a value |
-| `encode_with_schema(value, schema)` | Encode using Bound Profile |
-| `encode_batch(records)` | Encode a batch of same-shape records |
-| `SessionEncoder` | Stateful encoder for long-lived streams |
+| Operation | Description | Reference |
+| --- | --- | --- |
+| `encode(value)` | Dynamic profile encode | [Profiles](/guide/encoding-profiles) |
+| `decode(bytes)` | Decode to value | [Errors & Limits](/reference/errors-and-limits) |
+| `encode_with_schema(value, schema)` | Bound profile encode | [Schema-Bound](/guide/schema-bound) |
+| `encode_batch(records)` | Same-shape batch | [Batch & Columnar](/guide/batch-and-columnar) |
+| `SessionEncoder` | Stateful stream encoder | [Session Encoder](/reference/session-encoder) |
+
+## JavaScript entrypoints
+
+| Import                  | Use                                                |
+| ----------------------- | -------------------------------------------------- |
+| `@twilic/core`          | `init`, `encode`, `decode`, `createSessionEncoder` |
+| `@twilic/core/advanced` | `encodeBatch`, `encodeWithSchema`, transport-JSON  |
+
+See [JavaScript Core API](/reference/javascript-core) and [Advanced API](/reference/javascript-advanced).
 
 ## Rust (Reference Implementation)
 
-The [JavaScript SDK](/sdks/js) is built on top of the Rust implementation via N-API (Node.js) and WASM (browser/JS runtimes). The Rust crate is the canonical reference implementation for performance and correctness.
+The [JavaScript SDK](/sdks/js) is built on the Rust implementation via N-API and WASM. Full low-level API: [Rust reference](/reference/rust).
 
 ## Interoperability
 
-All SDKs are tested against a shared set of Rust-generated binary fixtures. Interoperability tests validate that encode output from one SDK is correctly decoded by every other SDK.
+All SDKs are tested against shared binary fixtures. Any v2 encoder output decodes in any v2 SDK. See [Interop guide](/guide/interop).

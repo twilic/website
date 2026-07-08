@@ -1,11 +1,11 @@
 # JavaScript / TypeScript SDK
 
-The JavaScript SDK provides Twilic v2 encoding with two backends:
+The JavaScript SDK provides Twilic v2 encoding with two backends and two package entrypoints.
 
-- **Node.js**: N-API native addon (`twilic-napi`) — maximum throughput on the server
-- **Browser / JS runtimes**: WebAssembly (`twilic-wasm`) — runs anywhere WASM is supported
+- **Node.js:** N-API native addon — maximum throughput
+- **Browser / edge:** WebAssembly — runs anywhere WASM is supported
 
-Both backends are built from the [Rust reference implementation](/sdks/rust). Integers decode as `bigint` by default for safe i64/u64 handling.
+Both backends are built from the [Rust reference implementation](/reference/rust).
 
 ## Requirements
 
@@ -15,148 +15,122 @@ Both backends are built from the [Rust reference implementation](/sdks/rust). In
 ## Install
 
 ```bash
-npm install @twilic/core
-# or
 pnpm add @twilic/core
-# or
-yarn add @twilic/core
 ```
 
-## Quick Start
+For batch, schema, and transport-JSON APIs:
+
+```bash
+# same package — advanced subpath
+import { encodeBatch } from "@twilic/core/advanced";
+```
+
+## Package exports
+
+| Subpath | Content |
+| --- | --- |
+| `@twilic/core` | [Core API](/reference/javascript-core): `init`, `encode`, `decode`, `createSessionEncoder` |
+| `@twilic/core/advanced` | [Advanced API](/reference/javascript-advanced): batch, schema, transport-JSON, direct encoding |
+
+There are no separate `@twilic/core/napi` or `@twilic/core/wasm` npm subpaths. Select backend via `init({ prefer })`.
+
+## Quick start
 
 ```ts
 import { init, encode, decode } from "@twilic/core";
 
-// Call init() once before using encode/decode
 await init();
 
 const value = {
-  id: 1001n, // u64 as BigInt
+  id: 1001n,
   name: "alice",
   score: 98.6,
 };
 
 const bytes = encode(value);
 const decoded = decode(bytes);
-
-console.log(`encoded ${bytes.byteLength} bytes`);
 ```
 
-## API Reference
-
-### Initialization
+## Batch encoding
 
 ```ts
-// Initialize the WASM module (only needed once, no-op for N-API backend)
-async function init(): Promise<void>;
+import { init, encodeBatch, decode } from "@twilic/core/advanced";
+
+await init();
+
+const bytes = encodeBatch(records); // same-shape array
 ```
 
-### Dynamic Encoding
+## Session encoding
 
 ```ts
-// Encode a value to Uint8Array
-function encode(value: TwilicValue): Uint8Array;
+import { init, createSessionEncoder } from "@twilic/core";
 
-// Decode a Uint8Array to a value
-function decode(bytes: Uint8Array): TwilicValue;
-```
+await init();
 
-### Schema-Aware Encoding
-
-```ts
-// Encode using Bound Profile
-function encodeWithSchema(value: TwilicValue, schema: Schema): Uint8Array;
-```
-
-### Batch Encoding
-
-```ts
-// Encode an array of same-shape records
-function encodeBatch(records: TwilicValue[]): Uint8Array;
-```
-
-### Session
-
-```ts
-import { SessionEncoder } from "@twilic/core";
-
-const enc = new SessionEncoder();
-
-// Encode with persistent state
-const bytes = enc.encode(value);
-
-// Encode a micro-batch
-const bytes = enc.encodeMicroBatch(records);
-
-// Encode a state patch
-const bytes = enc.encodePatch(value);
-
-// Reset
+const enc = createSessionEncoder();
+enc.encode(fullValue);
+enc.encodePatch(updatedValue);
 enc.reset();
 ```
 
-### Transport JSON Fast Path
+See [Session Encoder reference](/reference/session-encoder) and [Stateful Streams](/guide/stateful-streams).
 
-For situations where you need to pass structured data through a JSON transport without losing type fidelity:
-
-```ts
-// Encode to a transport-JSON-safe representation
-function encodeTransportJson(value: TwilicValue): string;
-function encodeBatchTransportJson(records: TwilicValue[]): string;
-
-// Decode from transport-JSON representation
-function decodeToTransportJson(bytes: Uint8Array): string;
-```
-
-## Backend Selection
-
-By default the SDK selects the N-API backend on Node.js and WASM elsewhere. To force a backend:
+## Backend selection
 
 ```ts
-import { init } from "@twilic/core/wasm"; // WASM only
-import { init } from "@twilic/core/napi"; // N-API only (Node.js)
+import { init } from "@twilic/core";
+
+// Node.js — N-API (default)
+await init();
+
+// Browser — WASM
+import wasmUrl from "@twilic/core/wasm/twilic_wasm_bg.wasm?url";
+await init({ prefer: "wasm", wasmInput: wasmUrl });
+
+// Force backend
+await init({ prefer: "napi" });
 ```
 
-## BigInt Handling
+## BigInt
 
-i64 and u64 values are always `bigint` in JavaScript. This avoids precision loss for values outside the `Number.MAX_SAFE_INTEGER` range.
+i64 and u64 values must use `bigint`:
 
 ```ts
-const value = { counter: 9007199254740993n }; // safe as bigint
+encode({ counter: 9007199254740993n });
 ```
 
-## Build from Source
+Decoded integers outside safe integer range return as `bigint`.
+
+## Web framework integrations
+
+| Package                                    | Role               |
+| ------------------------------------------ | ------------------ |
+| [`@twilic/hono`](/integrations/hono)       | Hono middleware    |
+| [`@twilic/express`](/integrations/express) | Express middleware |
+| [`@twilic/fastify`](/integrations/fastify) | Fastify plugin     |
+| [`@twilic/fetch`](/integrations/fetch)     | Fetch client       |
+| [`@twilic/axios`](/integrations/axios)     | Axios client       |
+
+See [Integrations overview](/integrations/) and [Web Integrations guide](/guide/web-integrations).
+
+## Full API reference
+
+- [JavaScript Core API](/reference/javascript-core)
+- [JavaScript Advanced API](/reference/javascript-advanced)
+- [Value & Schema types](/reference/value-and-schema)
+- [Errors & Limits](/reference/errors-and-limits)
+
+## Build from source
 
 ```bash
+git clone https://github.com/twilic/twilic-js.git
+cd twilic-js
 pnpm install
 pnpm build
 ```
 
-Build steps:
-
-1. Build N-API addon (`native/twilic_napi.node`)
-2. Build WASM package (`wasm/pkg/*`)
-3. Build TypeScript output (`dist/*`)
-
-## Project Layout
-
-```text
-twilic-js/
-  src/           # TypeScript API layer
-  native/        # N-API Rust bridge
-  wasm/          # WASM Rust bridge
-  tests/         # Node API tests (init, encode, decode, schema, batch, session)
-  dist/          # Built TypeScript output
-```
-
-## Web framework integrations
-
-For HTTP APIs, use the official integration packages:
-
-- [`@twilic/express`](https://github.com/twilic/express), [`@twilic/fastify`](https://github.com/twilic/fastify), [`@twilic/hono`](https://github.com/twilic/hono) — server middleware
-- [`@twilic/axios`](https://github.com/twilic/axios), [`@twilic/fetch`](https://github.com/twilic/fetch) — client helpers
-
-See [Web Integrations](/guide/web-integrations) for setup and examples.
+Build steps: N-API addon → WASM package → TypeScript output.
 
 ## Source
 

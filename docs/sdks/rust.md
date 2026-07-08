@@ -160,35 +160,24 @@ match decode(bytes) {
 
 All decode errors are hard failures — unknown references are never silently accepted per the v2 spec.
 
-## Building with Cargo Features
+See [Errors & Limits](/reference/errors-and-limits) for decode depth, count, and output ratio limits.
 
-```toml
-[dependencies]
-twilic = { git = "https://github.com/twilic/twilic-rust.git", features = ["session", "schema"] }
-```
+## Full API reference
 
-| Feature   | Description                                                 |
-| --------- | ----------------------------------------------------------- |
-| `session` | Enables `SessionEncoder` and stateful forms                 |
-| `schema`  | Enables `encode_with_schema` and Bound Profile              |
-| `batch`   | Enables `encode_batch`, `col_batch`, `row_batch`            |
-| `serde`   | Enables `serde::Serialize`/`Deserialize` derive for `Value` |
+Low-level `TwilicCodec`, `Message` model, and `SessionOptions`: [Rust API Reference](/reference/rust).
 
-## Project Layout
+## Project layout
 
 ```text
-twilic-rust/
-  src/
-    lib.rs          # public API
-    value.rs        # Value enum
-    encode/         # encoder (dynamic, bound, batch, session)
-    decode/         # decoder
-    codec/          # vector codecs (bitpack, RLE, delta, XOR)
-    session/        # SessionEncoder, state patch, template batch
-    schema/         # Schema, FieldType, presence bitmap
-  tests/            # spec conformance and interop tests
-  scripts/          # interop fixture generation
-  docs/
+twilic-rust/src/
+  lib.rs       # Public re-exports
+  v2.rs        # High-level encode/decode
+  model.rs     # Value, Message, Schema, PatchOpcode
+  protocol.rs  # TwilicCodec, SessionEncoder
+  session.rs   # SessionOptions, intern tables
+  codec.rs     # Vector codecs
+  wire.rs      # Reader/writer, safety limits
+  error.rs     # TwilicError
 ```
 
 ## Source

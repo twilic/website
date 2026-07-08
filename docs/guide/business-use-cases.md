@@ -1,4 +1,4 @@
-# Enterprise Use Cases
+# Business Use Cases
 
 Twilic is built for the workloads where teams already reach for MessagePack, Protocol Buffers, or compact JSON — and where repeated structure, volume, or session reuse makes wire size a real cost center.
 
@@ -169,7 +169,7 @@ See [Cookbook — Multi-Language Interoperability](/guide/cookbook#multi-languag
 
 ## Adoption Path
 
-Most enterprise rollouts follow the same sequence MessagePack adopters use — with an extra compression tier once volume proves the ROI.
+Most production rollouts follow the same sequence MessagePack adopters use — with an extra compression tier once volume proves the ROI.
 
 ```text
 1. Identify an internal boundary (cache, pipeline, internal API, WebSocket)

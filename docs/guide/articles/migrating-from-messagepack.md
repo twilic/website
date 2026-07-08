@@ -149,5 +149,5 @@ Twilic is an optimization, not a mandate.
 
 - [Building the Adoption Business Case](/guide/articles/building-the-adoption-business-case)
 - [Comparison — Twilic vs MessagePack](/guide/comparison#twilic-vs-messagepack)
-- [Enterprise Use Cases](/guide/enterprise-use-cases)
+- [Business Use Cases](/guide/business-use-cases)
 - [Quick Start](/guide/quick-start)

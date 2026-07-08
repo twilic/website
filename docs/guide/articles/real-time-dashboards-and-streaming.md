@@ -126,5 +126,5 @@ Track during a two-week pilot on one dashboard product:
 
 - [Cookbook — WebSocket Streaming](/guide/cookbook#websocket-streaming-live-dashboard)
 - [Examples — WebSocket session](https://github.com/twilic/examples)
-- [Enterprise Use Cases — Real-Time Dashboards](/guide/enterprise-use-cases#real-time-dashboards-and-streaming)
+- [Business Use Cases — Real-Time Dashboards](/guide/business-use-cases#real-time-dashboards-and-streaming)
 - [Spec — Stateful optimization](/spec/profiles)

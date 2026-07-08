@@ -130,7 +130,7 @@ Also keep **human-inspectable** diagnostic caches on JSON if engineers routinely
 
 ## Next Steps
 
-- [Enterprise Use Cases — Distributed Caching](/guide/enterprise-use-cases#distributed-caching)
+- [Business Use Cases — Distributed Caching](/guide/business-use-cases#distributed-caching)
 - [Examples — Cache payload](https://github.com/twilic/examples)
 - [Migrating from MessagePack](/guide/articles/migrating-from-messagepack)
 - [Building the Adoption Business Case](/guide/articles/building-the-adoption-business-case)

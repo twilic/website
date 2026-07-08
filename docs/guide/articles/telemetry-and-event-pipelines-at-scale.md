@@ -132,4 +132,4 @@ If your pipeline processes **mostly single events** with no batching stage, or b
 - [Cookbook — Telemetry Pipeline](/guide/cookbook#telemetry-pipeline)
 - [Examples — Telemetry](https://github.com/twilic/examples)
 - [Examples — Logs](https://github.com/twilic/examples)
-- [Enterprise Use Cases — Telemetry](/guide/enterprise-use-cases#telemetry-and-event-pipelines)
+- [Business Use Cases — Telemetry](/guide/business-use-cases#telemetry-and-event-pipelines)

@@ -135,7 +135,7 @@ Document batch sizes, shape heterogeneity, and bottleneck analysis. MessagePack 
 
 ## Related Resources
 
-- [Enterprise Use Cases](/guide/enterprise-use-cases)
+- [Business Use Cases](/guide/business-use-cases)
 - [Articles](/guide/articles/)
 - [Benchmark](/benchmark)
 - [Why Twilic?](/guide/why)

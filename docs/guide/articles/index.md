@@ -24,6 +24,6 @@ Practical guides for engineering leaders and platform teams evaluating Twilic. E
 
 ## Start Here
 
-If you are new to Twilic, read [Enterprise Use Cases](/guide/enterprise-use-cases) for a scenario map, then pick the article closest to your team's pain point.
+If you are new to Twilic, read [Business Use Cases](/guide/business-use-cases) for a scenario map, then pick the article closest to your team's pain point.
 
 For hands-on evaluation, clone the [Examples](https://github.com/twilic/examples) repository and compare payload sizes on workloads that match your production data.

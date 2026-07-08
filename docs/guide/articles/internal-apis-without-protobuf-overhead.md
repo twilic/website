@@ -122,4 +122,4 @@ Choose Twilic when:
 - [Web Integrations](/guide/web-integrations)
 - [Cookbook — API Response](/guide/cookbook#api-response-with-repeated-structure)
 - [Comparison — Twilic vs Protobuf](/guide/comparison#twilic-vs-protocol-buffers)
-- [Enterprise Use Cases — Internal APIs](/guide/enterprise-use-cases#internal-apis-and-microservices)
+- [Business Use Cases — Internal APIs](/guide/business-use-cases#internal-apis-and-microservices)

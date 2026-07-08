@@ -105,9 +105,9 @@ export default withMermaid(
             ],
           },
           {
-            text: "Enterprise",
+            text: "Business Use Cases",
             items: [
-              { text: "Use Cases", link: "/guide/enterprise-use-cases" },
+              { text: "Overview", link: "/guide/business-use-cases" },
               { text: "Articles", link: "/guide/articles/" },
             ],
           },

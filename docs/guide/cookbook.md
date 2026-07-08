@@ -15,7 +15,7 @@ An application emits thousands of events per second. Each event has the same sha
 Group events into batches and use `col_batch` so each column is compressed independently.
 
 ```ts
-import { encodeBatch } from "@twilic/core";
+import { encodeBatch } from "@twilic/core/advanced";
 
 const events = [
   {
@@ -244,14 +244,91 @@ value, err := twilic.Decode(data)
 
 This works across all eighteen official SDKs without any shared schema file or code generation step.
 
+## Cache & Session Store
+
+Store compact binary blobs in Redis, Memcached, or CDN edge caches. Use **stateless** Dynamic encoding per key — not a shared `SessionEncoder`.
+
+```ts
+import { decode, encode } from "@twilic/core";
+
+const store = new Map<string, Uint8Array>();
+
+function setSession(userId: number, session: object) {
+  store.set(`session:${userId}`, encode(session));
+}
+
+function getSession(userId: number) {
+  const bytes = store.get(`session:${userId}`);
+  return bytes ? decode(bytes) : null;
+}
+```
+
+For Redis:
+
+```ts
+import { createClient } from "redis";
+import { decode, encode } from "@twilic/core";
+
+const redis = createClient({ url: process.env.REDIS_URL });
+await redis.connect();
+
+async function cacheSession(userId: number, session: object) {
+  await redis.set(`session:${userId}`, Buffer.from(encode(session)));
+}
+
+async function loadSession(userId: number) {
+  const buf = await redis.getBuffer(`session:${userId}`);
+  return buf ? decode(new Uint8Array(buf)) : null;
+}
+```
+
+**When this fits:** session stores with stable object shapes, config snapshots, CDN edge caches.
+
+**Do not:** share a `SessionEncoder` across unrelated cache keys — stateful compression is for ordered streams, not KV entries.
+
+Run the example: `pnpm example:cache-payload` in [twilic/examples](https://github.com/twilic/examples).
+
+## Structured Logs & Micro-Batch
+
+Repeated field names and common strings (`level`, `service`, `trace_id`) compress well when events are grouped.
+
+```ts
+import { encode } from "@twilic/core";
+import { encodeBatch } from "@twilic/core/advanced";
+import { createSessionEncoder } from "@twilic/core";
+
+const events = collectLogEvents(1000);
+
+// Per-event — simple but repeats field names
+const perEvent = events.map((e) => encode(e));
+
+// Batch flush — amortize shape interning across 100 events
+const batches = chunk(events, 100);
+const batched = batches.map((chunk) => encodeBatch(chunk));
+
+// Micro-batch — stateful string interning within a flush window
+const session = createSessionEncoder();
+const micro = chunk(events, 50).map((chunk) => session.encodeMicroBatch(chunk));
+```
+
+| Strategy                       | Trade-off                              |
+| ------------------------------ | -------------------------------------- |
+| Per-event `encode()`           | Simplest; largest per-event overhead   |
+| `encodeBatch()` every N events | Best size for homogeneous log shape    |
+| `encodeMicroBatch()`           | Stateful interning within flush window |
+
+**When this fits:** log agents that flush on an interval, bursty application logging, pipelines where the same strings appear across many events.
+
+Run the example: `pnpm example:logs` in [twilic/examples](https://github.com/twilic/examples).
+
 ## Graceful Degradation: Stateless Fallback
 
 ### Pattern: Try stateful, fall back to stateless
 
 ```ts
-import { SessionEncoder } from "@twilic/core";
+import { createSessionEncoder } from "@twilic/core";
 
-const enc = new SessionEncoder();
+const enc = createSessionEncoder();
 let consecutiveErrors = 0;
 
 async function sendUpdate(value: object) {

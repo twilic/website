@@ -1,0 +1,179 @@
+# Conformance & Testing
+
+Twilic v2 interoperability means any conforming encoder output decodes correctly on any conforming decoder — across languages, profiles, and SDK versions within the v2 line. This guide explains how conformance is defined, tested, and validated in your own pipeline.
+
+## Conformance definition
+
+An implementation is **v2-interoperable** when it ([Spec §v2](/spec/v2#interoperability)):
+
+1. Encodes all Dynamic Profile values deterministically
+2. Decodes Dynamic, Batch, and stateless Bound messages correctly
+3. Resets intern tables at each top-level message boundary
+4. Fails decode on unknown `key_ref`, `str_ref`, or `shape_ref` IDs
+5. Supports all required column codecs
+6. Honors `RESET_STATE`
+
+Stateful forms (`state_patch`, `template_batch`, trained dictionary) are optional — decoders that do not implement them MUST still decode stateless messages and reject stateful frames with a clear error.
+
+## Required vs optional features
+
+| Feature | Required | Tags / APIs |
+| --- | --- | --- |
+| Dynamic encode/decode | ✓ | `encode()`, `decode()` |
+| Key/string/shape interning | ✓ | `0xD6`–`0xD9` |
+| Typed vectors | ✓ | `0xDA` |
+| Row batch | ✓ | `0xDB` |
+| Column batch | ✓ | `0xDC` |
+| Required column codecs | ✓ | DIRECT_BITPACK, DELTA_BITPACK, FOR_BITPACK, RLE, SIMPLE8B, XOR_FLOAT |
+| Stateful patch | Optional | `0xDD` |
+| Template batch | Optional | `0xDE` |
+| Trained dictionary | Optional | control stream + `dict_id` |
+| Zero-copy layout (§6.4) | Not implemented | — |
+| Static dictionary (§10.7) | Not implemented | — |
+
+## Cross-language fixtures
+
+The Twilic monorepo maintains shared interop fixtures. Each SDK runs encode/decode roundtrips against common payloads:
+
+```bash
+# Rust (reference implementation)
+cd twilic-rust && cargo test
+
+# Python
+cd twilic-python && ./scripts/check-interop.sh
+
+# Go
+cd twilic-go && go test ./...
+
+# JavaScript
+cd twilic-js && pnpm test
+
+# C
+cd twilic-c && ./scripts/check-interop.sh
+```
+
+Fixtures cover Dynamic maps, batches, Bound schema objects, stateful patches, and trained dictionary transport.
+
+## Spec test traceability
+
+The reference Rust test suite maps spec sections to tests in `twilic-rust/docs/SPEC-TEST-TRACEABILITY.md`:
+
+| Spec section | Coverage |
+| --- | --- |
+| §5 Dynamic Profile | Key table, shape table, typed vector threshold |
+| §6 Bound Profile | Schema required fields, schema_id emission |
+| §8 Numeric Encoding | Bitpack, delta, FOR, Simple8b, XOR float |
+| §10 Strings | Literal, ref, prefix-delta, reset |
+| §13 Batch/Stateful | Row/column threshold, patches, templates, dictionaries |
+| §15 Dictionary transport | Profile hash validation, fresh decoder sync |
+| §18 Encoder rules | Patch threshold, codec selection determinism |
+
+Use this file when auditing SDK completeness.
+
+## Determinism tests
+
+All v2 encoders MUST produce identical bytes for identical input:
+
+- Key ID assignment: first-seen order within message
+- String ID assignment: first-seen order within message
+- Shape ID assignment: first-seen at `shape_def`
+- Codec selection: deterministic for equal statistics
+
+Run benchmark fixtures to verify cross-SDK size parity:
+
+```bash
+cd benchmark && pnpm bench -- --twilic-vs-msgpack-only
+```
+
+Encoded byte counts should match across SDKs for the same fixture (modulo optional features disabled).
+
+## CI integration for your project
+
+### Minimal conformance check
+
+Add a smoke test that roundtrips your production payload shapes:
+
+```ts
+import { decode, encode } from "@twilic/core";
+import { assert } from "node:assert/strict";
+
+const fixtures = [userRecord, orderPage, logEvent];
+
+for (const value of fixtures) {
+  const bytes = encode(value);
+  const roundtrip = decode(bytes);
+  assert.deepEqual(roundtrip, value);
+}
+```
+
+### Cross-language check
+
+1. Export fixture JSON from your service
+2. Encode in producer language, write bytes to file
+3. Decode in consumer language, assert semantic equality
+4. Run in CI on every SDK upgrade
+
+### Stateful conformance
+
+If using patches:
+
+```bash
+pnpm example:websocket:simulate  # size validation
+# Add integration test: 20 ticks, disconnect, reconnect, verify recovery
+```
+
+## Unknown reference policy
+
+Conformance requires explicit policy — not silent corruption:
+
+| Policy           | Conformant behavior                  |
+| ---------------- | ------------------------------------ |
+| `failFast`       | Decode error with `UnknownReference` |
+| `statelessRetry` | Error kind `StatelessRetryRequired`  |
+
+Both producer and consumer must agree. Test both paths in integration tests.
+
+## Validating a new SDK port
+
+Checklist for language port authors:
+
+- [ ] Dynamic map/array/scalar roundtrip
+- [ ] Key ref after second key literal occurrence
+- [ ] Shape registration after second identical key sequence
+- [ ] Typed vector for homogeneous array ≥ 4 elements
+- [ ] Row batch and column batch decode
+- [ ] All required column codecs roundtrip
+- [ ] Unknown ref ID fails decode (not silent garbage)
+- [ ] `RESET_STATE` clears session tables
+- [ ] Interop fixtures pass against Rust-generated bytes
+- [ ] Deterministic encode: same input → same bytes
+
+Reference port order: twilic-rust → twilic-go internal/core → other SDKs.
+
+## CLI validation
+
+Use Twilic CLI for ad-hoc wire inspection:
+
+```bash
+twilic decode payload.twl
+twilic decode payload.twl --transport-json
+twilic bench -- --mode full
+```
+
+See [CLI reference](/guide/cli).
+
+## Reporting conformance gaps
+
+If an SDK fails a fixture that Rust passes:
+
+1. Identify spec section from [SPEC-TEST-TRACEABILITY](https://github.com/twilic/twilic-rust/blob/main/docs/SPEC-TEST-TRACEABILITY.md)
+2. File issue on the SDK repository with fixture bytes attached
+3. Reference the spec section number
+
+## Related
+
+- [Interop guide](/guide/interop)
+- [v2 Reference Profile](/spec/v2)
+- [Encoder Selection](/guide/encoder-selection)
+- [Troubleshooting](/guide/troubleshooting)
+- [Benchmark Fixtures](/benchmark/fixtures)

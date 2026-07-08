@@ -22,8 +22,8 @@ type TwilicValue =
 
 | Type | Wire representation | Notes |
 | --- | --- | --- |
-| `null` | Nil |  |
-| `boolean` | Bool |  |
+| `null` | Nil | — |
+| `boolean` | Bool | — |
 | `number` | f64 or i64/u64 if integer | Prefer `bigint` for u64/i64 |
 | `bigint` | u64 or i64 | Safe for values > 2^53 |
 | `string` | str | UTF-8 |

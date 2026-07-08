@@ -57,7 +57,7 @@ Twilic is designed for **internal, trusted** pipelines by default. At boundaries
 
 When `unknownReferencePolicy` is `statelessRetry` and the decoder encounters an unknown base ID, shape reference, or dictionary ID:
 
-```
+```text
 TwilicError::StatelessRetryRequired("base_id", 777)
 ```
 

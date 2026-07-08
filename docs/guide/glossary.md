@@ -11,13 +11,13 @@ A full encoded message stored in session state as the reference point for subseq
 Encoding mode that groups multiple same-shape records into one message with shared shape and string tables.
 
 **Bound profile**  
-Schema-aware encoding mode. Field names omitted from wire; positions defined by a [Schema](#schema).
+Schema-aware encoding mode. Field names omitted from wire; positions defined by a [Schema](/reference/value-and-schema).
 
 **col_batch**  
 Columnar batch message kind. Each field encoded as an independent column with per-column codec.
 
 **Columnar batch**  
-See [col_batch](#col-batch).
+See [Batch & Columnar](/guide/batch-and-columnar).
 
 **Control message**  
 Session-level instruction (register keys, reset state, register shape) sent on stateful channels.

@@ -80,15 +80,29 @@ export default withMermaid(
 
       nav: [
         { text: "Guide", link: "/guide/introduction" },
-        { text: "Specification", link: "/spec/overview" },
-        { text: "SDKs", link: "/sdks/" },
-        { text: "Tools", link: "/tools/" },
-        { text: "Benchmark", link: "/benchmark" },
         {
-          text: "v2",
+          text: "Reference",
           items: [
-            { text: "v2 (current)", link: "/spec/overview" },
+            { text: "API Reference", link: "/reference/" },
+            { text: "Integrations", link: "/integrations/" },
+            { text: "SDKs", link: "/sdks/" },
+          ],
+        },
+        {
+          text: "Specification",
+          items: [
+            { text: "Overview", link: "/spec/overview" },
+            { text: "v2 (current)", link: "/spec/v2" },
             { text: "v1 (legacy)", link: "/spec/v1" },
+          ],
+        },
+        {
+          text: "Tools",
+          items: [
+            { text: "Overview", link: "/tools/" },
+            { text: "CLI", link: "/guide/cli" },
+            { text: "Playground", link: "/guide/playground" },
+            { text: "Benchmark", link: "/benchmark" },
           ],
         },
       ],
@@ -113,13 +127,101 @@ export default withMermaid(
           },
           {
             text: "Deep Dive",
+            collapsed: true,
             items: [
               { text: "Core Concepts", link: "/guide/concepts" },
+              { text: "Encoding Profiles", link: "/guide/encoding-profiles" },
+              { text: "Batch & Columnar", link: "/guide/batch-and-columnar" },
+              { text: "Stateful Streams", link: "/guide/stateful-streams" },
+              { text: "Stateful Decoding", link: "/guide/stateful-decoding" },
+              {
+                text: "Trained Dictionaries",
+                link: "/guide/trained-dictionaries",
+              },
+              { text: "Encoder Selection", link: "/guide/encoder-selection" },
+              { text: "Edge & Workers", link: "/guide/edge-and-workers" },
+              { text: "Schema-Bound Encoding", link: "/guide/schema-bound" },
+              { text: "Transport & Framing", link: "/guide/transport-framing" },
+              { text: "Performance", link: "/guide/performance" },
+              { text: "Security", link: "/guide/security" },
+              { text: "Interop", link: "/guide/interop" },
+              { text: "Conformance", link: "/guide/conformance" },
+              { text: "v1 → v2 Migration", link: "/guide/migration-v1-to-v2" },
               { text: "Cookbook", link: "/guide/cookbook" },
               { text: "Examples", link: "/guide/examples" },
               { text: "Comparison", link: "/guide/comparison" },
+              { text: "Troubleshooting", link: "/guide/troubleshooting" },
+              { text: "Glossary", link: "/guide/glossary" },
               { text: "FAQ", link: "/guide/faq" },
               { text: "Contributing", link: "/guide/contributing" },
+            ],
+          },
+        ],
+        "/reference/": [
+          {
+            text: "API Reference",
+            items: [
+              { text: "Overview", link: "/reference/" },
+              {
+                text: "JavaScript / TypeScript",
+                items: [
+                  { text: "@twilic/core", link: "/reference/javascript-core" },
+                  {
+                    text: "@twilic/core/advanced",
+                    link: "/reference/javascript-advanced",
+                  },
+                ],
+              },
+              {
+                text: "Shared Types",
+                items: [
+                  {
+                    text: "Value & Schema",
+                    link: "/reference/value-and-schema",
+                  },
+                  {
+                    text: "Session Encoder",
+                    link: "/reference/session-encoder",
+                  },
+                  {
+                    text: "Errors & Limits",
+                    link: "/reference/errors-and-limits",
+                  },
+                ],
+              },
+              {
+                text: "Native SDKs",
+                items: [
+                  { text: "Rust", link: "/reference/rust" },
+                  { text: "Python", link: "/reference/python" },
+                  { text: "Go", link: "/reference/go" },
+                  { text: "Java", link: "/reference/java" },
+                  { text: "C", link: "/reference/c" },
+                ],
+              },
+            ],
+          },
+        ],
+        "/integrations/": [
+          {
+            text: "Integrations",
+            items: [
+              { text: "Overview", link: "/integrations/" },
+              {
+                text: "Server",
+                items: [
+                  { text: "Hono", link: "/integrations/hono" },
+                  { text: "Express", link: "/integrations/express" },
+                  { text: "Fastify", link: "/integrations/fastify" },
+                ],
+              },
+              {
+                text: "Client",
+                items: [
+                  { text: "Fetch", link: "/integrations/fetch" },
+                  { text: "Axios", link: "/integrations/axios" },
+                ],
+              },
             ],
           },
         ],
@@ -165,6 +267,10 @@ export default withMermaid(
                     text: "From MessagePack",
                     link: "/guide/articles/migrating-from-messagepack",
                   },
+                  {
+                    text: "From Protobuf",
+                    link: "/guide/articles/migrating-from-protobuf",
+                  },
                 ],
               },
             ],
@@ -175,10 +281,20 @@ export default withMermaid(
             text: "Tools",
             items: [
               { text: "Overview", link: "/tools/" },
-              { text: "Examples", link: "/guide/examples" },
               { text: "Twilic CLI", link: "/guide/cli" },
               { text: "Playground", link: "/guide/playground" },
+              { text: "Examples", link: "/guide/examples" },
               { text: "Benchmark", link: "/benchmark" },
+              { text: "Benchmark Fixtures", link: "/benchmark/fixtures" },
+            ],
+          },
+        ],
+        "/benchmark/": [
+          {
+            text: "Benchmark",
+            items: [
+              { text: "Overview", link: "/benchmark" },
+              { text: "Fixtures", link: "/benchmark/fixtures" },
             ],
           },
         ],
@@ -212,6 +328,7 @@ export default withMermaid(
             text: "SDKs",
             items: [
               { text: "Overview", link: "/sdks/" },
+              { text: "API Reference", link: "/reference/" },
               { text: "Rust", link: "/sdks/rust" },
               { text: "Go", link: "/sdks/go" },
               { text: "Python", link: "/sdks/python" },

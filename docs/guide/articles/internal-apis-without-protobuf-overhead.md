@@ -119,6 +119,7 @@ Choose Twilic when:
 
 ## Next Steps
 
+- [Migrating from Protobuf](/guide/articles/migrating-from-protobuf)
 - [Web Integrations](/guide/web-integrations)
 - [Cookbook — API Response](/guide/cookbook#api-response-with-repeated-structure)
 - [Comparison — Twilic vs Protobuf](/guide/comparison#twilic-vs-protocol-buffers)

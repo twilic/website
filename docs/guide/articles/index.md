@@ -21,6 +21,7 @@ Practical guides for engineering leaders and platform teams evaluating Twilic. E
 ### Migration
 
 - [Migrating from MessagePack](/guide/articles/migrating-from-messagepack) — Side-by-side rollout, compatibility strategy, and when Twilic is worth the switch
+- [Migrating from Protobuf](/guide/articles/migrating-from-protobuf) — Dual content-type rollout, gRPC replacement patterns, and when to keep Protobuf
 
 ## Start Here
 

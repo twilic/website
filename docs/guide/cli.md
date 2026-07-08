@@ -1,84 +1,172 @@
 # Twilic CLI
 
-`@twilic/cli` is the command-line tool for encoding, decoding, and benchmarking Twilic data from terminals and scripts.
+Command-line tool for encoding JSON to Twilic, decoding Twilic to JSON, and benchmarking against other binary formats.
+
+**Package:** `@twilic/cli`  
+**Source:** [github.com/twilic/cli](https://github.com/twilic/cli)
 
 ## Install
-
-Install globally:
 
 ```bash
 pnpm add -g @twilic/cli @twilic/core
 ```
 
-Or run it without installing:
+Or run without installing:
 
 ```bash
 pnpx @twilic/cli encode --help
 ```
 
-## Encode JSON to Twilic
+Requires `@twilic/core` as a runtime dependency for the encode/decode backend.
+
+---
+
+## `encode`
+
+Encode JSON to Twilic binary format.
 
 ```bash
-# stdin -> stdout
+# From stdin
 echo '{"hello":"world","n":42}' | twilic encode
 
-# file -> file
+# From file
 twilic encode -i data.json -o data.twilic
 
-# debug as hex text
+# Hex output (debugging)
 echo '{"hello":"world"}' | twilic encode --hex
 ```
 
-Options:
+### Options
 
-- `-i, --input <file>`: input JSON file (default: stdin)
-- `-o, --output <file>`: output file (default: stdout)
-- `--hex`: output hex string instead of raw binary
+| Flag                  | Description                             |
+| --------------------- | --------------------------------------- |
+| `-i, --input <file>`  | Input JSON file (default: stdin)        |
+| `-o, --output <file>` | Output file (default: stdout)           |
+| `--hex`               | Output hex string instead of raw binary |
 
-## Decode Twilic to JSON
+### Examples
 
 ```bash
-# stdin -> stdout
-cat data.twilic | twilic decode
+# Roundtrip test
+echo '{"users":[{"id":1,"name":"alice"}]}' | twilic encode | twilic decode --pretty
 
-# pretty output
-twilic decode -i data.twilic --pretty
-
-# roundtrip check
-echo '{"hello":"world"}' | twilic encode | twilic decode --pretty
+# Encode fixture for interop test
+twilic encode -i fixture.json -o fixture.twilic
 ```
 
-Options:
+---
 
-- `-i, --input <file>`: input Twilic file (default: stdin)
-- `-o, --output <file>`: output JSON file (default: stdout)
-- `--pretty`: pretty-print JSON
+## `decode`
 
-> Twilic integers are 64-bit (`u64` / `i64`). When decoded through the JavaScript runtime, values may become `bigint` and are serialized as strings by the CLI to avoid precision loss.
-
-## Run Benchmarks
+Decode Twilic binary to JSON.
 
 ```bash
-# run default suite
+# From stdin
+cat data.twilic | twilic decode
+
+# Pretty-print
+twilic decode -i data.twilic --pretty
+
+# From hex string (when piping --hex output)
+echo "a1..." | twilic decode
+```
+
+### Options
+
+| Flag                  | Description                        |
+| --------------------- | ---------------------------------- |
+| `-i, --input <file>`  | Input binary file (default: stdin) |
+| `-o, --output <file>` | Output file (default: stdout)      |
+| `--pretty`            | Pretty-print JSON output           |
+
+### BigInt serialization
+
+Twilic encodes integers as 64-bit values. The CLI serializes decoded `bigint` values as **JSON strings** to preserve precision:
+
+```json
+{ "id": "9007199254740993" }
+```
+
+---
+
+## `bench`
+
+Benchmark Twilic encoding and decoding against MessagePack, CBOR, BSON, and JSON.
+
+```bash
+# Default benchmark
 twilic bench
 
-# choose backend and duration
+# WASM backend, longer run
 twilic bench --backend wasm --time-ms 2000
 
-# append markdown report
+# Save results as Markdown
 twilic bench --markdown-out results.md
 ```
 
-Options:
+### Options
 
-- `--backend <napi|wasm>`: backend runtime (default: `napi`)
-- `--time-ms <ms>`: benchmark duration per task (default: `1000`)
-- `--warmup-ms <ms>`: warmup duration (default: `250`)
-- `--markdown-out <file>`: append markdown report to file
+| Flag                     | Description                         |
+| ------------------------ | ----------------------------------- |
+| `--backend <napi\|wasm>` | Backend (default: `napi`)           |
+| `--time-ms <ms>`         | Time per task in ms (default: 1000) |
+| `--warmup-ms <ms>`       | Warmup time in ms (default: 250)    |
+| `--markdown-out <file>`  | Append results as Markdown          |
 
-## Links
+### Benchmark modes
 
-- [Tools overview](/tools/)
-- npm: [`@twilic/cli`](https://www.npmjs.com/package/@twilic/cli)
-- repository: [`twilic/cli`](https://github.com/twilic/cli)
-- source docs: [`README.md`](https://github.com/twilic/cli/blob/main/README.md)
+The [benchmark repository](https://github.com/twilic/benchmark) supports additional modes not exposed in the CLI wrapper:
+
+- Single-record encode/decode
+- Batch encode (256 records)
+- Transport-JSON fast path
+- Stateful patch simulation
+
+See [Performance guide](/guide/performance) and [Benchmark page](/benchmark).
+
+---
+
+## Scripting patterns
+
+### CI size regression
+
+```bash
+#!/bin/bash
+SIZE=$(echo "$FIXTURE" | twilic encode | wc -c)
+if [ "$SIZE" -gt "$MAX_BYTES" ]; then
+  echo "Payload too large: $SIZE > $MAX_BYTES"
+  exit 1
+fi
+```
+
+### Inspect production payload
+
+```bash
+curl -s -H "Accept: application/vnd.twilic" https://internal/api/users \
+  | twilic decode --pretty \
+  | jq '.[0]'
+```
+
+### Generate test fixtures
+
+```bash
+twilic encode -i tests/fixtures/users.json -o tests/fixtures/users.twilic
+git add tests/fixtures/users.twilic
+```
+
+---
+
+## Exit codes
+
+| Code | Meaning                                     |
+| ---- | ------------------------------------------- |
+| 0    | Success                                     |
+| 1    | Invalid input, decode error, or I/O failure |
+
+---
+
+## Related
+
+- [JavaScript Core API](/reference/javascript-core)
+- [Troubleshooting](/guide/troubleshooting)
+- [Playground](/guide/playground)

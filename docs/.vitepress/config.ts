@@ -1,12 +1,57 @@
-import { defineConfig } from "vitepress";
+import { defineConfig, type PageData } from "vitepress";
 import { withMermaid } from "vitepress-plugin-mermaid";
 import llmstxt from "vitepress-plugin-llms";
 import { minify } from "html-minifier-terser";
 
+const SITE_TITLE = "Twilic";
+const DEFAULT_TITLE_TEMPLATE = ":title — Twilic";
+
+function resolvePageTitle(pageData: PageData): string {
+  const { frontmatter, title } = pageData;
+
+  if (frontmatter.titleTemplate === false) {
+    return String(frontmatter.title ?? title ?? SITE_TITLE);
+  }
+
+  const pageTitle = frontmatter.title ?? title;
+  if (!pageTitle) {
+    return SITE_TITLE;
+  }
+
+  const template = frontmatter.titleTemplate ?? DEFAULT_TITLE_TEMPLATE;
+  if (typeof template === "string") {
+    return template.replace(":title", pageTitle);
+  }
+
+  return `${pageTitle} — ${SITE_TITLE}`;
+}
+
+function resolvePageDescription(
+  pageData: PageData,
+  siteDescription: string,
+): string {
+  return String(pageData.frontmatter.description ?? siteDescription);
+}
+
+function socialMetaHead(
+  pageData: PageData,
+  siteDescription: string,
+): [string, Record<string, string>][] {
+  const title = resolvePageTitle(pageData);
+  const description = resolvePageDescription(pageData, siteDescription);
+
+  return [
+    ["meta", { property: "og:title", content: title }],
+    ["meta", { property: "og:description", content: description }],
+    ["meta", { name: "twitter:title", content: title }],
+    ["meta", { name: "twitter:description", content: description }],
+  ];
+}
+
 export default withMermaid(
   defineConfig({
-    title: "Twilic",
-    titleTemplate: ":title | Twilic",
+    title: SITE_TITLE,
+    titleTemplate: DEFAULT_TITLE_TEMPLATE,
     description:
       "Twilic is a compact binary serialization format for structured data — smaller than MessagePack, schema-less or schema-aware, with SDKs for Rust, Go, Python, JavaScript, and more.",
     lang: "en-US",
@@ -17,38 +62,18 @@ export default withMermaid(
       ["meta", { name: "theme-color", content: "#36A9F8" }],
       ["meta", { property: "og:type", content: "website" }],
       ["meta", { property: "og:site_name", content: "Twilic" }],
-      [
-        "meta",
-        {
-          property: "og:title",
-          content: "Twilic — Compact Binary Format for Structured Data",
-        },
-      ],
-      [
-        "meta",
-        {
-          property: "og:description",
-          content:
-            "MessagePack-like usability with decisively smaller payloads on repeated structure, keys, strings, and homogeneous arrays.",
-        },
-      ],
       ["meta", { name: "twitter:card", content: "summary" }],
-      [
-        "meta",
-        {
-          name: "twitter:title",
-          content: "Twilic — Compact Binary Format for Structured Data",
-        },
-      ],
-      [
-        "meta",
-        {
-          name: "twitter:description",
-          content:
-            "MessagePack-like usability with decisively smaller payloads on repeated structure, keys, strings, and homogeneous arrays.",
-        },
-      ],
     ],
+
+    transformPageData(pageData) {
+      pageData.frontmatter.head ??= [];
+      pageData.frontmatter.head.push(
+        ...socialMetaHead(
+          pageData,
+          "Twilic is a compact binary serialization format for structured data — smaller than MessagePack, schema-less or schema-aware, with SDKs for Rust, Go, Python, JavaScript, and more.",
+        ),
+      );
+    },
 
     themeConfig: {
       siteTitle: "Twilic",

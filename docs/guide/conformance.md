@@ -1,10 +1,20 @@
 # Conformance & Testing
 
-Twilic v2 interoperability means any conforming encoder output decodes correctly on any conforming decoder — across languages, profiles, and SDK versions within the v2 line. This guide explains how conformance is defined, tested, and validated in your own pipeline.
+Twilic conformance means any conforming encoder output decodes correctly on any conforming decoder for the same explicitly selected version and profile. The current specification family is [v3](/spec/v3); the current published SDK interop line remains v2. This guide explains how conformance is defined, tested, and validated in your own pipeline.
 
 ## Conformance definition
 
-An implementation is **v2-interoperable** when it ([Spec §v2](/spec/v2#interoperability)):
+An implementation is **v3-interoperable** when it ([Spec §v3](/spec/v3)):
+
+1. Encodes Dynamic Profile values deterministically where v3 defines canonical behavior
+2. Resets message-local `key_id`, `str_id`, and `shape_id` tables at each top-level message boundary
+3. Fails decode on unknown `key_ref`, `str_ref`, or `shape_ref` IDs
+4. Implements compact Bound payloads without per-field fallback mode bytes
+5. Implements `BOUND_STREAM` and `SCHEMA_BATCH` with the declared schema/framing defaults for its profile
+6. Supports reference-profile `PLAIN` and `DIRECT_BITPACK` payload grammars
+7. Rejects unnegotiated stateful forms and unnegotiated extension codecs
+
+The current published SDK line is **v2-interoperable** when it ([Spec §v2](/spec/v2#interoperability)):
 
 1. Encodes all Dynamic Profile values deterministically
 2. Decodes Dynamic, Batch, and stateless Bound messages correctly
@@ -13,7 +23,7 @@ An implementation is **v2-interoperable** when it ([Spec §v2](/spec/v2#interope
 5. Supports all required column codecs
 6. Honors `RESET_STATE`
 
-Stateful forms (`state_patch`, `template_batch`, trained dictionary) are optional — decoders that do not implement them MUST still decode stateless messages and reject stateful frames with a clear error.
+Stateful forms (`STATE_PATCH`, `TEMPLATE_BATCH`, trained dictionary) require a negotiated stateful profile in v3. Decoders that do not implement a stateful profile must still decode stateless messages and reject stateful frames with a clear error.
 
 ## Required vs optional features
 
@@ -24,7 +34,10 @@ Stateful forms (`state_patch`, `template_batch`, trained dictionary) are optiona
 | Typed vectors | ✓ | `0xDA` |
 | Row batch | ✓ | `0xDB` |
 | Column batch | ✓ | `0xDC` |
-| Required column codecs | ✓ | DIRECT_BITPACK, DELTA_BITPACK, FOR_BITPACK, RLE, SIMPLE8B, XOR_FLOAT |
+| Reference column codecs | ✓ | PLAIN, DIRECT_BITPACK |
+| Extension column codecs | Negotiated | DELTA_BITPACK, FOR_BITPACK, RLE, SIMPLE8B, XOR_FLOAT, dictionary codecs |
+| `BOUND_STREAM` | v3 required | `0x0F` |
+| `SCHEMA_BATCH` | v3 required | `0x0E` |
 | Stateful patch | Optional | `0xDD` |
 | Template batch | Optional | `0xDE` |
 | Trained dictionary | Optional | control stream + `dict_id` |
@@ -72,12 +85,12 @@ Use this file when auditing SDK completeness.
 
 ## Determinism tests
 
-All v2 encoders MUST produce identical bytes for identical input:
+Conforming encoders must produce deterministic bytes for identical input under the same version, profile, resolved schema, and negotiated options:
 
 - Key ID assignment: first-seen order within message
 - String ID assignment: first-seen order within message
 - Shape ID assignment: first-seen at `shape_def`
-- Codec selection: deterministic for equal statistics
+- Codec selection: deterministic for equal statistics and equal codec profile
 
 Run benchmark fixtures to verify cross-SDK size parity:
 
@@ -173,7 +186,8 @@ If an SDK fails a fixture that Rust passes:
 ## Related
 
 - [Interop guide](/guide/interop)
-- [v2 Reference Profile](/spec/v2)
+- [v3 Reference Profile](/spec/v3)
+- [v2 Legacy Reference Profile](/spec/v2)
 - [Encoder Selection](/guide/encoder-selection)
 - [Troubleshooting](/guide/troubleshooting)
 - [Benchmark Fixtures](/benchmark/fixtures)

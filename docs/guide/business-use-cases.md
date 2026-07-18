@@ -159,7 +159,7 @@ MessagePack wins here because it is self-describing and widely implemented. The 
 
 ### How Twilic helps
 
-Twilic v2 guarantees that any conforming encoder output decodes in any conforming SDK — no shared schema file required for Dynamic mode. Platform teams can:
+Twilic interoperability requires both sides to agree on version and profile. The published SDK line provides v2 cross-language fixtures today; v3 Dynamic still keeps the no-shared-schema adoption path where tags are unchanged. Platform teams can:
 
 - Standardize on `application/vnd.twilic` for internal event buses
 - Roll out SDK-by-SDK without a big-bang migration

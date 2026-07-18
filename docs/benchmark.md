@@ -1,8 +1,8 @@
 # Benchmark
 
-This page summarizes the benchmark results from the Twilic benchmark harness. Measurements are taken using `@twilic/core` on Node.js 24 (N-API backend) against MessagePack and JSON baselines.
+This page summarizes the benchmark results from the Twilic benchmark harness. Current published SDK measurements use `@twilic/core` on Node.js 24 (N-API backend) against MessagePack and JSON baselines. v3 schema-aware comparisons must follow the [v3 benchmark contract](/spec/v3#1813-benchmark-contract).
 
-For interactive size comparisons in the browser, see the [Playground](/guide/playground). For quick terminal benchmarks, use [`twilic bench`](/guide/cli#run-benchmarks). For fixture definitions (`single-small`, `batch-256`, `patch-session`), see [Benchmark Fixtures](/benchmark/fixtures).
+For interactive size comparisons in the browser, see the [Playground](/guide/playground). For quick terminal benchmarks, use [`twilic bench`](/guide/cli#run-benchmarks). For fixture definitions (`single-small`, `batch-homogeneous-256`, `batch-mixed-256`, `patch-session`), see [Benchmark Fixtures](/benchmark/fixtures).
 
 ## Setup
 
@@ -38,9 +38,11 @@ pnpm bench -- --time-ms 3000 --warmup-ms 1000  # longer windows
 | State patch encode        | `encodePatch` on a hot object stream            |
 | Transport-JSON fast path  | `encodeTransportJson` / `decodeToTransportJson` |
 
+For v3 Bound and Batch comparisons, reports must disclose whether byte counts include schema id, count, column count, field ids, record framing, compression wrappers, dictionary ids, and dictionary distribution or amortization cost.
+
 ## Payload Size Comparison
 
-Twilic's size advantage grows with repetition. Representative results on a 256-record batch with a 6-field object schema:
+Twilic's size advantage grows with repetition. Representative dynamic results on a 256-record batch with a 6-field object shape:
 
 | Format | Single record (bytes) | 256-record batch (bytes) | Ratio vs JSON |
 | --- | --- | --- | --- |
@@ -52,6 +54,8 @@ Twilic's size advantage grows with repetition. Representative results on a 256-r
 _Numbers are approximate; exact values depend on schema and data distribution._
 
 The key insight: Twilic's advantage is **multiplicative** at batch scale. Key interning and shape interning eliminate repeated field-name overhead across every record in the batch.
+
+For v3 schema-fixed workloads, compare `BOUND_STREAM` against schema-shared Protobuf/Avro raw streams and `SCHEMA_BATCH` against repeated-message or Avro raw-stream baselines under equivalent framing assumptions. Twilic does not claim every arbitrary self-describing payload is smaller than schema-first formats.
 
 ## Throughput
 
@@ -74,7 +78,7 @@ _Throughput numbers are illustrative; run the harness for your exact hardware._
 - Use Node.js 24+ (project baseline, JIT-optimized)
 - Increase run windows for stability: `--time-ms 3000 --warmup-ms 1000`
 - For hot paths: pre-serialize once with transport-JSON APIs, then use raw encode methods
-- Prefer columnar batch (`col_batch`) for large, regular datasets
+- Prefer `SCHEMA_BATCH` for shared-schema tabular datasets; use dynamic `col_batch` for schema-less regular datasets
 
 ## State Patch Performance
 

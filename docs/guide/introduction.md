@@ -56,8 +56,9 @@ Twilic follows six design principles.
 
 ## Current Version
 
-The current release line is **v2**. v2 is a clean break from v1 — a v2 decoder is not required to decode v1 payloads.
+The current specification family is **v3**. v3 is a clean break from v2 for Bound Profile field/record-body payloads; Dynamic Profile may remain v2-compatible where tags are unchanged. The current published SDK line still targets v2 payloads unless an SDK explicitly advertises v3 support.
 
-- [v2 Specification](/spec/overview)
-- [v2 Reference Profile](/spec/v2)
+- [v3 Specification](/spec/overview)
+- [v3 Reference Profile](/spec/v3)
+- [v2 (Legacy)](/spec/v2)
 - [v1 (Legacy)](/spec/v1)

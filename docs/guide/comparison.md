@@ -83,7 +83,7 @@ Protocol Buffers (protobuf) is the dominant schema-first binary format. It achie
 
 - **Schema-less usability**: Twilic Dynamic needs no schema. Protobuf requires a `.proto` file and a code generation step.
 - **Ad-hoc data**: Protobuf cannot natively encode a map with arbitrary string keys. Twilic handles it naturally.
-- **Columnar batch**: Protobuf has no built-in batch or columnar mode. Twilic's `col_batch` with per-column codecs outperforms repeated protobuf messages on large tabular datasets.
+- **Schema-aware batch**: Protobuf has no built-in columnar batch mode. Twilic `SCHEMA_BATCH` can outperform repeated protobuf messages on homogeneous repeated-record payloads where schema-derived bit packing or column codecs apply.
 - **Stateful compression**: Protobuf has no state patch or session compression. Twilic's stateful profile can dramatically reduce payload on hot update streams.
 - **Gradual adoption**: You can start with Twilic Dynamic (no schema) and migrate to Bound Profile (schema-aware) incrementally, without changing the API.
 
@@ -97,7 +97,7 @@ Protocol Buffers (protobuf) is the dominant schema-first binary format. It achie
 | Protobuf (with schema)     | 45 bytes       |
 | Twilic Bound (with schema) | 40–50 bytes    |
 
-For a **single record**, protobuf and Twilic Bound are comparable. For **batches**, Twilic's columnar mode often wins because per-column codecs compress repeated numeric patterns that protobuf treats as independent values.
+For a **single record**, protobuf and Twilic Bound are comparable. For **batches**, Twilic `SCHEMA_BATCH` can win when columnar codecs compress repeated numeric or low-cardinality patterns that protobuf treats as independent values. Benchmark claims must disclose schema sharing, framing, and compression assumptions.
 
 ## Twilic vs FlatBuffers / Cap'n Proto
 

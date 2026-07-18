@@ -92,7 +92,8 @@ export default withMermaid(
           text: "Specification",
           items: [
             { text: "Overview", link: "/spec/overview" },
-            { text: "v2 (current)", link: "/spec/v2" },
+            { text: "v3 (current)", link: "/spec/v3" },
+            { text: "v2 (legacy)", link: "/spec/v2" },
             { text: "v1 (legacy)", link: "/spec/v1" },
           ],
         },
@@ -318,7 +319,8 @@ export default withMermaid(
           {
             text: "Versions",
             items: [
-              { text: "v2 Reference Profile", link: "/spec/v2" },
+              { text: "v3 Reference Profile", link: "/spec/v3" },
+              { text: "v2 (Legacy)", link: "/spec/v2" },
               { text: "v1 (Legacy)", link: "/spec/v1" },
             ],
           },

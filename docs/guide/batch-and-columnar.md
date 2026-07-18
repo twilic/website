@@ -1,6 +1,6 @@
 # Batch & Columnar Encoding
 
-Batch encoding is where Twilic's advantage over MessagePack is largest. This guide explains row batches, columnar batches, batch sizing, and when each mode applies.
+Batch encoding is where Twilic's advantage over repeated structure is largest. This guide explains dynamic row batches, dynamic columnar batches, v3 `SCHEMA_BATCH`, batch sizing, and when each mode applies.
 
 ## Row batch vs columnar batch
 
@@ -8,8 +8,9 @@ Batch encoding is where Twilic's advantage over MessagePack is largest. This gui
 | --- | --- | --- |
 | **Row batch** | `row_batch` | Nested objects, moderate field count, general API lists |
 | **Columnar batch** | `col_batch` | Tabular data, many rows, numeric/time-series columns |
+| **Schema batch** | `SCHEMA_BATCH` (`0x0E`) | Shared-schema tabular records and Protobuf/Avro comparisons |
 
-Both share shape and string interning. Columnar mode additionally compresses each field as an independent column.
+Dynamic row/column batches share shape and string interning. Columnar mode additionally compresses each field as an independent column. `SCHEMA_BATCH` uses a shared schema, schema-order columns, presence bitmaps, and typed-vector payloads.
 
 ## Row batch
 
@@ -58,6 +59,18 @@ Per-column codec selection:
 | Numeric cluster | `FOR_BITPACK`, `SIMPLE8B` | `duration_ms`, sensor readings |
 | Homogeneous float array | `XOR_FLOAT` | Temperature samples |
 
+The v3 reference interoperability profile defines payload grammar for `PLAIN` and `DIRECT_BITPACK`. Other registered codec codes require a negotiated codec profile before interoperable results or benchmark claims use them.
+
+## Schema batch
+
+Use `SCHEMA_BATCH` when every row is represented by one shared schema:
+
+```text
+0x0E [schema_id?][count][column_count?][columns...]
+```
+
+In the v3 reference profile, `column_count` is present and `field_id` is omitted in strict schema-order compact mode. Optional/nullable columns use row-order presence bitmaps, and typed-vector payloads encode present values only.
+
 ## Size comparison (256 events, 6 fields)
 
 | Format             | Size      |
@@ -66,6 +79,8 @@ Per-column codec selection:
 | MessagePack        | ~65 KB    |
 | Twilic row batch   | ~25–35 KB |
 | Twilic `col_batch` | ~8–12 KB  |
+
+For schema-fixed homogeneous records, compare `SCHEMA_BATCH` against Protobuf repeated messages or Avro raw streams using equivalent schema and framing assumptions.
 
 ## Batch size tuning
 

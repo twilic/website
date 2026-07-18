@@ -1,6 +1,6 @@
 # Interoperability
 
-Twilic v2 guarantees that any conforming encoder output is decodable by any conforming decoder — regardless of language, profile, or SDK version within the v2 line.
+Twilic interoperability requires both sides to agree on version and profile. The current specification family is v3; the current published SDK interop line is v2.
 
 ## The interoperability contract
 
@@ -12,7 +12,7 @@ JS stateful   →  [bytes]  →  Rust session    ✓ (with matching session stat
 
 Requirements:
 
-- Both sides implement **Twilic v2** reference profile
+- Both sides implement the same Twilic version/profile (`v3` for new spec-level work, `v2` for current published SDK payloads)
 - Same profile used (Dynamic decodes Dynamic; session patches need session decoder)
 - Field maps use **string keys** for cross-language stability
 
@@ -68,18 +68,26 @@ cd twilic-js && pnpm test
 Prefix application payloads with a format version for multi-format pipelines:
 
 ```text
+0x03 = Twilic v3 Dynamic
 0x02 = Twilic v2 Dynamic
 0x01 = legacy MessagePack (during migration)
 ```
 
 Decoders branch on the first byte. See [Migrating from MessagePack](/guide/articles/migrating-from-messagepack).
 
+## v2 vs v3
+
+v3 is a clean break from v2 for Bound Profile field/record-body payloads. Dynamic Profile may remain v2-compatible where tags are unchanged, but implementations that support both versions must use an explicit external profile and version discriminator. Payload auto-detection is not defined.
+
+- [v3 Specification](/spec/v3)
+- [v2 Legacy Specification](/spec/v2)
+
 ## v1 vs v2
 
 v2 is a clean break. A v2 decoder is **not required** to decode v1 payloads. Deploy v1 and v2 decoders in parallel during migration:
 
 - [v1 → v2 Migration Runbook](/guide/migration-v1-to-v2)
-- [v2 Specification](/spec/v2)
+- [v2 Legacy Specification](/spec/v2)
 - [v1 Legacy](/spec/v1)
 
 ## Common interop failures

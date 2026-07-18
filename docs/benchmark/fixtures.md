@@ -52,7 +52,7 @@ One user-like object with nested profile:
 
 Fields vary by index (`tier` alternates `"gold"` / `"standard"`, `country` mostly `"JP"`), but shape is fixed.
 
-**What it tests:** Row batch shape interning and string dedup. Twilic typically **50–70% smaller than MessagePack**.
+**What it tests:** Row batch shape interning and string dedup. Twilic typically benefits strongly versus MessagePack because repeated field names and repeated strings are amortized.
 
 ## batch-mixed-256
 
@@ -113,19 +113,19 @@ See [Performance — JS hot paths](/guide/performance).
 
 The [Playground](/guide/playground) **Encoded sizes** view uses these same fixture names. You can also paste custom JSON to compare ad-hoc payloads.
 
-The **Schema-first** view uses `UserRecordV1` from [schema-example.json](https://github.com/twilic/twilic/blob/main/examples/schema-example.json) at ×1, ×3, and ×256 record counts — comparing Twilic Bound vs Protobuf, Avro, FlatBuffers, and Arrow IPC.
+The **Schema-first** view uses `UserRecordV1` from [schema-example.json](https://github.com/twilic/twilic/blob/main/examples/schema-example.json) at ×1, ×3, and ×256 record counts. v3 reports should compare `BOUND_STREAM` and `SCHEMA_BATCH` against Protobuf, Avro, FlatBuffers, and Arrow IPC with schema sharing and framing assumptions disclosed.
 
 ## Examples repo fixtures
 
 Shared fixtures in [examples/shared/fixtures.ts](https://github.com/twilic/examples/blob/main/shared/fixtures.ts) power the runnable examples:
 
-| Example       | Fixture helper    | Profile             |
-| ------------- | ----------------- | ------------------- |
-| API response  | User list page    | Batch               |
-| Telemetry     | Event array       | col_batch           |
-| Cache payload | Session blob      | Dynamic             |
-| Logs          | Log events        | Batch / micro-batch |
-| WebSocket     | Dashboard metrics | Stateful            |
+| Example       | Fixture helper    | Profile                      |
+| ------------- | ----------------- | ---------------------------- |
+| API response  | User list page    | Batch                        |
+| Telemetry     | Event array       | `col_batch` / `SCHEMA_BATCH` |
+| Cache payload | Session blob      | Dynamic                      |
+| Logs          | Log events        | Batch / micro-batch          |
+| WebSocket     | Dashboard metrics | Stateful                     |
 
 ## Running benchmarks
 

@@ -166,7 +166,7 @@ Common `logicalType` values for Bound profile fields:
 | `string`     | UTF-8 string                     |
 | `binary`     | Raw bytes                        |
 
-Range constraints (`min`, `max`) enable range-aware bitpacking. `enumValues` enable index encoding.
+Range constraints (`min`, `max`) validate values for every integer physical encoding. They enable range-aware bitpacking only when the resolved v3 physical encoding is `range_bits`. `enumValues` enable index encoding.
 
 ## Related
 

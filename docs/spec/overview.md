@@ -1,58 +1,58 @@
 # Specification Overview
 
-This page gives a concise summary of the Twilic v2 specification. For normative detail, read the full spec in the [twilic repository](https://github.com/twilic/twilic).
+This page summarizes the Twilic v3 specification. For normative detail, read the full spec in the [twilic repository](https://github.com/twilic/twilic/blob/main/SPEC.md) or the [v3 reference profile](/spec/v3).
 
 ## Purpose
 
-Twilic v2 defines a binary format that keeps MessagePack-like usability while producing smaller representations under the following conditions:
+Twilic v3 is a compact binary format that keeps MessagePack-like usability while adding schema-bound and batch payloads designed to be competitive with Protocol Buffers and Avro on explicitly benchmarked schema-fixed workloads.
 
-- Objects with the same shape appear repeatedly.
-- Messages under the same schema appear repeatedly.
-- Repeated strings and similar strings are common.
-- Homogeneous arrays and typed vectors are common.
-- Multiple records with the same schema can be sent together.
-- Optional-field distributions and integer series are biased.
+The v3 benchmark targets are scoped:
+
+- Dynamic targets smaller output than MessagePack and CBOR on repeated keys, repeated strings, homogeneous arrays, and same-shape object arrays.
+- Bound targets comparable output to Protobuf and Avro on streams of schema-fixed records.
+- Batch targets smaller output on homogeneous repeated-record payloads where columnar codecs apply.
 
 ## Design Principles
 
 | Principle | Summary |
 | --- | --- |
-| Usable through the same API | Dynamic mode for ad-hoc values; compact mode for schema-aware usage. Both use the same public API. |
-| Deferred optimization | First transmission may be self-describing. Compact forms activate as repetition accumulates. |
-| Minimize one-shot cost | Small, non-repeating messages pay no control overhead. |
-| Win decisively on repetition | Shape, key, string interning; typed vectors; columnar batches; stateful patches all compound. |
-| Deterministic wire format | Same profile + same state → same bytes. Essential for testing and interoperability. |
-| Optional stateful optimization | Stateless mode always works. Stateful mode requires an ordered, reliable session. |
+| API family | Dynamic, schema, stream, batch, and session APIs can coexist without forcing one transport model. |
+| Deferred optimization | Start self-describing, then use compact forms when repetition or schema context exists. |
+| Minimal one-shot cost | Tiny non-repeating values should not pay unrelated control overhead. |
+| Repetition wins | Message-local reuse, typed vectors, Bound streams, schema batches, and stateful extensions target repeated data. |
+| Deterministic wire behavior | A fixed profile and resolved schema must produce deterministic bytes. |
+| Native fast paths | Implementations should encode/decode runtime values without mandatory JSON text serialization. |
 
 ## Profiles
 
-Twilic defines four primary profiles. They compose: a session may use Dynamic for one-shot messages and Batch for bulk transfers.
+Twilic v3 defines three primary data profiles and one optional stateful profile.
 
 | Profile | Description |
 | --- | --- |
-| **Dynamic** | MessagePack-like. Any root value, no schema required. Shape/key/string interning activates automatically. |
-| **Bound** | Schema-aware. Field names and type tags are omitted; range-aware bit packing is used. |
-| **Batch** | Multiple records with the same shape or schema. Row-wise or columnar with per-column codec selection. |
-| **Stateful** | Compresses against previous messages over a stream. Base snapshots, state patches, template batches. Optional — requires ordered, reliable delivery. |
+| **Dynamic** | MessagePack-like, schema-less, and v2-compatible where tags are unchanged. Uses message-local `key_ref`, `str_ref`, `shape_def`, and `shape_ref`. |
+| **Bound** | Shared-schema profile. Field names, field numbers, type tags, and per-field fallback mode bytes are omitted from compact field payloads. `BOUND_STREAM` binds one schema for consecutive compact record bodies. |
+| **Batch** | Row-wise, columnar, and schema-aware columnar batches. `SCHEMA_BATCH` is the shared-schema columnar form. |
+| **Stateful** | Optional negotiated extensions for patches, templates, dictionaries, and persistent table state. The v3 reference interoperability profile is stateless unless a stateful profile is negotiated. |
 
-## v2 vs v1
+## v3 vs v2
 
-v2 is a clean break from v1. A v2 decoder is **not** required to decode v1 payloads.
+v3 is a clean break from v2 for Bound Profile field/record-body payloads. Dynamic Profile may remain v2-compatible where tags are unchanged.
 
-Key changes in v2:
+Key v3 changes:
 
-- Compact **tag-table** wire model replaces v1 top-level message-kind envelope.
-- Per-message key/string/shape interning tables (message-local, not session-scoped).
-- Standardized `shape_def` / `shape_ref` for same-shape map arrays.
-- `typed_vec` for homogeneous primitive arrays.
-- `row_batch` / `col_batch` for explicit batching.
-- `state_patch` / `template_batch` for stateful session optimization.
+- `BOUND_STREAM (0x0F)` for schema-bound compact record streams.
+- `SCHEMA_BATCH (0x0E)` for schema-aware columnar batches.
+- Bound field payloads prohibit fallback dynamic/literal encodings and per-field mode bytes in the compact layout.
+- `min`/`max` are validation constraints; physical integer encoding is resolved by schema/profile.
+- Compact record bodies separate presence bits, fixed bit groups, and byte payloads.
+- v3 reference profile fixes defaults for schema id, count, column count, field id omission, and `layout_kind = compact`.
+- Benchmark byte accounting distinguishes message bytes, raw record-body bytes, raw column payload bytes, external framing, and compression/dictionary overhead.
 
 ## Read Order
 
-1. [Wire Tags](/spec/wire-tags) — first-byte families and extended tag meanings.
-2. [Profiles](/spec/profiles) — Dynamic, Bound, Batch, Stateful in detail.
+1. [Wire Tags](/spec/wire-tags) — Dynamic tags and Bound/Batch envelope kinds.
+2. [Profiles](/spec/profiles) — Dynamic, Bound, Batch, and Stateful behavior.
 3. [Format Guide](/spec/format) — byte-level structure and decode shape.
-4. [Encoding Guide](/spec/encoding) — scalar rules, vector codecs, string modes.
-5. [Transport Guide](/spec/transport) — session-scoped state and transport assumptions.
-6. [v2 Reference Profile](/spec/v2) — the normative interoperability profile.
+4. [Encoding Guide](/spec/encoding) — scalar rules, interning, vector codecs, and Bound payloads.
+5. [Transport Guide](/spec/transport) — stateless/stateful assumptions and versioning.
+6. [v3 Reference Profile](/spec/v3) — current interoperability profile.

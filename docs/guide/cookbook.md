@@ -211,14 +211,14 @@ byte[] bytes = Twilic.encodeWithSchema(tx, schema);
 // Field names: not sent (schema defines positions)
 // currency "USD": 2-bit index (4 allowed values → log2(4)=2 bits)
 // status: 2-bit index (3 allowed values → ceil(log2(3))=2 bits)
-// amount_cents: range-aware bitpacking within [0, 100_000_00]
+// amount_cents: bitpacked only if schema/profile resolves this field to range_bits
 ```
 
 ## Multi-Language Interoperability
 
 ### Pattern: Rust encoder → Go decoder
 
-Twilic's interoperability guarantee: any v2-conforming encoder output is decodable by any v2-conforming decoder.
+Twilic's interoperability guarantee is version/profile scoped. Current published SDK payloads are v2-interoperable; v3 payloads require both sides to agree on v3 profile and negotiated extensions.
 
 ```rust
 // Rust: produce bytes

@@ -90,7 +90,7 @@ app.post("/data", twilicParser({ requireContentType: false }), handler);
 | `DECODE_DEPTH_EXCEEDED`       | Deeply nested or malicious payload         |
 | `decode count limit exceeded` | Corrupt length prefix or attack            |
 | `StatelessRetryRequired`      | Client/server state drift — call `reset()` |
-| `failed to decode v2 payload` | Wrong format version or truncated bytes    |
+| `failed to decode payload`    | Wrong format version or truncated bytes    |
 | HTTP 415                      | Missing or wrong `Content-Type` header     |
 
 Use the [Twilic CLI](/guide/cli) to inspect bytes:
@@ -110,4 +110,5 @@ console.log(decodeToTransportJson(bytes));
 
 - [Security guide](/guide/security)
 - [Troubleshooting](/guide/troubleshooting)
-- [Spec — v2 Reference Profile](/spec/v2)
+- [Spec — v3 Reference Profile](/spec/v3)
+- [Spec — v2 Legacy Reference Profile](/spec/v2)

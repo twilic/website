@@ -35,4 +35,4 @@ twilic bench --backend napi
 
 Full CLI documentation: [Twilic CLI](/guide/cli).
 
-All tools target the [v2 wire format](/spec/overview) and use `@twilic/core` or language SDKs built on the Rust reference implementation.
+Current tools are built on the published SDK line and target v2 payloads unless a tool explicitly advertises v3 support. For the current specification, see [v3 Reference Profile](/spec/v3).

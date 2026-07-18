@@ -1,137 +1,53 @@
 # Transport Guide
 
-This guide describes transport and session behavior for Twilic v2.
+This guide describes transport and session behavior for Twilic v3.
 
 ## Stateless vs Stateful
 
-**Stateless mode:** every message is self-sufficient. No session state is required. Safe for HTTP, message queues, fire-and-forget transports. Recommended as the default for general usage.
+- Stateless mode: every message is self-sufficient or uses externally supplied schema/framing.
+- Stateful mode: messages may reference prior session state, but only under a negotiated stateful profile.
 
-**Stateful mode:** messages may reference prior session state — `base_id`, templates, dictionaries. Requires an ordered, reliable session.
-
-When transport guarantees are weak, the encoder SHOULD remain stateless or use a stateless retry policy.
+The v3 reference interoperability profile is stateless unless such a profile is explicitly negotiated.
 
 ## Session State
 
-Session state may include:
+Negotiated state may include:
 
-- Base snapshots (registered with `base_id`)
-- Templates (registered with `template_id`)
-- Optional dictionary metadata
+- base snapshots
+- templates
+- optional dictionary metadata
+- persistent key/string/shape table extensions
 
-Per-message key/string/shape interning tables are **message-local** in v2. They are NOT persistent session state.
+Per-message key/string/shape interning tables are message-local in Dynamic Profile unless a persistent table extension is negotiated.
 
-Session state objects (`base_id`, `template_id`, dictionary IDs) MUST NOT be reused across independent streams.
-
-Session epochs SHOULD be treated as transport-local context and reset on reconnect unless explicitly negotiated.
+Session state objects such as `base_id`, `template_id`, and dictionary ids must not be reused across independent streams.
 
 ## Stateful Forms
 
-### `state_patch` (`0xDD`)
+Stateful wire forms require a negotiated transport/profile that defines state-reference discriminators, reset control encoding, dictionary ids, and retention rules.
 
-Delta payload against the previous message or an explicit base snapshot.
+Dynamic and envelope tags differ:
 
-**Typical usage:**
+| Dynamic tag | Envelope kind | Meaning |
+| --- | --- | --- |
+| `state_patch` `0xDD` | `STATE_PATCH` `0x0A` | patch against previous/base state |
+| `template_batch` `0xDE` | `TEMPLATE_BATCH` `0x0B` | template-based micro-batch |
+| — | `CONTROL_STREAM` `0x0C` | packed control lane |
+| — | `BASE_SNAPSHOT` `0x0D` | snapshot used by patches |
 
-- Hot object streams where the changed-field ratio is low (most fields stay the same between messages)
-- Repeated schema emissions with minor updates
+## Bound and Batch Forms
 
-**Benefit:** only changed fields are transmitted. On a telemetry stream where 2 of 20 fields change per tick, state patch can reduce payload size by 90%.
+`BOUND_STREAM` and `SCHEMA_BATCH` are usable in stateless contexts when schema identity and framing are supplied in-band or by the enclosing transport.
 
-### `template_batch` (`0xDE`)
-
-Micro-batch reuse for repeated schema/shape bursts.
-
-**Typical usage:**
-
-- Short burst batches where full column mode is overkill
-- Repeated optional-field presence patterns (e.g. most records have fields A/B/C present, rarely D/E)
-
-### Batch Forms (`0xDB` / `0xDC`)
-
-Row and column batches remain available in both session and stateless contexts.
-
-- `row_batch` — suitable for low-latency, moderate-size bursts
-- `col_batch` — suitable for larger batches with column codec gains
+- `BOUND_STREAM (0x0F)` is suitable when one shared schema is bound once and consecutive records omit per-record schema/object envelopes.
+- `SCHEMA_BATCH (0x0E)` is suitable when the same shared schema repeats and columnar gains are available.
 
 ## Reset Behavior
 
-`RESET_STATE` invalidates all state references (bases, templates, dictionaries).
+`RESET_STATE` invalidates all state references, including bases, templates, dictionaries, and negotiated persistent key/string/shape tables. It must be encoded by a negotiated control operation before it can affect decode state.
 
-After reset:
+## Versioning
 
-- Both sides MUST treat old state IDs as invalid.
-- Sender MUST emit a stateless full frame or fresh registration before sending stateful references.
-
-Reset must be sent reliably. A dropped reset frame leaves sender and receiver in diverged state with no recovery path.
-
-## Unknown Reference Policy
-
-Decoder policy MUST be fixed per deployment:
-
-| Policy | Behavior |
-| --- | --- |
-| **Fail-fast** | Hard decode error on unknown `base_id`, `template_id`, or dictionary ID |
-| **Stateless retry** | Transport/application requests a stateless resend from sender |
-
-Unknown IDs MUST NOT be silently accepted or speculatively repaired.
-
-## Ordering and Reliability
-
-Stateful mode requires:
-
-- **Ordered delivery** for state-mutating frames (base/template registration, patches)
-- **No silent drops** of reset or registration frames
-- **Bounded retention window** alignment between peers
-
-If any of these guarantees cannot be met, the deployment MUST use stateless mode only.
-
-## Recommended Defaults by Transport
-
-| Transport                     | Recommended mode  |
-| ----------------------------- | ----------------- |
-| HTTP request/response         | Stateless         |
-| Message queue / pub-sub       | Stateless         |
-| WebSocket (reliable, ordered) | Stateful optional |
-| gRPC streaming                | Stateful optional |
-| UDP / unreliable channel      | Stateless only    |
-
-## Session Lifecycle
-
-A typical stateful session follows this sequence:
-
-```mermaid
-sequenceDiagram
-    participant C as Client
-    participant S as Server
-
-    C->>S: Full message (MAP / SCHEMA_OBJECT)
-    note over C,S: bootstrap — stateless, self-describing
-
-    C->>S: REGISTER_KEYS / REGISTER_SHAPE
-    note over C,S: register intern tables
-
-    C->>S: Compact message (SHAPED_OBJECT)
-    note over C,S: use shape interning
-
-    C->>S: BASE_SNAPSHOT (base_id=7)
-    note over C,S: anchor for patches
-
-    C->>S: STATE_PATCH (base_ref=7, ops...)
-    note over C,S: delta encode — send only changed fields
-
-    C->>S: TEMPLATE_BATCH (template_id=3)
-    note over C,S: micro-batch reuse
-
-    C->>S: RESET_STATE
-    note over C,S: state divergence detected
-
-    C->>S: Full stateless resync message
-    note over C,S: re-bootstrap
-```
-
-Operational intent:
-
-- Start stateless for safe bootstrap.
-- Register keys/shapes once repetition is observed.
-- Use snapshot + patch + template only while state alignment is healthy.
-- Reset and resync immediately when unknown references or divergence is detected.
+- v3 is a clean break from v2 for Bound Profile field/record-body payloads.
+- Dynamic Profile may retain v2-compatible tags where unchanged.
+- Dual support requires explicit profile and version signaling outside payload decode heuristics.

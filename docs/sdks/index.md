@@ -1,6 +1,6 @@
 # SDKs
 
-Twilic has production-ready implementations in eighteen languages. All SDKs target the [v2 wire format](/spec/overview) and share a consistent API surface.
+Twilic has production-ready implementations in eighteen languages. The current published SDK line targets v2 payloads and shares a consistent API surface; the current specification family is [v3](/spec/v3).
 
 ## Documentation
 
@@ -61,4 +61,4 @@ The [JavaScript SDK](/sdks/js) is built on the Rust implementation via N-API and
 
 ## Interoperability
 
-All SDKs are tested against shared binary fixtures. Any v2 encoder output decodes in any v2 SDK. See [Interop guide](/guide/interop).
+All published SDKs are tested against shared binary fixtures. Any v2 encoder output decodes in any v2 SDK. See [Interop guide](/guide/interop).

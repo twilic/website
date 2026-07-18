@@ -11,7 +11,9 @@ A full encoded message stored in session state as the reference point for subseq
 Encoding mode that groups multiple same-shape records into one message with shared shape and string tables.
 
 **Bound profile**  
-Schema-aware encoding mode. Field names omitted from wire; positions defined by a [Schema](/reference/value-and-schema).
+Schema-aware encoding mode. In v3 compact layouts, field names, field numbers, type tags, and per-field fallback mode bytes are omitted from field payloads; positions are defined by a [Schema](/reference/value-and-schema).
+
+**BOUND_STREAM**: v3 envelope kind `0x0F` that binds one schema for consecutive compact record bodies.
 
 **col_batch**  
 Columnar batch message kind. Each field encoded as an independent column with per-column codec.
@@ -56,13 +58,15 @@ Google's schema-first binary format. Strong alternative for gRPC and strict cont
 ## R–S
 
 **Reference profile**  
-Normative v2 encoding rules. See [v2 Reference Profile](/spec/v2).
+Normative current encoding rules. See [v3 Reference Profile](/spec/v3).
 
 **Row batch**  
 Batch mode encoding records row-by-row with shared shape. Wire kind: `row_batch`.
 
 **Schema**  
 Field definition for Bound profile: field numbers, names, types, constraints.
+
+**SCHEMA_BATCH**: v3 envelope kind `0x0E` for schema-aware columnar batches.
 
 **Session encoder**  
 Encoder maintaining state across an ordered message sequence for patches and dictionaries.

@@ -1,8 +1,8 @@
 # Schema-Bound Encoding
 
-The Bound profile encodes values using a predefined schema. Field names disappear from the wire; enum and range constraints shrink individual fields to bit-level representations.
+The Bound profile encodes values using a predefined schema. Field names, field numbers, type tags, and per-field fallback mode bytes disappear from compact field payloads; enum, bool, and `range_bits` fields shrink to bit-level representations.
 
-Use Bound when message shape is stable, latency matters, and you want Protobuf-class density without `.proto` codegen — or as the final optimization tier after starting with Dynamic.
+Use Bound when message shape is stable, latency matters, and you want Protobuf/Avro-class density under equivalent schema/framing assumptions — or as the final optimization tier after starting with Dynamic.
 
 ## When to use Bound
 
@@ -89,7 +89,7 @@ const bytes = encodeWithSchema(paymentSchema, tx);
 | Protobuf (with .proto) | ~45 bytes    |
 | Twilic Bound           | ~40–50 bytes |
 
-For **batches**, Twilic columnar mode often beats Protobuf because per-column codecs compress patterns Protobuf treats as independent values.
+For **batches**, `SCHEMA_BATCH` is the preferred v3 comparison point. It can beat Protobuf/Avro on homogeneous repeated records when schema-derived bit packing or column codecs apply, but byte counts must include equivalent schema/framing assumptions.
 
 ## Enum encoding
 
@@ -109,11 +109,21 @@ enumValues: ["pending", "settled", "failed"]; // 3 values → 2 bits
 
 ## Range-aware integers
 
-When `min` and `max` are set, the encoder uses the minimum bit width that covers the range:
+When a field declares physical encoding `range_bits`, the encoder stores `value - min` using the minimum bit width that covers the range:
 
 ```ts
 { number: 1, name: "amount_cents", logicalType: "u64", min: 0n, max: 100_000_00n }
 ```
+
+## Bound streams
+
+For schema-fixed streams, v3 adds `BOUND_STREAM` (`0x0F`). It binds one schema once and then emits compact record bodies:
+
+```text
+[presence bits?][fixed bit group][byte payloads...]
+```
+
+Record bodies do not carry field names, field numbers, type tags, schema ids, field counts, or per-field mode bytes. For benchmark reporting, distinguish full `BOUND_STREAM` message bytes from raw record-body bytes.
 
 ## Schema evolution
 

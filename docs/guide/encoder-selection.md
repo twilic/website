@@ -170,17 +170,17 @@ For minimal implementations (Spec §18.12):
 
 ## Determinism requirements
 
-All v2 implementations MUST:
+All implementations must be deterministic for the same version, profile, resolved schema, and negotiated options:
 
 - Assign key/string/shape IDs in first-seen order (no randomization)
 - Select codecs deterministically for equal input statistics
 - Reset intern tables at each top-level message boundary
 
-See [v2 Reference Profile — Default Deterministic Heuristics](/spec/v2#default-deterministic-heuristics).
+See [v3 Reference Profile](/spec/v3) and [Encoding Guide](/spec/encoding).
 
 ## Related
 
 - [Encoding Profiles](/guide/encoding-profiles)
 - [Performance](/guide/performance)
 - [Benchmark Fixtures](/benchmark/fixtures)
-- [Spec §18 Encoder Auto-Selection](https://github.com/twilic/twilic/blob/main/versions/v2.md)
+- [Spec §18 Encoder Auto-Selection](https://github.com/twilic/twilic/blob/main/versions/v3.md)

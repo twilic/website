@@ -1,137 +1,64 @@
 # Profiles
 
-Twilic defines four primary profiles. Profiles compose — a session may use Dynamic for one-shot messages, Bound for schema-aware records, and Batch for bulk transfers.
+Twilic v3 defines three primary data profiles and one optional Stateful Profile. A deployment must know the active profile before interpreting byte 0.
 
 ## Dynamic Profile
 
-The Dynamic Profile is Twilic's default. It behaves like MessagePack: any root value can be sent without a schema, and maps/lists/scalars/binary/strings are all represented directly.
+Dynamic is the schema-less profile. It behaves like MessagePack for arbitrary values, with compact forms for repetition inside one top-level message.
 
-Within a single top-level message, the Dynamic Profile activates structural compression automatically:
+- `key_id` and `str_id` are zero-based Twilic-PV ids scoped to the current top-level message.
+- `shape_def` is a declaration, not a decoded application value.
+- `shape_ref` produces one decoded object value.
+- Dynamic fixed-width integers and fixed-width length/count fields are little-endian.
+- Dynamic scalar integers use fixint first, then the smallest fixed-width integer tag. They do not use Twilic-PV.
 
-- **Key interning** — First-seen map keys are assigned a `key_id`. Repeated keys within the same message use `key_ref` instead of the literal string.
-- **Shape interning** — Arrays of same-shape maps use one `shape_def`. Subsequent rows use `shape_ref` and encode only values.
-- **String interning** — Repeated string values within the same message use `str_ref`.
-- **Typed vectors** — Homogeneous primitive arrays use `typed_vec` with codec selection.
-
-All intern tables reset at each top-level message boundary.
-
-### Usage
-
-Dynamic is the right profile when:
-
-- You do not have a fixed schema.
-- You are migrating from JSON or MessagePack.
-- You want compression benefits without a schema definition step.
+Use Dynamic when you do not have a fixed schema or need MessagePack-like convenience.
 
 ## Bound Profile
 
-The Bound Profile is schema-aware. Sender and receiver share a schema ahead of time. In return:
+Bound is schema-aware. Sender and receiver share a resolved schema identity before decoding field payloads.
 
-- Field names are **not sent** — field order is fixed by schema.
-- Type tags are **generally not sent** — types are known from schema.
-- Required fields are always present; optional fields follow a **presence bitmap**.
-- **Range-aware bit packing** — if a field has a known value range, it is stored as `value - min` using the minimum required bit width.
+- Field order is the declared schema field-array order.
+- Field names are metadata and are not sent.
+- Compact Bound field payloads do not carry field numbers, type tags, per-field fallback mode bytes, or fallback dynamic/literal encodings.
+- `BOUND_STREAM (0x0F)` binds one schema for consecutive compact record bodies.
+- `SCHEMA_OBJECT (0x04)` remains available for independently decodable Bound records when the resolved schema is known.
 
-### Schema Definition
+Bound compact record bodies use:
 
-Each schema field specifies at minimum:
+```text
+[presence bits?][fixed bit group][byte payloads...]
+```
 
-- Field number and name
-- Logical type and physical encoding
-- Required vs optional, and default value
-- Value range or allowed set (for bit packing)
-- String constraints
-
-If the message type is unambiguous from context, `schema_id` may be omitted. Attach it only when mixed message types must be disambiguated.
-
-### Zero-Copy Layout (Optional)
-
-An optional extension within Bound Profile aligns in-memory structure and wire layout, following a Cap'n Proto-like design. Fields are aligned naturally; offsets use relative values for memory-mapping. This reduces decode/encode work at the cost of some size overhead from padding. Use compact layout (default) when minimizing payload size is the primary goal.
+Presence bits and fixed bit groups are least-significant-bit first and zero-padded to byte boundaries. Non-zero padding bits fail decode.
 
 ## Batch Profile
 
-The Batch Profile bundles multiple records with the same shape or schema into one message.
+Batch bundles multiple records with the same shape or schema.
 
-Two modes are available:
+| Form                    | Tag / kind | Use                                  |
+| ----------------------- | ---------- | ------------------------------------ |
+| Dynamic `row_batch`     | `0xDB`     | Dynamic row-wise same-shape records. |
+| Dynamic `col_batch`     | `0xDC`     | Dynamic columnar same-shape records. |
+| Envelope `ROW_BATCH`    | `0x06`     | Bound/Batch envelope row-wise form.  |
+| Envelope `COLUMN_BATCH` | `0x07`     | Bound/Batch envelope columnar form.  |
+| `SCHEMA_BATCH`          | `0x0E`     | Shared-schema columnar batch.        |
 
-### Row Batch (`row_batch`)
-
-Records are sent row-by-row. Shape or schema is declared once; each row encodes only values.
-
-```text
-row_batch [shape_id] [row_count] [row_0_values] ... [row_n_values]
-```
-
-Best for: low-latency, moderate-size bursts where column codec gains are small.
-
-### Column Batch (`col_batch`)
-
-Records are stored column-by-column. Each column is encoded with its own codec.
-
-```text
-col_batch [shape_id] [row_count] [col_0] ... [col_n]
-```
-
-Per-column codecs: `DIRECT_BITPACK`, `DELTA_BITPACK`, `FOR_BITPACK`, `DELTA_FOR_BITPACK`, `DELTA_DELTA_BITPACK`, `RLE`, `PATCHED_FOR`, `SIMPLE8B`, `XOR_FLOAT`.
-
-Best for: larger batches with high column regularity — time series, telemetry, database exports.
+`SCHEMA_BATCH` columns are in schema order. In the v3 reference profile, `column_count` is present and `field_id` is omitted in strict schema-order compact mode unless an enclosing profile declares otherwise.
 
 ## Stateful Profile
 
-The Stateful Profile compresses against previous messages and shared dictionaries over the same stream, session, or channel. It is **optional** — receivers that do not use stateful mode must still handle stateless messages.
+Stateful forms are optional negotiated extensions. They may use previous messages, base snapshots, templates, dictionaries, or persistent key/string/shape tables.
 
-Stateful mode requires **ordered delivery** and **no silent drops** of reset or registration frames.
+The v3 reference interoperability profile is stateless unless a transport/profile defines exact wire forms for state references, patch opcodes, reset controls, dictionary ids, and retention rules.
 
-### State Forms
+Dynamic stateful tags differ from Bound/Batch envelope kinds:
 
-| Form | Tag | Usage |
+| Dynamic tag | Envelope kind | Meaning |
 | --- | --- | --- |
-| `state_patch` | `0xDD` | Delta against previous message or explicit base. Beneficial when changed-field ratio is low. |
-| `template_batch` | `0xDE` | Micro-batch for repeated schema/shape bursts with optional-field presence patterns. |
-| Base snapshot | — | Explicit snapshot registered with `base_id` for stable patch anchors. |
+| `state_patch` `0xDD` | `STATE_PATCH` `0x0A` | Patch against previous/base state. |
+| `template_batch` `0xDE` | `TEMPLATE_BATCH` `0x0B` | Template-based micro-batch. |
+| — | `CONTROL_STREAM` `0x0C` | Packed control lane. |
+| — | `BASE_SNAPSHOT` `0x0D` | Snapshot used by patches. |
 
-### Reset Behavior
-
-`RESET_STATE` invalidates all state references (bases, templates, dictionaries). After reset, the sender must emit a stateless full frame or fresh registration before sending stateful references again.
-
-### Unknown Reference Policy
-
-Decoder policy must be fixed per deployment:
-
-- **Fail-fast** — decode error on unknown `base_id`, `template_id`, or dictionary id.
-- **Stateless retry** — transport/application requests a stateless resend from the sender.
-
-Unknown references must **never** be silently accepted.
-
-## Encoding Flow
-
-The diagram below shows how an encoder progresses from baseline dynamic forms to compact forms as repetition accumulates.
-
-```mermaid
-flowchart TD
-    A([Input Value]) --> B{Classify root}
-    B -->|scalar| C[Scalar encoding\nfixint / str / bin / f64]
-    B -->|map or array| D{Observe repetition}
-
-    D -->|repeated keys| E[key_ref]
-    D -->|repeated shape| F[shape_def / shape_ref]
-    D -->|homogeneous array| G[typed_vec]
-
-    E & F --> H([Repeated rows\nwith same shape])
-    G --> H
-
-    H --> I{Batch decision}
-    I -->|low latency| J[row_batch]
-    I -->|large / regular| K[col_batch]
-    K --> L[Per-column codecs\ndelta · FOR · RLE · XOR · Simple8b]
-
-    H --> M{Stateful session?}
-    M -->|yes| N[base_snapshot]
-    N --> O[state_patch]
-    O --> P[template_batch]
-    P --> Q{State divergence?}
-    Q -->|yes| R[RESET_STATE]
-    R --> S([Stateless full message\nre-bootstrap])
-    Q -->|no| O
-    M -->|no| S
-```
+Use stateful forms only when sender and receiver have explicit profile negotiation and ordered state alignment.

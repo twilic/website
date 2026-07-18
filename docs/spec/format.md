@@ -1,144 +1,118 @@
 # Format Guide
 
-This guide describes the Twilic v2 wire layout in practical terms. It mirrors the normative rules in the full specification, with focus on byte structure and decode shape.
+This guide describes the Twilic v3 wire layout in practical terms. For normative detail, see [v3 Reference Profile](/spec/v3).
 
 ## Wire Model Overview
 
-v2 uses a tag-table model. The first byte is always a tag family or fixed literal tag. Unlike v1, there is no top-level message-kind envelope byte.
+v3 uses profile-selected wire models.
 
-### First-Byte Compact Families
+- Dynamic Profile uses the compact tag table described in [Wire Tags](/spec/wire-tags).
+- Bound and Batch Profiles use message-kind envelopes when self-delimiting payloads are needed.
+- `BOUND_STREAM (0x0F)` binds a schema for compact record streams.
+- `SCHEMA_BATCH (0x0E)` is the schema-aware columnar batch form.
 
-| Range        | Meaning                     |
-| ------------ | --------------------------- |
-| `0x00..0x7F` | positive fixint (`0..127`)  |
-| `0x80..0x9F` | fixstr (`len=0..31`)        |
-| `0xA0..0xAF` | fixarray (`count=0..15`)    |
-| `0xB0..0xBF` | fixmap (`count=0..15`)      |
-| `0xE0..0xFF` | negative fixint (`-32..-1`) |
+A decoder must know the active profile before interpreting byte 0.
 
-## Dynamic Container Shapes
+## Dynamic Containers
 
 ### Map Body
 
 ```text
-[fixmap | map16 | map32] [key] [value] ...
+[fixmap|map16|map32][key][value]...
 ```
 
-Key representations:
+Key forms:
 
-- key literal (`fixstr` / `str8` / `str16` / `str32`)
-- `key_ref`: `0xD8 [varuint key_id]`
+- key literal string
+- `key_ref` + zero-based `key_id`
 
-Unknown `key_ref` id is a hard decode error.
+Unknown `key_ref` ids fail decode.
 
 ### Array Body
 
 ```text
-[fixarray | array16 | array32] [value_0] [value_1] ...
+[fixarray|array16|array32][element_0][element_1]...
 ```
 
-An array may remain generic, or be promoted to:
+Arrays may include message-local `shape_def` declarations before decoded elements. Those declarations do not count toward decoded element count.
 
-- `typed_vec` for homogeneous primitive arrays
-- shape forms for homogeneous map arrays
+## `SCHEMA_OBJECT` (`0x04`)
 
-## Message-Local Reuse Forms
-
-v2 does not require session state for structural reuse — all reuse tables are per-message and reset at each top-level message boundary.
-
-### `shape_def` (`0xD6`)
-
-Defines an ordered key sequence and registers `shape_id` in the current message.
+`SCHEMA_OBJECT` is an independently decodable Bound object when the resolved schema is known.
 
 ```text
-0xD6 [shape_id] [key_count] [key_0] ... [key_n]
+0x04 [has_schema_id][schema_id?][has_presence][presence bytes?][field payloads...]
 ```
 
-### `shape_ref` (`0xD7`)
+`has_schema_id` and `has_presence` are one-byte flags: `0x00 = false`, `0x01 = true`; other values fail decode.
 
-References a prior shape in the current message and encodes only values.
+For compact `SCHEMA_OBJECT`, field payloads use:
 
 ```text
-0xD7 [shape_id] [value_0] ... [value_n]
+[fixed bit group][byte payloads...]
 ```
 
-Unknown `shape_ref` id is a decode error.
+after presence bytes, following compact record-body bit order and padding rules.
 
-### `key_ref` / `str_ref`
+## `BOUND_STREAM` (`0x0F`)
 
-- `key_ref` (`0xD8`) references key literals already emitted in the message.
-- `str_ref` (`0xD9`) references string value literals already emitted in the message.
-
-All intern tables (`key_id`, `str_id`, `shape_id`) reset at each top-level message boundary.
-
-## Typed Vector
+`BOUND_STREAM` is the schema-bound compact stream form.
 
 ```text
-0xDA [element_type] [count] [codec] [payload]
+0x0F [schema_id?][count?][presence_strategy][record_body...]
 ```
 
-`element_type` identifies the scalar type of all elements (u8, u16, u32, u64, i8, i16, i32, i64, f64).
+The v3 reference profile includes `schema_id` and `count` unless an enclosing transport/profile explicitly declares external schema identity and framing. If `count` is omitted, external framing must supply record count, byte extent, or terminal end-of-stream. Multiplexed/framed transports must provide count or byte extent.
 
-`codec` identifies the compression applied to the payload column. Codec choice must be deterministic for equal input statistics and equal profile configuration.
+`presence_strategy` values:
 
-## Row and Column Batch
+| Value  | Meaning                    |
+| ------ | -------------------------- |
+| `0x00` | normal bitmap per record   |
+| `0x01` | inverted bitmap per record |
+| `0x02` | all-present elided         |
 
-### `row_batch` (`0xDB`)
+Each record body is decoded using schema order:
 
 ```text
-0xDB [shape_id] [row_count] [row_0_values] ... [row_n_values]
+[presence bits?][fixed bit group][byte payloads...]
 ```
 
-The `shape_id` references a prior `shape_def` in the same message or a session-registered shape. Each row encodes only its values in shape-key order.
+- Presence bits are least-significant-bit first in schema optional-field order and zero-padded to a byte boundary.
+- The fixed bit group packs bool, enum, and `range_bits` fields least-significant-bit first in schema order.
+- Byte payloads contain `fixed_le`, float, varints, strings, binary values, and other byte-aligned fields in schema order.
+- Non-zero padding bits fail decode.
 
-### `col_batch` (`0xDC`)
+## `SCHEMA_BATCH` (`0x0E`)
 
 ```text
-0xDC [shape_id] [row_count] [col_0_header + col_0_payload] ... [col_n_header + col_n_payload]
+0x0E [schema_id?][count][column_count?][columns...]
 ```
 
-Each column header specifies:
+The v3 reference profile includes `column_count` and omits `field_id` in strict schema-order compact mode.
 
-- `element_type`
-- `codec`
-- payload length
-
-Columns are packed end-to-end. Decoder reconstructs rows by reading one value per column, for each of `row_count` rows.
-
-## Stateful Forms
-
-Stateful forms require session state and ordered, reliable delivery.
-
-### `state_patch` (`0xDD`)
+Each column contains:
 
 ```text
-0xDD [optional base_ref] [patch_operations ...]
+[field_id?][null_strategy][presence bits?][codec][typed vector payload]
 ```
 
-`patch_operations` describe field-level changes: KEEP, REPLACE, APPEND, DELETE. Decoder reconstructs the current message by applying operations to the base or previous message.
+`null_strategy` values:
 
-### `template_batch` (`0xDE`)
+| Value | Meaning                              |
+| ----- | ------------------------------------ |
+| `0`   | all rows present; no presence bitmap |
+| `1`   | normal bitmap                        |
+| `2`   | inverted bitmap                      |
 
-```text
-0xDE [template_id] [count] [record_0] ... [record_n]
-```
+Presence bitmaps are row-order, least-significant-bit first, and zero-padded to `ceil(count / 8)` bytes. Nullable/optional column payloads encode present values only; decoded element count is `popcount(presence)` or `count` for all-present.
 
-`template_id` references a registered template (shape + optional-field presence pattern). Each record encodes only its present, non-default values.
+## Stateful Envelope Kinds
 
-## Extension Point
+Stateful envelope kinds such as `STATE_PATCH (0x0A)`, `TEMPLATE_BATCH (0x0B)`, `CONTROL_STREAM (0x0C)`, and `BASE_SNAPSHOT (0x0D)` require a negotiated stateful profile. The v3 reference interoperability profile is stateless unless such a profile is negotiated.
 
-```text
-0xDF [ext_type] [length] [payload]
-```
+## Compatibility
 
-Extension types below `0x80` are reserved for future Twilic use. Extension types `0x80..0xFF` are available for application-defined use.
-
-## Varuint Encoding
-
-Twilic-PV varuint is used for metadata fields: lengths, counts, `key_id`, `str_id`, `shape_id`, `schema_id`, `base_id`, `template_id`.
-
-```text
-byte 0: high bit = 1 if more bytes follow; low 7 bits = value bits
-```
-
-Varuint domains in v2 are used for metadata, not for replacing fixed integer value tags.
+- v3 is a clean break from v2 for Bound Profile field/record-body payloads.
+- Dynamic Profile may remain v2-compatible where tags are unchanged.
+- Implementations supporting multiple profiles or versions must use an explicit external profile and version discriminator.

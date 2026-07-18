@@ -1,132 +1,110 @@
 # Encoding Guide
 
-This guide covers scalar, reference, and vector encoding behavior for Twilic v2. Implementations follow these rules to stay deterministic and interoperable.
+This guide covers scalar, reference, vector, Bound, and batch encoding behavior for Twilic v3.
 
 ## Lengths and IDs
 
-Lengths and IDs use varuint encoding:
+Twilic-PV is an unsigned base-128 varuint with 7 payload bits per byte, little-endian group order, and high-bit continuation. Encoders use the shortest form; decoders reject overlong forms.
 
-- dynamic lengths
-- `key_id`, `str_id`, `shape_id`
-- `base_id`, `template_id`, and other state IDs (when session features are enabled)
+Twilic-PV is used for metadata and for Bound integer fields whose physical encoding is `varuint` or `zigzag_varuint`. Dynamic scalar integers do not use Twilic-PV.
 
-Varuint domains in v2 are for metadata, not for replacing fixed-width integer value tags.
+Dynamic `str`/`bin`/`array`/`map` tag lengths use tag-defined fixed-width length fields. Dynamic fixed-width integer payloads and fixed-width length/count fields are little-endian.
 
-## Scalar Rules
+## Dynamic Integers
 
-### Integers
+The v3 reference profile must encode Dynamic integers with this canonical order:
 
-- Use fixint for `-32..127` first.
-- Otherwise use the smallest valid fixed-width tag: `i8`/`i16`/`i32`/`i64` or `u8`/`u16`/`u32`/`u64`.
-- Encoder SHOULD choose the smallest valid width.
+- `-32..-1`: negative fixint
+- `0..127`: positive fixint
+- otherwise use the smallest valid fixed-width signed or unsigned tag
 
-Recommended width order:
+## Bound Integers
 
-| Type     | Selection order                         |
-| -------- | --------------------------------------- |
-| Signed   | `fixint` → `i8` → `i16` → `i32` → `i64` |
-| Unsigned | `fixint` → `u8` → `u16` → `u32` → `u64` |
+Bound fields are schema-declared and do not carry per-field type tags.
 
-### Float
+| Physical encoding | Meaning |
+| --- | --- |
+| `varuint` | unsigned value encoded as Twilic-PV |
+| `zigzag_varuint` | signed value zigzag-encoded, then Twilic-PV |
+| `range_bits` | `value - min` encoded with schema-derived bit width |
+| `fixed_le` | logical alias width, little-endian, no implicit alignment padding |
 
-- Scalar float uses `f64` (`0xC3`), little-endian.
-- No `f32` tag exists in v2.
+`min` and `max` are validation constraints for all encodings. They become storage parameters only for `range_bits`. Declared physical encodings must not be overridden.
 
-### Strings and Binary
+## Booleans and Enums
 
-| Data   | Short (≤ 31 bytes) | Medium | Large             |
-| ------ | ------------------ | ------ | ----------------- |
-| String | `fixstr`           | `str8` | `str16` / `str32` |
-| Binary | —                  | `bin8` | `bin16` / `bin32` |
+- Boolean bit `0` means false and bit `1` means true.
+- Enum code is the zero-based index in schema `enumValues` order.
+- `N = 0` enum sets are invalid.
+- `N = 1` consumes zero bits and reconstructs the sole value.
+- Unknown enum values fail encode; decoded codes `>= N` fail decode.
 
-Length tags MUST match actual payload byte length exactly.
-
-## Per-Message Interning
+## Message-Local Interning
 
 ### Keys
 
-Literal map keys are registered in first-seen order and assigned a `key_id`. Repeated keys in the same message MAY be replaced with `key_ref`.
-
-Registration order is part of deterministic behavior and cannot be implementation-random.
+`key_id` values are zero-based Twilic-PV ids assigned once per top-level message in first eligible key-literal registration order. Eligible key literals are keys emitted in Dynamic map key position. Keys inside `shape_def` register only in the shape table unless later emitted as map key literals.
 
 ### String Values
 
-Literal string values are registered in first-seen order and assigned a `str_id`. Repeated values MAY be replaced with `str_ref`.
+`str_id` values are zero-based Twilic-PV ids assigned once per string-table scope. In Dynamic Profile, eligible literals are string values emitted in value position, excluding map keys and `shape_def` keys.
 
-Interning state resets at each top-level message boundary.
+### Shapes
 
-Unknown `key_ref`/`str_ref` IDs MUST fail decode.
+`shape_def` is a declaration, not a decoded application value. In arrays, `shape_def` declarations do not count toward decoded element count; `shape_ref` rows produce decoded object values.
 
-### Shape IDs
-
-Shape IDs are message-local and assigned in first-seen order when `shape_def` appears. `shape_ref` may only reference prior shape IDs in the same top-level message.
-
-## Typed Vector Codecs
-
-`typed_vec` payload:
+## Typed Vector Payloads
 
 ```text
-0xDA [element_type] [count] [codec] [payload]
+0xDA [element_type][count][codec][payload]
 ```
 
-### Supported Codecs
+The v3 reference interoperability profile defines payload grammar for `PLAIN` and `DIRECT_BITPACK`. Other codec codes require a negotiated profile before use in interoperable payloads or benchmark claims.
 
-| Codec | Best for |
-| --- | --- |
-| `DIRECT_BITPACK` | Integers with known max value |
-| `DELTA_BITPACK` | Monotone or slowly-changing sequences |
-| `FOR_BITPACK` | Frame-of-reference + bitpack |
-| `DELTA_FOR_BITPACK` | Delta + FOR + bitpack |
-| `DELTA_DELTA_BITPACK` | Second-order delta (accelerations, timestamps) |
-| `RLE` | Runs of identical values |
-| `PATCHED_FOR` | FOR with outlier patching |
-| `SIMPLE8B` | General-purpose: packs multiple small integers per 64-bit word |
-| `XOR_FLOAT` | Float sequences (XOR of adjacent values, then bitpack) |
+For `PLAIN`, present values are encoded in element/row order:
 
-Codec choice SHOULD be deterministic for equal input statistics and equal profile configuration.
+| Value kind         | Payload per present value                           |
+| ------------------ | --------------------------------------------------- |
+| unsigned integer   | fixed-width little-endian logical alias width       |
+| signed integer     | two's-complement fixed-width little-endian width    |
+| `varuint` field    | Twilic-PV value                                     |
+| `zigzag_varuint`   | zigzag then Twilic-PV                               |
+| `fixed_le` field   | fixed-width little-endian logical alias width       |
+| `f64`              | 64-bit little-endian IEEE 754                       |
+| string             | Twilic-PV byte length followed by UTF-8 bytes       |
+| binary             | Twilic-PV byte length followed by raw bytes         |
+| bool               | bitstream, least-significant-bit first, zero-padded |
+| enum               | fixed-width code bitstream, schema enum order       |
+| `range_bits` field | fixed-width offset bitstream, field range width     |
 
-## Schema-Aware (Bound Profile) Encoding
-
-### Presence Bitmap
-
-Optional fields use a presence bitmap:
-
-- `1` = field present
-- `0` = field absent
-
-If most fields are present, a 1-bit invert flag allows the inverted interpretation:
-
-- `0` = field present
-- `1` = field absent
-
-If all fields are known present, the presence bitmap may be omitted entirely (schema or profile must fix this behavior).
-
-### Range-Aware Bit Packing
-
-When a schema field has a known value range `[min, max]`:
+For `DIRECT_BITPACK`, payload is:
 
 ```text
-stored_value = actual_value - min
-bit_width = ceil(log2(max - min + 1))
+[bit_width][bitstream]
 ```
 
-This eliminates wasted bits for constrained fields (enums, bounded integers, short string lengths).
+The bitstream emits unsigned codes least-significant-bit first in element/row order with zero padding. Signed element types use zigzag over the logical alias width before bit packing. Codes must be `< 2^bit_width`; `bit_width = 0` permits only code `0` and emits no bits.
 
-### Zigzag Encoding
+## Bound Record Streams
 
-For signed integers without a known range, zigzag encoding maps signed values to unsigned space before width selection:
+For schema-shared row-wise streams, use `BOUND_STREAM` and compact record bodies:
 
 ```text
-zigzag(n) = (n << 1) ^ (n >> 63)   // for 64-bit
+[presence bits?][fixed bit group][byte payloads...]
 ```
 
-## Determinism Requirements
+Record bodies do not carry schema id, field count, field numbers, field names, type tags, or per-field mode bytes. Fallback dynamic/literal encodings are unavailable inside Bound field payloads unless a negotiated extension changes the layout.
 
-The following behaviors MUST be deterministic across independent encoder runs with equal inputs and equal profile state:
+## Schema-Bound Batches
 
-- Integer width selection
-- Codec selection for `typed_vec` and `col_batch` columns
-- `key_id`, `str_id`, `shape_id` assignment order (first-seen order, not hash-random)
-- Presence bitmap layout
+For columnar batches under a shared schema, use `SCHEMA_BATCH`.
 
-Implementations MUST NOT randomize any of these choices.
+- one column per schema field in schema order
+- `column_count` present in the v3 reference profile
+- `field_id` omitted in strict schema-order compact mode by default
+- presence bitmaps use one bit per row
+- typed-vector payload encodes present row values only for optional/nullable columns
+
+## Compatibility
+
+v3 is a clean break from v2 for Bound Profile field/record-body payloads. Dynamic Profile may retain v2-compatible tag behavior where tags are unchanged.

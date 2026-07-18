@@ -1,17 +1,17 @@
 # Encoding Profiles
 
-Twilic v2 defines four encoding profiles. Each profile trades off flexibility, wire size, and session requirements differently. Pick the profile that matches your transport and data shape — not the other way around.
+Twilic v3 defines three primary data profiles and one optional stateful profile. Each profile trades off flexibility, wire size, and session requirements differently. Pick the profile that matches your transport and data shape — not the other way around.
 
 ## Profile overview
 
 | Profile | Schema required | Session required | Best for |
 | --- | --- | --- | --- |
 | **Dynamic** | No | No | Ad-hoc values, single objects, first adoption |
-| **Batch** | No | No | Same-shape record lists, API pages, cache snapshots |
+| **Batch** | No, or yes for `SCHEMA_BATCH` | No | Same-shape record lists, API pages, cache snapshots |
 | **Bound** | Yes | No | Fixed message types, payment events, max density |
 | **Stateful** | No | Yes | WebSocket ticks, incremental entity sync |
 
-All profiles produce v2-conforming bytes decodable by any v2 SDK.
+Published SDKs may still emit v2 payloads. For new spec-level work, use the [v3 reference profile](/spec/v3) and explicitly signal version/profile when v2 and v3 coexist.
 
 ## Dynamic Profile
 
@@ -44,7 +44,7 @@ const bytes = encodeBatch(records);
 
 - Field names sent once per batch
 - String interning across all records
-- Row batch (`row_batch`) or columnar batch (`col_batch`) selected by encoder
+- Dynamic row batch (`row_batch`), dynamic columnar batch (`col_batch`), or schema-aware `SCHEMA_BATCH` selected by encoder/profile
 
 **Size vs MessagePack** (same-shape records):
 
@@ -71,8 +71,9 @@ const bytes = encodeWithSchema(schema, value);
 
 - Field names not sent
 - Enum fields encode as bit indices
-- Range constraints enable bitpacking
-- Comparable to Protobuf density on single records
+- `BOUND_STREAM` binds one schema for consecutive compact record bodies
+- Enum, bool, and `range_bits` fields coalesce into compact bit groups
+- Comparable to Protobuf/Avro density on schema-fixed streams under equivalent framing assumptions
 
 **Use when:** payment messages, fixed RPC contracts, hot paths with stable structure.
 
@@ -128,7 +129,7 @@ Typical adoption path:
 1. Dynamic everywhere (drop-in MessagePack replacement)
 2. Batch on list/bulk endpoints
 3. Stateful on WebSocket products
-4. Bound on 2–3 latency-critical fixed messages
+4. Bound/`BOUND_STREAM` on 2–3 latency-critical fixed messages
 ```
 
 ## SDK entrypoints by profile

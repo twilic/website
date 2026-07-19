@@ -52,9 +52,35 @@ Twilic's advantage over MessagePack shrinks on one-shot, non-repeating payloads.
 
 ## Comparison with Benchmarks
 
-The [Benchmark](/benchmark) page shows throughput and payload size measurements for Twilic vs. MessagePack and JSON on representative workloads. In general:
+Pinned sizes from the [benchmark harness](/benchmark) (`@twilic/core` 3.1.0, Node.js 24, N-API). Byte counts are deterministic for these fixtures; try them live in the [Playground](/guide/playground).
 
-- Single-record encoding: Twilic ≈ MessagePack (within encoder overhead).
-- 256-record batch: Twilic is measurably smaller due to shape and key interning.
-- Columnar batch on typed data: Twilic is significantly smaller due to per-column codecs.
-- Stateful patch on hot object streams: Twilic can send only changed fields.
+### Dynamic vs MessagePack
+
+Homogeneous 256-record batch (`batch-homogeneous-256`):
+
+| Format                         |     Bytes |    vs MessagePack |
+| ------------------------------ | --------: | ----------------: |
+| Twilic Dynamic (`encodeBatch`) | **5,316** | **72.7% smaller** |
+| MessagePack                    |    19,505 |                 — |
+| JSON (UTF-8)                   |    28,202 |                 — |
+
+Single-record `single-small` is a tie: Twilic and MessagePack both encode to **140** bytes (JSON **180**). Twilic’s advantage appears when the same shape repeats.
+
+### Bound / Batch vs Protobuf / Avro
+
+`UserRecordV1` ×256, schema shared out of band ([v3 contract](/spec/v3#1813-benchmark-contract)):
+
+| Format                |     Bytes |       vs Protobuf |           vs Avro |
+| --------------------- | --------: | ----------------: | ----------------: |
+| Twilic `BOUND_STREAM` | **2,395** | **30.7%** smaller | **16.0%** smaller |
+| Twilic `SCHEMA_BATCH` |   **798** | **76.9%** smaller | **72.0%** smaller |
+| Protobuf stream       |     3,458 |                 — |                 — |
+| Avro raw stream       |     2,852 |                 — |                 — |
+
+- Single-record encoding: Twilic Dynamic ≈ MessagePack.
+- Homogeneous batches: Twilic Dynamic is substantially smaller than MessagePack via shape and key interning.
+- Schema-fixed streams: Twilic `BOUND_STREAM` beats schema-shared Protobuf/Avro raw streams on this fixture.
+- Tabular packs: Twilic `SCHEMA_BATCH` is the strongest size mode when a shared schema is available.
+- Stateful patch on hot object streams: Twilic can send only changed fields after the first full frame.
+
+Full tables, assumptions, and regenerate commands: [Benchmark](/benchmark).

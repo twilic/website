@@ -1,18 +1,19 @@
 # Benchmark
 
-This page summarizes the benchmark results from the Twilic benchmark harness. Current published SDK measurements use `@twilic/core` on Node.js 24 (N-API backend) against MessagePack and JSON baselines. v3 schema-aware comparisons must follow the [v3 benchmark contract](/spec/v3#1813-benchmark-contract).
+This page publishes **pinned** size results from the Twilic benchmark harness (`twilic/benchmark`) and explains how to regenerate them. Measurements use `@twilic/core` **3.1.0** on Node.js 24 with the **N-API** backend. v3 schema-aware comparisons follow the [v3 benchmark contract](/spec/v3#1813-benchmark-contract).
 
-For interactive size comparisons in the browser, see the [Playground](/guide/playground). For quick terminal benchmarks, use [`twilic bench`](/guide/cli#run-benchmarks). For fixture definitions (`single-small`, `batch-homogeneous-256`, `batch-mixed-256`, `patch-session`), see [Benchmark Fixtures](/benchmark/fixtures).
+Machine-local timing varies; **byte counts are deterministic** for these fixtures and are the numbers used in [Why Twilic](/guide/why) and [Comparison](/guide/comparison).
+
+For interactive size comparisons in the browser, see the [Playground](/guide/playground). For fixture definitions, see [Benchmark Fixtures](/benchmark/fixtures). Raw JSON: [`/benchmark-snapshot.json`](/benchmark-snapshot.json).
 
 ## Setup
-
-The benchmark harness lives in the `twilic/benchmark` repository. To run it yourself:
 
 ```bash
 git clone https://github.com/twilic/benchmark
 cd benchmark
 pnpm install
-pnpm bench
+pnpm --dir ../twilic-js build   # if local @twilic/core artifacts are stale
+pnpm bench -- --backend napi --time-ms 1500 --warmup-ms 500 --json-out results/pinned-snapshot.json
 ```
 
 Options:
@@ -27,77 +28,71 @@ pnpm bench -- --time-ms 3000 --warmup-ms 1000  # longer windows
 
 ## What Is Measured
 
-| Benchmark                 | Description                                     |
-| ------------------------- | ----------------------------------------------- |
-| Single record encode      | Encode one object with a representative schema  |
-| Single record decode      | Decode one Twilic payload                       |
-| 256-record batch encode   | Encode 256 same-shape records                   |
-| 256-record batch decode   | Decode a 256-record Twilic batch                |
-| MessagePack encode/decode | Baseline for single and batch                   |
-| JSON stringify/parse      | Baseline for single and batch                   |
-| State patch encode        | `encodePatch` on a hot object stream            |
-| Transport-JSON fast path  | `encodeTransportJson` / `decodeToTransportJson` |
+| Benchmark | Description |
+| --- | --- |
+| Dynamic sizes | `encode` / `encodeBatch` vs MessagePack, CBOR, BSON, JSON |
+| Bound stream | `encodeBoundStream` (`BOUND_STREAM`, `0x0F`) vs Protobuf/Avro raw streams |
+| Schema batch | `encodeBatchWithSchema` (`SCHEMA_BATCH`, `0x0E`) vs the same Protobuf/Avro streams |
+| Throughput | encode/decode ops/s via `tinybench` (hardware-dependent) |
 
-For v3 Bound and Batch comparisons, reports must disclose whether byte counts include schema id, count, column count, field ids, record framing, compression wrappers, dictionary ids, and dictionary distribution or amortization cost.
+## Dynamic vs MessagePack (pinned)
 
-## Payload Size Comparison
+Fixture set: `single-small`, `batch-homogeneous-256`, `batch-mixed-256`. No generic compression.
 
-Twilic's size advantage grows with repetition. Representative dynamic results on a 256-record batch with a 6-field object shape:
+| Payload | Twilic | MessagePack | CBOR | JSON | vs MessagePack | vs JSON |
+| --- | --: | --: | --: | --: | --: | --: |
+| `single-small` | 140 | 140 | 144 | 180 | 0.0% | 22.2% |
+| `batch-homogeneous-256` | **5,316** | 19,505 | 20,633 | 28,202 | **72.7%** | **81.2%** |
+| `batch-mixed-256` | 9,799 | 20,893 | 22,204 | 29,659 | 53.1% | 67.0% |
 
-| Format | Single record (bytes) | 256-record batch (bytes) | Ratio vs JSON |
-| --- | --- | --- | --- |
-| JSON | ~120 | ~30,720 | 1.0× |
-| MessagePack | ~80 | ~20,480 | 0.67× |
-| Twilic (Dynamic) | ~75 | ~8,960 | 0.29× |
-| Twilic (Columnar) | ~70 | ~4,200 | 0.14× |
+On one-shot values Twilic Dynamic matches MessagePack. On a homogeneous 256-record batch, key/shape interning cuts MessagePack size by about **73%**.
 
-_Numbers are approximate; exact values depend on schema and data distribution._
+## Bound / Batch vs Protobuf / Avro (pinned)
 
-The key insight: Twilic's advantage is **multiplicative** at batch scale. Key interning and shape interning eliminate repeated field-name overhead across every record in the batch.
+Fixture: `UserRecordV1` ×256 (`schema-example.json` style). **Schema shared out of band.**
 
-For v3 schema-fixed workloads, compare `BOUND_STREAM` against schema-shared Protobuf/Avro raw streams and `SCHEMA_BATCH` against repeated-message or Avro raw-stream baselines under equivalent framing assumptions. Twilic does not claim every arbitrary self-describing payload is smaller than schema-first formats.
+| Format | Bytes | Notes |
+| --- | --: | --- |
+| Twilic `BOUND_STREAM` | **2,395** | compact schema-bound record stream |
+| Twilic `SCHEMA_BATCH` | **798** | schema-order columnar batch |
+| Protobuf stream | 3,458 | concatenated messages, no length prefixes |
+| Avro raw stream | 2,852 | no OCF header |
 
-## Throughput
+| Twilic mode    |       vs Protobuf |           vs Avro |
+| -------------- | ----------------: | ----------------: |
+| `BOUND_STREAM` | **30.7%** smaller | **16.0%** smaller |
+| `SCHEMA_BATCH` | **76.9%** smaller | **72.0%** smaller |
 
-On a single record, Twilic and MessagePack have comparable throughput — both are significantly faster than JSON parse/stringify. Twilic's overhead vs MessagePack on a single record is encoder state initialization, which is amortized across a batch.
+Assumptions match §18.13: schema id / field layout are not re-sent inside the Protobuf/Avro streams; Twilic still carries an in-band schema id and framing for the chosen message kind.
 
-For the N-API backend on Node.js 24, typical throughput:
+## Throughput (same pinned run)
 
-| Operation               | Twilic (N-API)  | MessagePack     |
-| ----------------------- | --------------- | --------------- |
-| Single encode           | ~500k ops/s     | ~550k ops/s     |
-| Single decode           | ~480k ops/s     | ~530k ops/s     |
-| 256-record batch encode | ~8k batches/s   | ~3.5k batches/s |
-| 256-record batch decode | ~7.5k batches/s | ~3k batches/s   |
+Hardware-dependent; regenerate locally for CI claims. From the pinned N-API run:
 
-_Throughput numbers are illustrative; run the harness for your exact hardware._
+| Operation               |          Twilic |     MessagePack |
+| ----------------------- | --------------: | --------------: |
+| Single encode           |     ~440k ops/s |     ~519k ops/s |
+| Single decode           |     ~249k ops/s |     ~687k ops/s |
+| 256-record batch encode | ~9.6k batches/s | ~6.1k batches/s |
+
+Batch encode favors Twilic once interning amortizes; single-record decode still trails MessagePack on this path.
 
 ## Max Speed Tips
 
 - Use `--backend napi` on Node.js (highest throughput)
-- Use Node.js 24+ (project baseline, JIT-optimized)
+- Use Node.js 24+ (project baseline)
 - Increase run windows for stability: `--time-ms 3000 --warmup-ms 1000`
-- For hot paths: pre-serialize once with transport-JSON APIs, then use raw encode methods
-- Prefer `SCHEMA_BATCH` for shared-schema tabular datasets; use dynamic `col_batch` for schema-less regular datasets
+- Prefer `SCHEMA_BATCH` for shared-schema tabular datasets; use dynamic `encodeBatch` when no schema is available
 
 ## State Patch Performance
 
-On a hot object stream where 2 of 20 fields change per tick, `encodePatch` reduces payload size by 85–92% compared to re-encoding the full object. The patch overhead (patch header + changed field encoding) is small relative to the savings.
+On a hot object stream where a few fields change per tick, `encodePatch` sends only the delta after the first full frame. See the playground **Encoded sizes** view and harness `session-patch-hot` fixture.
 
-## Running the Full Suite
+## Regenerating the pinned snapshot
 
 ```bash
-# Full suite
-pnpm bench -- --mode full
-
-# Extended suite with all workloads
-pnpm bench -- --mode max
-
-# Twilic vs MessagePack only (no JSON rows)
-pnpm bench -- --twilic-vs-msgpack-only
-
-# WASM backend comparison
-pnpm bench -- --backend wasm --time-ms 2000
+pnpm bench -- --backend napi --time-ms 1500 --warmup-ms 500 \
+  --json-out results/pinned-snapshot.json
 ```
 
-Results are printed as formatted CLI tables with throughput (ops/sec) and payload size columns side by side.
+Copy size tables into this page and into [Why Twilic](/guide/why) when fixtures or codecs change. Keep `docs/public/benchmark-snapshot.json` on the website in sync.

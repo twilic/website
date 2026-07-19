@@ -7,7 +7,7 @@ The [Twilic Playground](https://twilic.github.io/playground/) is a browser app f
 Two views are available:
 
 1. **Encoded sizes** — the same fixture payloads as the [benchmark harness](/benchmark). Compares Twilic against MessagePack, CBOR, BSON, and JSON (UTF-8).
-2. **Schema-first** — compares Twilic Bound profile (`encodeWithSchema`) with Protobuf, Avro, FlatBuffers, and Apache Arrow IPC on schema-example style records.
+2. **Schema-first** — compares Twilic v3 `BOUND_STREAM` / `SCHEMA_BATCH` with Protobuf, Avro, FlatBuffers, and Apache Arrow IPC on schema-example style records.
 
 You can also paste custom JSON (a root object or array) to see how your own payload compares.
 

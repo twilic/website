@@ -79,17 +79,18 @@ const tx = {
 const bytes = encodeWithSchema(paymentSchema, tx);
 ```
 
-## Size comparison (single 6-field record)
+## Size comparison (pinned)
 
-| Format                 | Approx. size |
-| ---------------------- | ------------ |
-| JSON                   | ~120 bytes   |
-| MessagePack            | ~80 bytes    |
-| Twilic Dynamic         | ~75 bytes    |
-| Protobuf (with .proto) | ~45 bytes    |
-| Twilic Bound           | ~40–50 bytes |
+Single-record Dynamic vs MessagePack is a tie on `single-small` (both **140** bytes). For schema-fixed **batches**, use the pinned `UserRecordV1` ×256 numbers:
 
-For **batches**, `SCHEMA_BATCH` is the preferred v3 comparison point. It can beat Protobuf/Avro on homogeneous repeated records when schema-derived bit packing or column codecs apply, but byte counts must include equivalent schema/framing assumptions.
+| Format                       |     Bytes |
+| ---------------------------- | --------: |
+| Protobuf stream (schema OOB) |     3,458 |
+| Avro raw stream (schema OOB) |     2,852 |
+| Twilic `BOUND_STREAM`        | **2,395** |
+| Twilic `SCHEMA_BATCH`        |   **798** |
+
+Full assumptions and regenerate commands: [Benchmark](/benchmark).
 
 ## Enum encoding
 

@@ -29,10 +29,10 @@ Try fixture payloads interactively in the [Playground](/guide/playground).
 
 ### Where Twilic wins
 
-- **Size**: Twilic is consistently smaller. On a realistic 6-field object, Twilic encodes in 30–50% fewer bytes than JSON.
-- **Speed**: Binary parsing is faster than UTF-8 string tokenization. Twilic also skips key parsing entirely in shape mode.
-- **Repetition**: JSON sends field names verbatim every time. Twilic sends each field name once.
-- **Typed integers**: JSON represents `9007199254740993` as a 16-character string; Twilic encodes it in 8 bytes as `u64`.
+- **Size**: Twilic is smaller once structure repeats. On the pinned `batch-homogeneous-256` fixture, Twilic Dynamic is **81.2%** smaller than JSON and **72.7%** smaller than MessagePack ([Benchmark](/benchmark)).
+- **Speed**: Binary parsing is faster than UTF-8 string tokenization on batch workloads; Twilic also skips repeated key parsing in shape mode.
+- **Repetition**: JSON sends field names verbatim every time. Twilic sends each field name once per batch message.
+- **Typed integers**: JSON represents large integers as text; Twilic encodes them as compact binary widths / `bigint` in JS.
 - **Binary data**: JSON requires base64 encoding (~33% overhead); Twilic has native `bin` types.
 
 ### Migration path
@@ -51,18 +51,15 @@ MessagePack is Twilic's closest predecessor. Twilic is designed to be a strict i
 
 ### Where Twilic wins
 
-| Scenario | MessagePack | Twilic |
-| --- | --- | --- |
-| Single record | ~100% | ~100% (same) |
-| 10 records, same shape | 100% | ~60–70% |
-| 100 records, same shape | 100% | ~30–40% |
-| 1,000 records, same shape | 100% | ~20–30% |
-| Homogeneous int array (1k elements) | 100% | ~15–25% (with delta bitpack) |
-| Stateful stream (2/20 fields change) | 100% | ~10–15% (with state patch) |
+| Scenario                         |     MessagePack |      Twilic Dynamic |
+| -------------------------------- | --------------: | ------------------: |
+| `single-small` (pinned)          |    140 B (100%) |        140 B (100%) |
+| `batch-homogeneous-256` (pinned) | 19,505 B (100%) | **5,316 B (27.3%)** |
+| `batch-mixed-256` (pinned)       | 20,893 B (100%) | **9,799 B (46.9%)** |
 
-_Percentages relative to MessagePack size. Lower is smaller._
+_Pinned from [Benchmark](/benchmark) (`@twilic/core` 3.1.0 N-API). Lower percentage is smaller._
 
-The difference is purely structural: MessagePack repeats field names in every object; Twilic interns them.
+The difference is structural: MessagePack repeats field names in every object; Twilic interns them within the batch.
 
 ### Key behavioral difference
 
@@ -87,17 +84,17 @@ Protocol Buffers (protobuf) is the dominant schema-first binary format. It achie
 - **Stateful compression**: Protobuf has no state patch or session compression. Twilic's stateful profile can dramatically reduce payload on hot update streams.
 - **Gradual adoption**: You can start with Twilic Dynamic (no schema) and migrate to Bound Profile (schema-aware) incrementally, without changing the API.
 
-### Size comparison: single 6-field record
+### Size comparison: `UserRecordV1` ×256 (pinned)
 
-| Format                     | Size (approx.) |
-| -------------------------- | -------------- |
-| JSON                       | 120 bytes      |
-| MessagePack                | 80 bytes       |
-| Twilic Dynamic             | 75 bytes       |
-| Protobuf (with schema)     | 45 bytes       |
-| Twilic Bound (with schema) | 40–50 bytes    |
+| Format                         |                Size |
+| ------------------------------ | ------------------: |
+| Twilic Dynamic (`encodeBatch`) | see Dynamic section |
+| Protobuf stream (schema OOB)   |         3,458 bytes |
+| Avro raw stream (schema OOB)   |         2,852 bytes |
+| Twilic `BOUND_STREAM`          |     **2,395 bytes** |
+| Twilic `SCHEMA_BATCH`          |       **798 bytes** |
 
-For a **single record**, protobuf and Twilic Bound are comparable. For **batches**, Twilic `SCHEMA_BATCH` can win when columnar codecs compress repeated numeric or low-cardinality patterns that protobuf treats as independent values. Benchmark claims must disclose schema sharing, framing, and compression assumptions.
+For a **single record**, Protobuf and Twilic Bound are in the same ballpark. For **homogeneous batches**, Twilic `SCHEMA_BATCH` wins when columnar codecs compress repeated numeric or low-cardinality patterns that Protobuf treats as independent values. Full assumptions: [Benchmark](/benchmark).
 
 ## Twilic vs FlatBuffers / Cap'n Proto
 

@@ -48,10 +48,10 @@ All SDKs expose the same logical operations:
 
 ## JavaScript entrypoints
 
-| Import                  | Use                                                |
-| ----------------------- | -------------------------------------------------- |
-| `@twilic/core`          | `init`, `encode`, `decode`, `createSessionEncoder` |
-| `@twilic/core/advanced` | `encodeBatch`, `encodeWithSchema`, transport-JSON  |
+| Import | Use |
+| --- | --- |
+| `@twilic/core` | `init`, `encode`, `decode`, `createSessionEncoder` |
+| `@twilic/core/advanced` | `encodeBatch`, `encodeBoundStream`, `encodeBatchWithSchema`, transport-JSON |
 
 See [JavaScript Core API](/reference/javascript-core) and [Advanced API](/reference/javascript-advanced).
 

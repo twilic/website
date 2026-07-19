@@ -1,0 +1,63 @@
+{
+  "generatedAt": "2026-07-20",
+  "runtime": "napi",
+  "backend": "napi",
+  "sdk": "@twilic/core 3.1.0 (N-API)",
+  "node": "24",
+  "assumptions": {
+    "dynamic": "No generic compression. Fixtures from twilic/benchmark.",
+    "schema": "UserRecordV1 \u00d7256. Schema shared out of band. Protobuf: concatenated messages without length prefixes. Avro: raw record stream without OCF header. Twilic: BOUND_STREAM (0x0F) and SCHEMA_BATCH (0x0E)."
+  },
+  "sizes": [
+    {
+      "payload": "single-small",
+      "twilic": 140,
+      "msgpack": 140,
+      "cbor": 144,
+      "bson": 198,
+      "json": 180
+    },
+    {
+      "payload": "batch-homogeneous-256",
+      "twilic": 5316,
+      "msgpack": 19505,
+      "cbor": 20633,
+      "bson": 28241,
+      "json": 28202
+    },
+    {
+      "payload": "batch-mixed-256",
+      "twilic": 9799,
+      "msgpack": 20893,
+      "cbor": 22204,
+      "bson": 32956,
+      "json": 29659
+    },
+    {
+      "payload": "session-patch-hot (first)",
+      "twilic": 89,
+      "msgpack": 89,
+      "cbor": 93,
+      "bson": 120,
+      "json": 110
+    }
+  ],
+  "schemaSizes": [
+    {
+      "payload": "schema-user-record-256 (schema shared OOB)",
+      "twilicBoundStream": 2395,
+      "twilicSchemaBatch": 798,
+      "protobuf": 3458,
+      "avro": 2852
+    }
+  ],
+  "throughputOpsPerSec": {
+    "msgpack decode single-small": 686824,
+    "msgpack encode single-small": 519218,
+    "twilic encode single-small": 440264,
+    "twilic decode single-small": 249178,
+    "json stringify batch-homogeneous-256": 11465,
+    "twilic encode batch-homogeneous-256": 9590,
+    "msgpack encode batch-homogeneous-256": 6058
+  }
+}

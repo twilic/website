@@ -138,5 +138,6 @@ await init({ prefer: "wasm", wasmInput: wasmUrl });
 ## Related
 
 - [Fetch client](/integrations/fetch)
-- [Examples — API response](https://github.com/twilic/examples)
+- [Examples — HTTP Round-Trip](/guide/examples#http-round-trip)
+- [Examples — API response](https://github.com/twilic/examples/tree/main/api-response)
 - [Transport & Framing](/guide/transport-framing)

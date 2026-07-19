@@ -134,3 +134,4 @@ Each integration accepts an optional codec object with `encode` and `decode` fun
 - [JavaScript / TypeScript SDK](/sdks/js)
 - [Twilic CLI](/guide/cli) — encode and decode from the terminal
 - [Cookbook — API Response with Repeated Structure](/guide/cookbook#api-response-with-repeated-structure)
+- [Examples — HTTP Round-Trip](/guide/examples#http-round-trip) — Express / Hono / Fastify + fetch / Axios

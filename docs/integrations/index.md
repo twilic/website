@@ -85,7 +85,12 @@ app.get("/users", async (req, res) => {
 });
 ```
 
-The [examples repository](https://github.com/twilic/examples) demonstrates this with `@twilic/hono`.
+The [examples repository](https://github.com/twilic/examples) includes:
+
+- [api-response](https://github.com/twilic/examples/tree/main/api-response) — Batch GET size comparison
+- [http-roundtrip](https://github.com/twilic/examples/tree/main/http-roundtrip) — Express / Hono / Fastify + fetch / Axios POST echo
+
+See [Examples — HTTP Round-Trip](/guide/examples#http-round-trip).
 
 ## Related
 

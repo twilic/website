@@ -24,6 +24,7 @@ pnpm install
 | Example | Profile | Command |
 | --- | --- | --- |
 | [API response](#api-response) | Stateless Batch | `pnpm example:api-response` |
+| [HTTP round-trip](#http-round-trip) | Stateless Dynamic | `pnpm example:http-roundtrip` |
 | [WebSocket session](#websocket-session) | Stateful | `pnpm example:websocket:simulate` |
 | [Batch records](#batch-records) | Batch | `pnpm example:batch-records` |
 | [Telemetry](#telemetry) | Batch (`col_batch`) | `pnpm example:telemetry` |
@@ -57,7 +58,7 @@ pnpm example:api-response:client
 
 50 user records with 8 fields each. Field names are sent once; repeated strings like `"admin"` and `"us-east"` are interned. The server prints a size table on startup; the client compares Twilic vs JSON byte counts.
 
-The server uses [`@twilic/hono`](https://github.com/twilic/hono) for content negotiation and [`@twilic/fetch`](https://github.com/twilic/fetch) on the client.
+The server is a small Hono app that sets `Content-Type: application/vnd.twilic` on the batch response. The client uses [`@twilic/fetch`](https://github.com/twilic/fetch) plus `decode()` for the size comparison.
 
 ### When this fits
 
@@ -68,6 +69,45 @@ The server uses [`@twilic/hono`](https://github.com/twilic/hono) for content neg
 ::: tip Use stateless Dynamic or Batch profiles for HTTP. Stateful session compression requires an ordered stream and is not used here. :::
 
 See also: [Cookbook — API Response with Repeated Structure](/guide/cookbook#api-response-with-repeated-structure).
+
+## HTTP Round-Trip
+
+POST Twilic bodies with the official HTTP adapters — Express, Hono, or Fastify on the server; fetch or Axios on the client.
+
+**Profile:** Stateless Dynamic.
+
+### Run
+
+```bash
+# terminal 1 — pick one server
+pnpm example:http-roundtrip
+pnpm example:http-roundtrip:hono
+pnpm example:http-roundtrip:fastify
+
+# terminal 2 — pick one client
+pnpm example:http-roundtrip:client
+pnpm example:http-roundtrip:axios
+```
+
+### Endpoint
+
+| Route        | Format                                                 |
+| ------------ | ------------------------------------------------------ |
+| `POST /echo` | Twilic request and response (`application/vnd.twilic`) |
+
+### What it shows
+
+- Server: `twilicParser()` + `twilicSend` / `twilicResponse` / `twilicReply`
+- Client: `twilicFetchJson({ twilicBody })` or `createTwilicAxios` with `twilicBody`
+- Echo payload `{ ok, via, received }` so you can see which server handled the call
+
+### When this fits
+
+- Internal service-to-service APIs
+- Dropping Twilic into an existing Express / Hono / Fastify route
+- Pairing a Node server with a browser or Node client helper
+
+See also: [Web Integrations](/guide/web-integrations), [Integrations overview](/integrations/).
 
 ## WebSocket Session
 

@@ -136,3 +136,4 @@ await client.fetchJson("/test", { twilicBody: { ping: true } });
 - [Hono server](/integrations/hono)
 - [Axios client](/integrations/axios)
 - [JavaScript Core](/reference/javascript-core)
+- [Examples — HTTP Round-Trip](/guide/examples#http-round-trip)

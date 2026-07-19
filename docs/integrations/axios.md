@@ -112,3 +112,4 @@ client.interceptors.response.use(twilicResponseInterceptor(codec));
 
 - [Fetch client](/integrations/fetch)
 - [Internal APIs article](/guide/articles/internal-apis-without-protobuf-overhead)
+- [Examples — HTTP Round-Trip](/guide/examples#http-round-trip)

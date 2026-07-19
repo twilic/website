@@ -119,3 +119,4 @@ await app.register(twilicPlugin, {
 
 - [Express middleware](/integrations/express)
 - [Hono middleware](/integrations/hono)
+- [Examples — HTTP Round-Trip](/guide/examples#http-round-trip)

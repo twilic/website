@@ -116,3 +116,4 @@ app.use("/api", jsonRouter);
 
 - [Fastify plugin](/integrations/fastify)
 - [Web Integrations guide](/guide/web-integrations)
+- [Examples — HTTP Round-Trip](/guide/examples#http-round-trip)

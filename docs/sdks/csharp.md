@@ -1,6 +1,6 @@
 # C# SDK
 
-The C# library provides Twilic v2 dynamic encoding and decoding. Session and full protocol parity with the Java reference are still expanding; see the repository for current coverage.
+The C# library provides Twilic v2 dynamic encoding and decoding (v3 support pending). Session and full protocol parity with the Java reference are still expanding; see the repository for current coverage.
 
 ## Requirements
 

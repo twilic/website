@@ -1,6 +1,6 @@
 # Scala SDK
 
-The Scala library provides a full Twilic v2 implementation with dynamic, schema-aware, batch, and stateful encoding.
+The Scala library provides a full Twilic v2 implementation (v3 support pending) with dynamic, schema-aware, batch, and stateful encoding.
 
 ## Requirements
 

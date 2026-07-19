@@ -1,6 +1,6 @@
 # Lua SDK
 
-The Lua module provides a full Twilic v2 implementation with dynamic, schema-aware, batch, and session encoding.
+The Lua module provides a full Twilic v2 implementation (v3 support pending) with dynamic, schema-aware, batch, and session encoding.
 
 ## Requirements
 

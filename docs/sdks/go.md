@@ -1,6 +1,6 @@
 # Go SDK
 
-The Go module provides a full Twilic v2 implementation with dynamic, schema-aware, batch, and stateful encoding.
+The Go module provides a full Twilic v3 implementation with dynamic, schema-aware, batch, bound-stream, and stateful encoding.
 
 ## Requirements
 
@@ -60,7 +60,7 @@ func Decode(b []byte) (Value, error)
 
 ```go
 // Encode using Bound Profile
-func EncodeWithSchema(v Value, schema *Schema) ([]byte, error)
+func EncodeWithSchema(schema *Schema, v Value) ([]byte, error)
 ```
 
 ### Batch Encoding
@@ -68,6 +68,16 @@ func EncodeWithSchema(v Value, schema *Schema) ([]byte, error)
 ```go
 // Encode a slice of same-shape records
 func EncodeBatch(records []Value) ([]byte, error)
+```
+
+### v3 Schema Batch and Bound Stream
+
+```go
+// Schema-aware columnar batch (SCHEMA_BATCH, 0x0E)
+func EncodeBatchWithSchema(schema *Schema, values []Value) ([]byte, error)
+
+// Schema-bound compact record stream (BOUND_STREAM, 0x0F)
+func EncodeBoundStream(schema *Schema, values []Value) ([]byte, error)
 ```
 
 ### Session Encoder
@@ -106,7 +116,7 @@ twilic.NewMap(
 ```text
 twilic-go/
   export.go, version.go          # public import path
-  internal/core/                 # wire, model, codec, session, protocol, v2, tests
+  internal/core/                 # wire, model, codec, session, protocol, v2, v3 tests
   scripts/                       # Rust interop fixtures and smoke checks
   docs/
 ```

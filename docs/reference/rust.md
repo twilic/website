@@ -9,13 +9,13 @@
 
 ```toml
 [dependencies]
-twilic = "0.1"
+twilic = "3.1"
 ```
 
 ## High-level API
 
 ```rust
-use twilic::{encode, decode, encode_with_schema, encode_batch, create_session_encoder, Value};
+use twilic::{encode, decode, encode_with_schema, encode_batch, encode_bound_stream, encode_batch_with_schema, create_session_encoder, Value};
 
 // Stateless dynamic
 let bytes = encode(&value)?;
@@ -26,6 +26,10 @@ let bytes = encode_with_schema(&schema, &value)?;
 
 // Batch
 let bytes = encode_batch(&records)?;
+
+// v3 schema batch / bound stream
+let batch = encode_batch_with_schema(&schema, &records)?;
+let stream = encode_bound_stream(&schema, &records)?;
 
 // Session
 let mut enc = create_session_encoder(SessionOptions::default());

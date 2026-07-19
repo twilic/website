@@ -35,4 +35,4 @@ twilic bench --backend napi
 
 Full CLI documentation: [Twilic CLI](/guide/cli).
 
-Current tools are built on the published SDK line and target v2 payloads unless a tool explicitly advertises v3 support. For the current specification, see [v3 Reference Profile](/spec/v3).
+Current tools use `@twilic/core`, which targets the v3 wire line. For the current specification, see [v3 Reference Profile](/spec/v3).

@@ -1,6 +1,6 @@
 # Kotlin SDK
 
-The Kotlin/JVM library provides a full Twilic v2 implementation with dynamic, schema-aware, batch, and stateful encoding.
+The Kotlin/JVM library provides a full Twilic v2 implementation (v3 support pending) with dynamic, schema-aware, batch, and stateful encoding.
 
 ## Requirements
 

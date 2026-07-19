@@ -1,6 +1,6 @@
 # Python SDK
 
-The Python package provides a full Twilic v2 implementation with dynamic, schema-aware, batch, and stateful encoding.
+The Python package provides a full Twilic v2 implementation (v3 support pending) with dynamic, schema-aware, batch, and stateful encoding.
 
 ## Requirements
 

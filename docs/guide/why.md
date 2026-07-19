@@ -52,7 +52,7 @@ Twilic's advantage over MessagePack shrinks on one-shot, non-repeating payloads.
 
 ## Comparison with Benchmarks
 
-The [Benchmark](/benchmark) page shows throughput and payload size measurements for Twilic v2 vs. MessagePack and JSON on representative workloads. In general:
+The [Benchmark](/benchmark) page shows throughput and payload size measurements for Twilic vs. MessagePack and JSON on representative workloads. In general:
 
 - Single-record encoding: Twilic ≈ MessagePack (within encoder overhead).
 - 256-record batch: Twilic is measurably smaller due to shape and key interning.

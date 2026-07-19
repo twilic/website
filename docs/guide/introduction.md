@@ -56,7 +56,9 @@ Twilic follows six design principles.
 
 ## Current Version
 
-The current specification family is **v3**. v3 is a clean break from v2 for Bound Profile field/record-body payloads; Dynamic Profile may remain v2-compatible where tags are unchanged. The current published SDK line still targets v2 payloads unless an SDK explicitly advertises v3 support.
+The current specification family is **v3**. v3 is a clean break from v2 for Bound Profile field/record-body payloads; Dynamic Profile may remain v2-compatible where tags are unchanged.
+
+**v3 SDKs (default encode/decode):** [Rust](/sdks/rust), [Go](/sdks/go), [JavaScript](/sdks/js), and [Zig](/sdks/zig). Other published SDKs still target v2 payloads until their v3 support lands.
 
 - [v3 Specification](/spec/overview)
 - [v3 Reference Profile](/spec/v3)

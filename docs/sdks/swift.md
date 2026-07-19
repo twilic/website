@@ -1,6 +1,6 @@
 # Swift SDK
 
-The Swift package provides Twilic v2 encoding and decoding with codec spec vector tests. Session and full protocol APIs are under active development.
+The Swift package provides Twilic v2 encoding (v3 support pending) and decoding with codec spec vector tests. Session and full protocol APIs are under active development.
 
 ## Requirements
 

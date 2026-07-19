@@ -11,7 +11,7 @@ Twilic v3 defines three primary data profiles and one optional stateful profile.
 | **Bound** | Yes | No | Fixed message types, payment events, max density |
 | **Stateful** | No | Yes | WebSocket ticks, incremental entity sync |
 
-Published SDKs may still emit v2 payloads. For new spec-level work, use the [v3 reference profile](/spec/v3) and explicitly signal version/profile when v2 and v3 coexist.
+Rust, Go, JavaScript, and Zig emit v3 by default. Other published SDKs may still emit v2 payloads. For new spec-level work, use the [v3 reference profile](/spec/v3) and explicitly signal version/profile when v2 and v3 coexist.
 
 ## Dynamic Profile
 

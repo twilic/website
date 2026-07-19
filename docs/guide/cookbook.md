@@ -218,7 +218,7 @@ byte[] bytes = Twilic.encodeWithSchema(tx, schema);
 
 ### Pattern: Rust encoder → Go decoder
 
-Twilic's interoperability guarantee is version/profile scoped. Current published SDK payloads are v2-interoperable; v3 payloads require both sides to agree on v3 profile and negotiated extensions.
+Twilic's interoperability guarantee is version/profile scoped. Prefer matching wire lines: v3↔v3 among Rust, Go, JavaScript, and Zig, or v2↔v2 among the remaining SDKs. Mixed deployments require both sides to agree on version/profile and negotiated extensions.
 
 ```rust
 // Rust: produce bytes

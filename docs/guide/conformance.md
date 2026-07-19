@@ -1,6 +1,6 @@
 # Conformance & Testing
 
-Twilic conformance means any conforming encoder output decodes correctly on any conforming decoder for the same explicitly selected version and profile. The current specification family is [v3](/spec/v3); the current published SDK interop line remains v2. This guide explains how conformance is defined, tested, and validated in your own pipeline.
+Twilic conformance means any conforming encoder output decodes correctly on any conforming decoder for the same explicitly selected version and profile. The current specification family is [v3](/spec/v3). Rust, Go, JavaScript, and Zig are on the v3 interop line; other published SDKs remain on v2 until their v3 support lands. This guide explains how conformance is defined, tested, and validated in your own pipeline.
 
 ## Conformance definition
 
@@ -14,7 +14,7 @@ An implementation is **v3-interoperable** when it ([Spec §v3](/spec/v3)):
 6. Supports reference-profile `PLAIN` and `DIRECT_BITPACK` payload grammars
 7. Rejects unnegotiated stateful forms and unnegotiated extension codecs
 
-The current published SDK line is **v2-interoperable** when it ([Spec §v2](/spec/v2#interoperability)):
+The remaining published SDKs are **v2-interoperable** when they ([Spec §v2](/spec/v2#interoperability)):
 
 1. Encodes all Dynamic Profile values deterministically
 2. Decodes Dynamic, Batch, and stateless Bound messages correctly

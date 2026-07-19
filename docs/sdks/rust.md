@@ -1,6 +1,6 @@
 # Rust SDK
 
-The Rust crate is the canonical reference implementation for Twilic v2. It provides the highest performance and is the foundation for the JavaScript SDK (N-API and WASM builds).
+The Rust crate is the canonical reference implementation for Twilic v3. It provides the highest performance and is the foundation for the JavaScript SDK (N-API and WASM builds).
 
 ## Requirements
 
@@ -19,7 +19,7 @@ From crates.io (when published):
 
 ```toml
 [dependencies]
-twilic = "0.1"
+twilic = "3.1"
 ```
 
 ## Quick Start
@@ -72,7 +72,7 @@ pub enum Value {
 | `bool` | `Value::Bool` | - |
 | `u8`..`u64` | `Value::U8`..`Value::U64` | Encoder picks smallest width automatically |
 | `i8`..`i64` | `Value::I8`..`Value::I64` | - |
-| `f32` | `Value::F64` | Upcast — no `f32` tag in v2 |
+| `f32` | `Value::F64` | Upcast — no `f32` tag |
 | `f64` | `Value::F64` | - |
 | `String` / `&str` | `Value::String` | - |
 | `Vec<u8>` / `&[u8]` | `Value::Binary` | Raw bytes, no base64 |
@@ -96,7 +96,7 @@ pub fn decode(bytes: &[u8]) -> Result<Value, TwilicError>
 
 ```rust
 // Encode using Bound Profile with a shared schema
-pub fn encode_with_schema(value: &Value, schema: &Schema) -> Result<Vec<u8>, TwilicError>
+pub fn encode_with_schema(schema: &Schema, value: &Value) -> Result<Vec<u8>, TwilicError>
 ```
 
 ### Batch Encoding
@@ -104,6 +104,16 @@ pub fn encode_with_schema(value: &Value, schema: &Schema) -> Result<Vec<u8>, Twi
 ```rust
 // Encode a slice of same-shape records as row_batch or col_batch
 pub fn encode_batch(records: &[Value]) -> Result<Vec<u8>, TwilicError>
+```
+
+### v3 Schema Batch and Bound Stream
+
+```rust
+// Schema-aware columnar batch (SCHEMA_BATCH, 0x0E)
+pub fn encode_batch_with_schema(schema: &Schema, values: &[Value]) -> Result<Vec<u8>>
+
+// Schema-bound compact record stream (BOUND_STREAM, 0x0F)
+pub fn encode_bound_stream(schema: &Schema, values: &[Value]) -> Result<Vec<u8>>
 ```
 
 ### Session Encoder

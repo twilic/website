@@ -1,10 +1,10 @@
 # Zig SDK
 
-The Zig package provides a full Twilic v2 implementation with dynamic, schema-aware, batch, and session encoding.
+The Zig package provides a full Twilic v3 implementation with Dynamic, Bound, Batch, and Stateful profiles, including `encodeBoundStream` and `encodeBatchWithSchema`.
 
 ## Requirements
 
-- Zig 0.15.2 (minimum 0.15.0)
+- Zig 0.16.0 (minimum `0.16.0`)
 
 ## Install
 
@@ -84,6 +84,16 @@ pub fn SessionEncoder.encodeWithSchema(self: *SessionEncoder, value: Value, sche
 ```zig
 // Encode a slice of same-shape records
 pub fn SessionEncoder.encodeBatch(self: *SessionEncoder, records: []Value) ![]u8
+```
+
+### v3 Schema Batch and Bound Stream
+
+```zig
+// Schema-aware columnar batch (SCHEMA_BATCH, 0x0E)
+pub fn encodeBatchWithSchema(allocator: Allocator, schema: Schema, values: []const Value) ![]u8
+
+// Schema-bound compact record stream (BOUND_STREAM, 0x0F)
+pub fn encodeBoundStream(allocator: Allocator, schema: Schema, values: []const Value) ![]u8
 ```
 
 ### Session Encoder

@@ -1,18 +1,19 @@
 # Interoperability
 
-Twilic interoperability requires both sides to agree on version and profile. The current specification family is v3; the current published SDK interop line is v2.
+Twilic interoperability requires both sides to agree on version and profile. The current specification family is v3. Rust, Go, JavaScript, and Zig are on the v3 interop line; other published SDKs remain on v2 until their v3 support lands.
 
 ## The interoperability contract
 
 ```text
-Rust encoder  →  [bytes]  →  Go decoder     ✓
-Python batch  →  [bytes]  →  JS decode       ✓
-JS stateful   →  [bytes]  →  Rust session    ✓ (with matching session state)
+Rust encoder  →  [bytes]  →  Go decoder     ✓ (v3)
+JS encoder    →  [bytes]  →  Zig decoder    ✓ (v3)
+Python batch  →  [bytes]  →  Java decode    ✓ (v2)
+JS stateful   →  [bytes]  →  Rust session   ✓ (with matching session state and wire line)
 ```
 
 Requirements:
 
-- Both sides implement the same Twilic version/profile (`v3` for new spec-level work, `v2` for current published SDK payloads)
+- Both sides implement the same Twilic version/profile (`v3` among Rust/Go/JS/Zig, `v2` among the remaining SDKs, or an explicitly negotiated mix)
 - Same profile used (Dynamic decodes Dynamic; session patches need session decoder)
 - Field maps use **string keys** for cross-language stability
 

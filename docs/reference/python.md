@@ -1,6 +1,6 @@
 # Python API Reference
 
-Native Python implementation of Twilic v2, API-compatible with the Go and Rust reference encoders.
+Native Python implementation of Twilic v2 (v3 support pending). Dynamic Profile remains largely wire-compatible with the Go and Rust encoders where tags are unchanged; Bound/Batch v3 forms require a v3 SDK.
 
 **Package:** `twilic`  
 **Source:** [github.com/twilic/twilic-python](https://github.com/twilic/twilic-python)

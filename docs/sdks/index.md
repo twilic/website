@@ -1,6 +1,6 @@
 # SDKs
 
-Twilic has production-ready implementations in eighteen languages. The current published SDK line targets v2 payloads and shares a consistent API surface; the current specification family is [v3](/spec/v3).
+Twilic has production-ready implementations in eighteen languages. The current specification family is [v3](/spec/v3). Rust, Go, JavaScript, and Zig ship v3 by default; other SDKs remain on the v2 interop line until their v3 support lands. All SDKs share a consistent API surface.
 
 ## Documentation
 
@@ -13,26 +13,26 @@ Twilic has production-ready implementations in eighteen languages. The current p
 
 ## Available SDKs
 
-| Language | Package | Requirements |
-| --- | --- | --- |
-| [Rust](/sdks/rust) | `twilic` (crates.io) | Rust stable (edition 2024) |
-| [Go](/sdks/go) | `github.com/twilic/twilic-go` | Go 1.22+ |
-| [Python](/sdks/python) | `twilic` (PyPI) | Python 3.12+ |
-| [JavaScript / TypeScript](/sdks/js) | `@twilic/core` | Node.js 24+ / WASM |
-| [Java](/sdks/java) | `io.twilic` | Java 21+ |
-| [Scala](/sdks/scala) | `io.twilic` (GitHub) | Java 21+ / Scala 3.3+ |
-| [Ruby](/sdks/ruby) | `twilic` (RubyGems) | Ruby 3.3+ |
-| [R](/sdks/r) | `twilic` (GitHub) | R 4.4+ |
-| [Zig](/sdks/zig) | `twilic` (build.zig.zon) | Zig 0.15.2+ |
-| [PHP](/sdks/php) | `twilic/twilic` (GitHub) | PHP 8.3+ |
-| [Kotlin](/sdks/kotlin) | `io.twilic:twilic` (GitHub) | JDK 21+ |
-| [Dart](/sdks/dart) | `twilic` (GitHub) | Dart SDK 3.5+ |
-| [Elixir](/sdks/elixir) | `:twilic` (GitHub) | Elixir 1.19+ / OTP 27+ |
-| [Lua](/sdks/lua) | `twilic` (GitHub / LuaRocks) | Lua 5.4 |
-| [C](/sdks/c) | `twilic-c` (GitHub) | CMake 3.16+ / C11 |
-| [C++](/sdks/cpp) | `twilic-cpp` (GitHub) | CMake 3.16+ / C++17 |
-| [C#](/sdks/csharp) | `Twilic` (GitHub) | .NET 8 SDK |
-| [Swift](/sdks/swift) | `Twilic` (SPM) | Swift 5.9+ |
+| Language | Package | Wire line | Requirements |
+| --- | --- | --- | --- |
+| [Rust](/sdks/rust) | `twilic` (crates.io) | **v3** | Rust stable (edition 2024) |
+| [Go](/sdks/go) | `github.com/twilic/twilic-go` | **v3** | Go 1.22+ |
+| [JavaScript / TypeScript](/sdks/js) | `@twilic/core` | **v3** | Node.js 24+ / WASM |
+| [Zig](/sdks/zig) | `twilic` (build.zig.zon) | **v3** | Zig 0.16.0+ |
+| [Python](/sdks/python) | `twilic` (PyPI) | v2 | Python 3.12+ |
+| [Java](/sdks/java) | `io.twilic` | v2 | Java 21+ |
+| [Scala](/sdks/scala) | `io.twilic` (GitHub) | v2 | Java 21+ / Scala 3.3+ |
+| [Ruby](/sdks/ruby) | `twilic` (RubyGems) | v2 | Ruby 3.3+ |
+| [R](/sdks/r) | `twilic` (GitHub) | v2 | R 4.4+ |
+| [PHP](/sdks/php) | `twilic/twilic` (GitHub) | v2 | PHP 8.3+ |
+| [Kotlin](/sdks/kotlin) | `io.twilic:twilic` (GitHub) | v2 | JDK 21+ |
+| [Dart](/sdks/dart) | `twilic` (GitHub) | v2 | Dart SDK 3.5+ |
+| [Elixir](/sdks/elixir) | `:twilic` (GitHub) | v2 | Elixir 1.19+ / OTP 27+ |
+| [Lua](/sdks/lua) | `twilic` (GitHub / LuaRocks) | v2 | Lua 5.4 |
+| [C](/sdks/c) | `twilic-c` (GitHub) | v2 | CMake 3.16+ / C11 |
+| [C++](/sdks/cpp) | `twilic-cpp` (GitHub) | v2 | CMake 3.16+ / C++17 |
+| [C#](/sdks/csharp) | `Twilic` (GitHub) | v2 | .NET 8 SDK |
+| [Swift](/sdks/swift) | `Twilic` (SPM) | v2 | Swift 5.9+ |
 
 ## Common API Surface
 
@@ -61,4 +61,4 @@ The [JavaScript SDK](/sdks/js) is built on the Rust implementation via N-API and
 
 ## Interoperability
 
-All published SDKs are tested against shared binary fixtures. Any v2 encoder output decodes in any v2 SDK. See [Interop guide](/guide/interop).
+v3 SDKs (Rust, Go, JavaScript, Zig) interoperate on the v3 reference profile, including `BOUND_STREAM` and `SCHEMA_BATCH`. v2 SDKs interoperate on the v2 fixture line. Mix v2 and v3 only when both sides agree on version and profile. See [Interop guide](/guide/interop).

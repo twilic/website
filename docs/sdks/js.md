@@ -1,6 +1,6 @@
 # JavaScript / TypeScript SDK
 
-The JavaScript SDK provides Twilic v2 encoding with two backends and two package entrypoints.
+The JavaScript SDK provides Twilic v3 encoding with two backends and two package entrypoints.
 
 - **Node.js:** N-API native addon — maximum throughput
 - **Browser / edge:** WebAssembly — runs anywhere WASM is supported
@@ -59,6 +59,21 @@ import { init, encodeBatch, decode } from "@twilic/core/advanced";
 await init();
 
 const bytes = encodeBatch(records); // same-shape array
+```
+
+## v3 schema batch and bound stream
+
+```ts
+import {
+  init,
+  encodeBatchWithSchema,
+  encodeBoundStream,
+} from "@twilic/core/advanced";
+
+await init();
+
+const batch = encodeBatchWithSchema(schema, records);
+const stream = encodeBoundStream(schema, records);
 ```
 
 ## Session encoding

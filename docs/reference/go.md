@@ -1,6 +1,6 @@
 # Go API Reference
 
-Go implementation of Twilic v2 with full session, batch, and low-level codec support.
+Go implementation of Twilic v3 with full session, batch, bound-stream, and low-level codec support.
 
 **Module:** `github.com/twilic/twilic-go`  
 **Source:** [github.com/twilic/twilic-go](https://github.com/twilic/twilic-go)
@@ -22,6 +22,10 @@ restored, err := twilic.Decode(bytes)
 
 // Batch
 bytes, err := twilic.EncodeBatch(records)
+
+// v3 schema batch / bound stream
+batch, err := twilic.EncodeBatchWithSchema(schema, records)
+stream, err := twilic.EncodeBoundStream(schema, records)
 
 // Session
 enc := twilic.NewSessionEncoder(twilic.SessionOptions{})

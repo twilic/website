@@ -69,7 +69,7 @@ For long-lived HTTP/2 or WebSocket streams between services, pair **Stateful Pro
 
 ### Polyglot microservices
 
-Twilic v2 interoperability: a Rust producer and Go consumer exchange bytes without a shared schema file in Dynamic mode. Platform standards can mandate:
+Twilic interoperability: a Rust producer and Go consumer exchange bytes without a shared schema file in Dynamic mode. Platform standards can mandate:
 
 - `Content-Type: application/vnd.twilic` on internal east-west traffic
 - Batch encoding for any response with ≥ N same-shape records

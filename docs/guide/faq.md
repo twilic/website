@@ -30,6 +30,10 @@ Stateful Profile is not appropriate for HTTP request/response because there is n
 
 Twilic is a binary format. There is no normative text representation. For debugging, decode to the value tree and serialize to JSON for inspection. The SDKs provide `decode` → standard value tree → JSON serialization as a standard pattern.
 
+### Can Twilic record AI / LLM streams?
+
+Yes. [Twilic AI](/ai/) records streaming LLM and agent runs as compact `.twai` sessions. Use `@twilic/ai` plus optional adapters (`@twilic/ai-openai`, `@twilic/ai-sdk`, `@twilic/ai-agents`), and inspect or replay with `twilic ai` on the [CLI](/guide/cli#ai).
+
 ---
 
 ## Encoding

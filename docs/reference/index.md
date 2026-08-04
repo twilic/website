@@ -22,6 +22,16 @@ Complete API documentation for Twilic SDKs, integration packages, and tooling. U
 | [`@twilic/fastify`](/integrations/fastify) | Fastify plugin and reply decorator |
 | [`@twilic/axios`](/integrations/axios) | Axios instance with interceptors |
 
+### Twilic AI
+
+| Package | Description |
+| --- | --- |
+| [Overview](/ai/) | Record, replay, and inspect AI sessions |
+| [`@twilic/ai`](/ai/core) | Core recorder, `.twai` codec, replay, inspect, diff |
+| [`@twilic/ai-openai`](/ai/openai) | OpenAI Responses API normalization |
+| [`@twilic/ai-sdk`](/ai/ai-sdk) | Vercel AI SDK transport + recorder |
+| [`@twilic/ai-agents`](/ai/agents) | Agents SDK tracing processor |
+
 ### Native SDKs
 
 | Language | Reference                                                   |
@@ -60,6 +70,9 @@ Long-lived stream with incremental updates?
 
 HTTP API?
   → Integration package + stateless Dynamic or Batch only
+
+AI stream / agent run?
+  → @twilic/ai (+ adapter) → .twai session; twilic ai inspect / replay
 
 Debugging wire bytes?
   → Twilic CLI decode, or decodeToTransportJson() (advanced)

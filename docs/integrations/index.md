@@ -97,3 +97,4 @@ See [Examples — HTTP Round-Trip](/guide/examples#http-round-trip).
 - [Transport & Framing](/guide/transport-framing)
 - [JavaScript Core API](/reference/javascript-core)
 - [Web Integrations guide](/guide/web-integrations)
+- [Twilic AI](/ai/) — LLM / agent session recording (separate from HTTP adapters)

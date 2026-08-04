@@ -49,6 +49,7 @@ Twilic follows six design principles.
 | [Quick Start](/guide/quick-start) | Install an SDK and encode your first value |
 | [API Reference](/reference/) | Function signatures for `@twilic/core`, Rust, Python, Go |
 | [Integrations](/integrations/) | Hono, Express, Fastify, Fetch, Axios |
+| [Twilic AI](/ai/) | Record and replay LLM / agent sessions as `.twai` |
 | [Encoding Profiles](/guide/encoding-profiles) | Dynamic, Batch, Bound, Stateful |
 | [Cookbook](/guide/cookbook) | Telemetry, WebSocket, API batch, sensor data |
 | [Business Use Cases](/guide/business-use-cases) | Cache, telemetry, internal APIs, streaming |

@@ -85,6 +85,7 @@ export default withMermaid(
           items: [
             { text: "API Reference", link: "/reference/" },
             { text: "Integrations", link: "/integrations/" },
+            { text: "Twilic AI", link: "/ai/" },
             { text: "SDKs", link: "/sdks/" },
           ],
         },
@@ -102,6 +103,7 @@ export default withMermaid(
           items: [
             { text: "Overview", link: "/tools/" },
             { text: "CLI", link: "/guide/cli" },
+            { text: "Twilic AI", link: "/ai/" },
             { text: "Playground", link: "/guide/playground" },
             { text: "Benchmark", link: "/benchmark" },
           ],
@@ -117,6 +119,7 @@ export default withMermaid(
               { text: "Why Twilic?", link: "/guide/why" },
               { text: "Quick Start", link: "/guide/quick-start" },
               { text: "Web Integrations", link: "/guide/web-integrations" },
+              { text: "Twilic AI", link: "/ai/" },
             ],
           },
           {
@@ -226,6 +229,20 @@ export default withMermaid(
             ],
           },
         ],
+        "/ai/": [
+          {
+            text: "Twilic AI",
+            items: [
+              { text: "Overview", link: "/ai/" },
+              { text: "@twilic/ai", link: "/ai/core" },
+              { text: "@twilic/ai-openai", link: "/ai/openai" },
+              { text: "@twilic/ai-sdk", link: "/ai/ai-sdk" },
+              { text: "@twilic/ai-agents", link: "/ai/agents" },
+              { text: ".twai format", link: "/ai/format" },
+              { text: "CLI ai commands", link: "/guide/cli#ai" },
+            ],
+          },
+        ],
         "/guide/articles/": [
           {
             text: "Articles",
@@ -283,6 +300,7 @@ export default withMermaid(
             items: [
               { text: "Overview", link: "/tools/" },
               { text: "Twilic CLI", link: "/guide/cli" },
+              { text: "Twilic AI", link: "/ai/" },
               { text: "Playground", link: "/guide/playground" },
               { text: "Examples", link: "/guide/examples" },
               { text: "Benchmark", link: "/benchmark" },

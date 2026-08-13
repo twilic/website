@@ -13,7 +13,7 @@ hero:
   text: Compact binary format for structured data
   tagline: MessagePack-like usability. Decisively smaller on repeated structure, keys, strings, and homogeneous arrays.
   image:
-    src: /favicon.svg
+    src: /mark.svg
   actions:
     - theme: brand
       text: Get Started

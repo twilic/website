@@ -93,7 +93,8 @@ website/
     benchmark.md
     public/
       favicon.svg
-      wordmark.svg
+      logo.svg
+      mark.svg
   .github/
     ISSUE_TEMPLATE/      # bug report, feature request
     workflows/           # CI, commitlint, PR checks, invisible-chars

@@ -59,7 +59,7 @@ export default withMermaid(
 
     head: [
       ["link", { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" }],
-      ["meta", { name: "theme-color", content: "#36A9F8" }],
+      ["meta", { name: "theme-color", content: "#FA5D19" }],
       ["meta", { property: "og:type", content: "website" }],
       ["meta", { property: "og:site_name", content: "Twilic" }],
       ["meta", { name: "twitter:card", content: "summary" }],

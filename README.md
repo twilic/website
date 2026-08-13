@@ -92,9 +92,12 @@ website/
       swift.md
     benchmark.md
     public/
+      apple-touch-icon.png
+      favicon-32.png
       favicon.svg
       logo.svg
       mark.svg
+      og.png
   .github/
     ISSUE_TEMPLATE/      # bug report, feature request
     workflows/           # CI, commitlint, PR checks, invisible-chars

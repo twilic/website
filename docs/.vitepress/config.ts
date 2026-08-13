@@ -4,6 +4,7 @@ import llmstxt from "vitepress-plugin-llms";
 import { minify } from "html-minifier-terser";
 
 const SITE_TITLE = "Twilic";
+const SITE_ORIGIN = "https://twilic.dev";
 const DEFAULT_TITLE_TEMPLATE = ":title — Twilic";
 
 function resolvePageTitle(pageData: PageData): string {
@@ -58,11 +59,34 @@ export default withMermaid(
     cleanUrls: true,
 
     head: [
+      [
+        "link",
+        {
+          rel: "apple-touch-icon",
+          href: "/apple-touch-icon.png",
+          sizes: "180x180",
+        },
+      ],
+      [
+        "link",
+        {
+          rel: "icon",
+          href: "/favicon-32.png",
+          type: "image/png",
+          sizes: "32x32",
+        },
+      ],
       ["link", { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" }],
       ["meta", { name: "theme-color", content: "#FA5D19" }],
       ["meta", { property: "og:type", content: "website" }],
       ["meta", { property: "og:site_name", content: "Twilic" }],
+      ["meta", { property: "og:image", content: `${SITE_ORIGIN}/og.png` }],
+      ["meta", { property: "og:image:type", content: "image/png" }],
+      ["meta", { property: "og:image:width", content: "1200" }],
+      ["meta", { property: "og:image:height", content: "1200" }],
+      ["meta", { property: "og:image:alt", content: "Twilic" }],
       ["meta", { name: "twitter:card", content: "summary" }],
+      ["meta", { name: "twitter:image", content: `${SITE_ORIGIN}/og.png` }],
     ],
 
     transformPageData(pageData) {

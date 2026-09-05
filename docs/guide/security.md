@@ -15,7 +15,7 @@ Twilic belongs in the **trusted → boundary** zone. Keep **untrusted → bounda
 
 ## Decode limits
 
-All v2 decoders enforce safety limits. See [Errors & Limits](/reference/errors-and-limits).
+The current source adds limits to the reader, collection and compressed-vector paths reviewed in the language implementations. Limits and supported formats differ by API; this does not imply that every historical release or every backend has the same protections. See [Errors & Limits](/reference/errors-and-limits) for the source-level scope and compatibility changes.
 
 | Limit        | Protects against                                |
 | ------------ | ----------------------------------------------- |
@@ -44,9 +44,7 @@ Always cap payload size **before** decode:
 ```ts
 const MAX_BODY = 1_048_576; // 1 MiB
 
-app.post("/data", twilicParser(), (req, res) => {
-  // enforce at reverse proxy or middleware before parser
-});
+app.post("/data", twilicParser({ limit: MAX_BODY }), handler);
 ```
 
 ## Untrusted input rules

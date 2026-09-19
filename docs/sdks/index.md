@@ -16,7 +16,7 @@ Twilic has production-ready implementations in eighteen languages. The current s
 | Language | Package | Wire line | Requirements |
 | --- | --- | --- | --- |
 | [Rust](/sdks/rust) | `twilic` (crates.io) | **v3** | Rust stable (edition 2024) |
-| [Go](/sdks/go) | `github.com/twilic/twilic-go` | **v3** | Go 1.22+ |
+| [Go](/sdks/go) | `github.com/twilic/twilic/runtimes/go/v3` | **v3** | Go 1.22+ |
 | [JavaScript / TypeScript](/sdks/js) | `@twilic/core` | **v3** | Node.js 24+ / WASM |
 | [Zig](/sdks/zig) | `twilic` (build.zig.zon) | **v3** | Zig 0.16.0+ |
 | [Python](/sdks/python) | `twilic` (PyPI) | v2 | Python 3.12+ |

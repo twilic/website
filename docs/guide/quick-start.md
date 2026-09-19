@@ -10,7 +10,7 @@ Add to `Cargo.toml`:
 
 ```toml
 [dependencies]
-twilic = { git = "https://github.com/twilic/twilic-rust.git" }
+twilic = { git = "https://github.com/twilic/twilic.git" }
 ```
 
 Encode and decode a value:
@@ -40,7 +40,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 Install:
 
 ```bash
-go get github.com/twilic/twilic-go
+go get github.com/twilic/twilic/runtimes/go/v3
 ```
 
 Encode and decode a value:
@@ -50,7 +50,7 @@ package main
 
 import (
     "fmt"
-    twilic "github.com/twilic/twilic-go"
+    twilic "github.com/twilic/twilic/runtimes/go/v3"
 )
 
 func main() {

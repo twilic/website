@@ -75,7 +75,7 @@ Within a session, the encoder:
 3. Assigns a `dict_id` and transports the dictionary profile to the decoder
 4. Subsequent messages reference `dict_id` + compressed block
 
-Fresh decoders receive the dictionary profile through the control stream before any `dict_id` reference is decoded. Invalid hash or version mismatch is rejected — see conformance tests in twilic-rust.
+Fresh decoders receive the dictionary profile through the control stream before any `dict_id` reference is decoded. Invalid hash or version mismatch is rejected — see conformance tests in `runtimes/rust`.
 
 ## Dictionary scope
 

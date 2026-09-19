@@ -35,12 +35,12 @@ export default app;
 
 ## WASM bundling with Vite / Wrangler
 
-The [playground](https://github.com/twilic/playground) and [twilic-js](https://github.com/twilic/twilic-js) repos show the production-tested pattern:
+The [playground](https://github.com/twilic/playground) and [`@twilic/core`](https://github.com/twilic/twilic/tree/main/runtimes/javascript) sources show the production-tested pattern:
 
 ### 1. Sync WASM artifacts
 
 ```bash
-# Copies twilic-js/wasm/pkg → your project's wasm/pkg
+# Copies twilic/runtimes/javascript/wasm/pkg → your project's wasm/pkg
 pnpm sync-wasm
 ```
 
@@ -153,7 +153,7 @@ const data = await twilicFetchJson("https://api.example.com/users", {
 | `init()` per request     | Avoid — re-initializes WASM every time            |
 | Batch encoding           | Amortizes encoder overhead across records         |
 
-Measure bundle size with `@twilic/core` CI tooling (`twilic-js/scripts/measure-bundle.mjs`).
+Measure bundle size with `@twilic/core` CI tooling (`twilic/runtimes/javascript/scripts/measure-bundle.mjs`).
 
 ## GitHub Pages / static hosting
 
@@ -176,8 +176,8 @@ GITHUB_PAGES=true pnpm build
 ## Local development
 
 ```bash
-# Terminal 1 — build twilic-js WASM first
-cd twilic-js && pnpm build:wasm && pnpm build:ts
+# Terminal 1 — build @twilic/core WASM first
+cd twilic/runtimes/javascript && pnpm build:wasm && pnpm build:ts
 
 # Terminal 2 — your edge app
 cd your-app && pnpm dev

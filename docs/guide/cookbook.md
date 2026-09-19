@@ -110,7 +110,7 @@ package main
 
 import (
     "net/http"
-    twilic "github.com/twilic/twilic-go"
+    twilic "github.com/twilic/twilic/runtimes/go/v3"
     "github.com/gorilla/websocket"
 )
 
@@ -235,7 +235,7 @@ std::fs::write("event.twl", &bytes)?;
 
 ```go
 // Go: consume bytes
-import twilic "github.com/twilic/twilic-go"
+import twilic "github.com/twilic/twilic/runtimes/go/v3"
 import "os"
 
 data, _ := os.ReadFile("event.twl")

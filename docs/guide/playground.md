@@ -21,17 +21,16 @@ For throughput numbers (encode/decode ops per second), use the [benchmark harnes
 
 ## Run locally
 
-The playground depends on a sibling [`twilic-js`](https://github.com/twilic/twilic-js) checkout:
+The playground depends on a sibling [`@twilic/core`](https://github.com/twilic/twilic/tree/main/runtimes/javascript) checkout:
 
 ```text
 your-workspace/
-  twilic-js/
-  twilic-rust/
+  twilic/
   playground/
 ```
 
 ```bash
-cd ../twilic-js
+cd ../twilic/runtimes/javascript
 pnpm install
 pnpm build:wasm
 pnpm build:ts

@@ -1,9 +1,9 @@
 # Rust API Reference
 
-`twilic-rust` is the reference implementation. All other SDKs are built from or tested against this crate.
+The Rust runtime under `runtimes/rust` is the reference implementation. All other SDKs are built from or tested against this crate.
 
 **Crate:** `twilic`  
-**Source:** [github.com/twilic/twilic-rust](https://github.com/twilic/twilic-rust)
+**Source:** [github.com/twilic/twilic/tree/main/runtimes/rust](https://github.com/twilic/twilic/tree/main/runtimes/rust)
 
 ## Install
 
@@ -163,7 +163,7 @@ See [Errors & Limits](/reference/errors-and-limits).
 ## Project layout
 
 ```text
-twilic-rust/src/
+runtimes/rust/src/
   lib.rs       # Public re-exports
   v2.rs        # High-level encode/decode
   model.rs     # Value, Message, Schema, PatchOpcode

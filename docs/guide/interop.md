@@ -46,13 +46,13 @@ The Twilic monorepo maintains cross-language conformance fixtures. Run interop c
 
 ```bash
 # Python
-cd twilic-python && ./scripts/check-interop.sh
+cd twilic/runtimes/python && ./scripts/check-interop.sh
 
 # Rust (reference)
-cd twilic-rust && cargo test
+cd twilic/runtimes/rust && cargo test
 
 # JavaScript
-cd twilic-js && pnpm test
+cd twilic/runtimes/javascript && pnpm test
 ```
 
 ## Profile-specific interop

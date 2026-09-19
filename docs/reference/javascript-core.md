@@ -3,7 +3,7 @@
 The main JavaScript/TypeScript entrypoint. Provides stateless Dynamic profile encoding, session encoder creation, and runtime initialization for Node.js (N-API) and browser (WASM) backends.
 
 **Package:** `@twilic/core`  
-**Source:** [github.com/twilic/twilic-js](https://github.com/twilic/twilic-js)
+**Source:** [github.com/twilic/twilic/tree/main/runtimes/javascript](https://github.com/twilic/twilic/tree/main/runtimes/javascript)
 
 For batch encoding, schema-aware encoding, and transport-JSON helpers, use [`@twilic/core/advanced`](/reference/javascript-advanced).
 

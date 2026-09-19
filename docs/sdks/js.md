@@ -139,8 +139,8 @@ See [Integrations overview](/integrations/) and [Web Integrations guide](/guide/
 ## Build from source
 
 ```bash
-git clone https://github.com/twilic/twilic-js.git
-cd twilic-js
+git clone https://github.com/twilic/twilic.git
+cd twilic/runtimes/javascript
 pnpm install
 pnpm build
 ```
@@ -149,4 +149,4 @@ Build steps: N-API addon → WASM package → TypeScript output.
 
 ## Source
 
-[github.com/twilic/twilic-js](https://github.com/twilic/twilic-js)
+[github.com/twilic/twilic/tree/main/runtimes/javascript](https://github.com/twilic/twilic/tree/main/runtimes/javascript)

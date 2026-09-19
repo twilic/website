@@ -2,19 +2,19 @@
 
 Go implementation of Twilic v3 with full session, batch, bound-stream, and low-level codec support.
 
-**Module:** `github.com/twilic/twilic-go`  
-**Source:** [github.com/twilic/twilic-go](https://github.com/twilic/twilic-go)
+**Module:** `github.com/twilic/twilic/runtimes/go/v3`  
+**Source:** [github.com/twilic/twilic/tree/main/runtimes/go](https://github.com/twilic/twilic/tree/main/runtimes/go)
 
 ## Install
 
 ```bash
-go get github.com/twilic/twilic-go
+go get github.com/twilic/twilic/runtimes/go/v3
 ```
 
 ## High-level API
 
 ```go
-import twilic "github.com/twilic/twilic-go"
+import twilic "github.com/twilic/twilic/runtimes/go/v3"
 
 // Stateless dynamic
 bytes, err := twilic.Encode(value)

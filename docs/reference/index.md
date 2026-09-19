@@ -34,13 +34,13 @@ Complete API documentation for Twilic SDKs, integration packages, and tooling. U
 
 ### Native SDKs
 
-| Language | Reference                                                   |
-| -------- | ----------------------------------------------------------- |
-| Rust     | [`twilic-rust`](/reference/rust) — reference implementation |
-| Python   | [`twilic-python`](/reference/python)                        |
-| Go       | [`twilic-go`](/reference/go)                                |
-| Java     | [`twilic-java`](/reference/java)                            |
-| C        | [`twilic-c`](/reference/c)                                  |
+| Language | Reference                                                     |
+| -------- | ------------------------------------------------------------- |
+| Rust     | [`runtimes/rust`](/reference/rust) — reference implementation |
+| Python   | [`twilic-python`](/reference/python)                          |
+| Go       | [`runtimes/go`](/reference/go)                                |
+| Java     | [`twilic-java`](/reference/java)                              |
+| C        | [`twilic-c`](/reference/c)                                    |
 
 Other language SDKs follow the same four-function surface (`encode`, `decode`, `encode_batch`, `create_session_encoder`). See [SDKs overview](/sdks/) for install instructions per language.
 

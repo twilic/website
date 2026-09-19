@@ -135,14 +135,14 @@ After all consumers decode v2:
 
 ## SDK upgrade matrix
 
-| SDK           | v2 status | Notes                      |
-| ------------- | --------- | -------------------------- |
-| twilic-rust   | Reference | Full v2 profile            |
-| twilic-js     | Primary   | `@twilic/core` targets v2  |
-| twilic-python | Primary   | v2 default                 |
-| twilic-go     | Primary   | v2 default                 |
-| twilic-java   | Primary   | v2 default                 |
-| twilic-c      | Primary   | v2 default `twilic_encode` |
+| SDK                 | v2 status | Notes                      |
+| ------------------- | --------- | -------------------------- |
+| runtimes/rust       | Reference | Full v2 profile            |
+| runtimes/javascript | Primary   | `@twilic/core` targets v2  |
+| twilic-python       | Primary   | v2 default                 |
+| runtimes/go         | Primary   | v2 default                 |
+| twilic-java         | Primary   | v2 default                 |
+| twilic-c            | Primary   | v2 default `twilic_encode` |
 
 Check each SDK's CHANGELOG for v1 deprecation timeline.
 
@@ -152,7 +152,7 @@ Check each SDK's CHANGELOG for v1 deprecation timeline.
 
 ```bash
 # v2 encode → v2 decode (all SDKs)
-cd twilic-rust && cargo test
+cd twilic/runtimes/rust && cargo test
 
 # Interop fixtures
 cd twilic-python && ./scripts/check-interop.sh

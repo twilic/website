@@ -12,7 +12,7 @@ From GitHub:
 
 ```toml
 [dependencies]
-twilic = { git = "https://github.com/twilic/twilic-rust.git" }
+twilic = { git = "https://github.com/twilic/twilic.git" }
 ```
 
 From crates.io (when published):
@@ -179,7 +179,7 @@ Low-level `TwilicCodec`, `Message` model, and `SessionOptions`: [Rust API Refere
 ## Project layout
 
 ```text
-twilic-rust/src/
+runtimes/rust/src/
   lib.rs       # Public re-exports
   v2.rs        # High-level encode/decode
   model.rs     # Value, Message, Schema, PatchOpcode
@@ -192,4 +192,4 @@ twilic-rust/src/
 
 ## Source
 
-[github.com/twilic/twilic-rust](https://github.com/twilic/twilic-rust)
+[github.com/twilic/twilic/tree/main/runtimes/rust](https://github.com/twilic/twilic/tree/main/runtimes/rust)

@@ -12,7 +12,7 @@ For interactive size comparisons in the browser, see the [Playground](/guide/pla
 git clone https://github.com/twilic/benchmark
 cd benchmark
 pnpm install
-pnpm --dir ../twilic-js build   # if local @twilic/core artifacts are stale
+pnpm --dir ../twilic/runtimes/javascript build   # if local @twilic/core artifacts are stale
 pnpm bench -- --backend napi --time-ms 1500 --warmup-ms 500 --json-out results/pinned-snapshot.json
 ```
 

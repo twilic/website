@@ -9,7 +9,7 @@ The Go module provides a full Twilic v3 implementation with dynamic, schema-awar
 ## Install
 
 ```bash
-go get github.com/twilic/twilic-go
+go get github.com/twilic/twilic/runtimes/go/v3
 ```
 
 ## Quick Start
@@ -20,7 +20,7 @@ package main
 import (
     "fmt"
 
-    twilic "github.com/twilic/twilic-go"
+    twilic "github.com/twilic/twilic/runtimes/go/v3"
 )
 
 func main() {
@@ -114,15 +114,15 @@ twilic.NewMap(
 ## Project Layout
 
 ```text
-twilic-go/
-  export.go, version.go          # public import path
+runtimes/go/
+  export.go, version.go          # public import path (github.com/twilic/twilic/runtimes/go/v3)
   internal/core/                 # wire, model, codec, session, protocol, v2, v3 tests
   scripts/                       # Rust interop fixtures and smoke checks
   docs/
 ```
 
-The repository root stays thin. Import `github.com/twilic/twilic-go` only. Implementation details live under `internal/core/`.
+The package root stays thin. Import `github.com/twilic/twilic/runtimes/go/v3` only. Implementation details live under `internal/core/`.
 
 ## Source
 
-[github.com/twilic/twilic-go](https://github.com/twilic/twilic-go)
+[github.com/twilic/twilic/tree/main/runtimes/go](https://github.com/twilic/twilic/tree/main/runtimes/go)

@@ -6,10 +6,8 @@ Thank you for helping improve Twilic. The project spans a specification, eightee
 
 | Repository | Role |
 | --- | --- |
-| [`twilic/twilic`](https://github.com/twilic/twilic) | Normative v3 specification and versioned spec snapshots |
-| [`twilic/twilic-rust`](https://github.com/twilic/twilic-rust) | Reference implementation and conformance fixtures |
-| [`twilic/twilic-*`](https://github.com/twilic) | Language SDKs (Go, Python, Java, …) |
-| [`twilic/twilic-js`](https://github.com/twilic/twilic-js) | JavaScript / TypeScript SDK (N-API + WASM) |
+| [`twilic/twilic`](https://github.com/twilic/twilic) | Canonical monorepo: specification, conformance, and all language runtimes |
+| [`twilic/twilic` → `runtimes/`](https://github.com/twilic/twilic/tree/main/runtimes) | Language SDKs (Rust, Go, JavaScript, Python, …) |
 | [`twilic/cli`](https://github.com/twilic/cli) | `@twilic/cli` command-line tool |
 | [`twilic/axios`](https://github.com/twilic/axios), [`express`](https://github.com/twilic/express), [`fastify`](https://github.com/twilic/fastify), [`fetch`](https://github.com/twilic/fetch), [`hono`](https://github.com/twilic/hono) | Web framework integrations |
 | [`twilic/benchmark`](https://github.com/twilic/benchmark) | Benchmark harness |
@@ -73,7 +71,7 @@ General contribution guidelines (commit messages, issue templates) are described
 | Goal | Start here |
 | --- | --- |
 | Fix a spec ambiguity | [`twilic/twilic`](https://github.com/twilic/twilic) |
-| Fix an SDK bug | The language repository (`twilic-go`, `twilic-python`, …) |
+| Fix an SDK bug | [`twilic/twilic`](https://github.com/twilic/twilic) under `runtimes/<language>/` |
 | Add a cookbook pattern | This site — `docs/guide/cookbook.md` |
 | Add CLI or web integration docs | This site — `docs/guide/` |
 | Run all repos locally | [`twilic/workspace`](https://github.com/twilic/workspace) |

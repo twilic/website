@@ -139,7 +139,7 @@ Implementations may score candidate codecs:
 score(codec) = estimated_encoded_size(codec) + switching_penalty(codec)
 ```
 
-`switching_penalty` adds hysteresis for profile stability. Reference implementation in twilic-rust uses deterministic tie-breaking — no random selection.
+`switching_penalty` adds hysteresis for profile stability. Reference implementation in `runtimes/rust` uses deterministic tie-breaking — no random selection.
 
 ## Simplified cheat sheet
 

@@ -34,14 +34,31 @@ function resolvePageDescription(
   return String(pageData.frontmatter.description ?? siteDescription);
 }
 
+function resolveCanonicalUrl(pageData: PageData): string {
+  const override = pageData.frontmatter.canonical;
+  if (typeof override === "string" && override.length > 0) {
+    if (/^https?:\/\//.test(override)) {
+      return override;
+    }
+    return `${SITE_ORIGIN}${override.startsWith("/") ? override : `/${override}`}`;
+  }
+
+  return `${SITE_ORIGIN}/${pageData.relativePath}`
+    .replace(/index\.md$/, "")
+    .replace(/\.md$/, "");
+}
+
 function socialMetaHead(
   pageData: PageData,
   siteDescription: string,
 ): [string, Record<string, string>][] {
   const title = resolvePageTitle(pageData);
   const description = resolvePageDescription(pageData, siteDescription);
+  const canonicalUrl = resolveCanonicalUrl(pageData);
 
   return [
+    ["link", { rel: "canonical", href: canonicalUrl }],
+    ["meta", { property: "og:url", content: canonicalUrl }],
     ["meta", { property: "og:title", content: title }],
     ["meta", { property: "og:description", content: description }],
     ["meta", { name: "twitter:title", content: title }],

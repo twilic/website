@@ -74,6 +74,9 @@ export default withMermaid(
       "Twilic is a compact binary serialization format for structured data — smaller than MessagePack, schema-less or schema-aware, with SDKs for Rust, Go, Python, JavaScript, and more.",
     lang: "en-US",
     cleanUrls: true,
+    sitemap: {
+      hostname: SITE_ORIGIN,
+    },
 
     head: [
       [

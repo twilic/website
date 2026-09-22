@@ -1,6 +1,6 @@
 # Web Integrations
 
-Twilic ships npm packages that encode and decode binary request and response bodies for common JavaScript web stacks. All integrations use the same MIME type and `@twilic/core` codec.
+Twilic ships npm packages that encode and decode binary payloads for common JavaScript web stacks. HTTP integrations use the same MIME type; WebSocket helpers share the same `@twilic/core` codec.
 
 ## Content type
 
@@ -16,15 +16,16 @@ Use **stateless** Dynamic or Batch profiles for HTTP request/response. Stateful 
 
 ## Packages
 
-| Package                                                | Use with           |
-| ------------------------------------------------------ | ------------------ |
+| Package | Use with |
+| --- | --- |
 | [`@twilic/express`](https://github.com/twilic/express) | Express middleware |
-| [`@twilic/fastify`](https://github.com/twilic/fastify) | Fastify plugin     |
-| [`@twilic/hono`](https://github.com/twilic/hono)       | Hono middleware    |
-| [`@twilic/axios`](https://github.com/twilic/axios)     | Axios interceptors |
-| [`@twilic/fetch`](https://github.com/twilic/fetch)     | `fetch` helpers    |
+| [`@twilic/fastify`](https://github.com/twilic/fastify) | Fastify plugin |
+| [`@twilic/hono`](https://github.com/twilic/hono) | Hono middleware |
+| [`@twilic/axios`](https://github.com/twilic/axios) | Axios interceptors |
+| [`@twilic/fetch`](https://github.com/twilic/fetch) | `fetch` helpers |
+| [`@twilic/websocket`](https://github.com/twilic/websocket) | WebSocket frames |
 
-All packages depend on [`@twilic/core`](/sdks/js). Install the integration package plus its framework peer dependency.
+All packages depend on [`@twilic/core`](/sdks/js). Install the integration package plus its framework peer dependency (`@twilic/websocket` needs only `@twilic/core`).
 
 ## Express
 
@@ -127,7 +128,32 @@ On Node.js, `@twilic/core` selects the N-API backend by default and `init()` is 
 
 ## Custom codec
 
-Each integration accepts an optional codec object with `encode` and `decode` functions. Use `createTwilicExpress`, `createTwilicFastify`, `createTwilicHono`, `createTwilicAxios`, or `createTwilicFetch` when you need a custom `@twilic/core` configuration.
+Each integration accepts an optional codec object with `encode` and `decode` functions. Use `createTwilicExpress`, `createTwilicFastify`, `createTwilicHono`, `createTwilicAxios`, `createTwilicFetch`, or `createTwilicWebSocket` when you need a custom `@twilic/core` configuration.
+
+## WebSocket
+
+```bash
+pnpm add @twilic/websocket @twilic/core
+```
+
+```ts
+import { init } from "@twilic/core";
+import { attachTwilicWebSocket, twilicSend } from "@twilic/websocket";
+
+await init();
+
+const socket = new WebSocket("ws://localhost:8788");
+
+attachTwilicWebSocket(socket, (value) => {
+  console.log(value);
+});
+
+socket.addEventListener("open", () => {
+  twilicSend(socket, { id: 1n, name: "alice" });
+});
+```
+
+One WebSocket message equals one Twilic frame. Prefer binary frames. For stateful patches, inject a session encoder via `createTwilicWebSocket(codec)`. See [`@twilic/websocket`](/integrations/websocket) and [Examples — WebSocket Session](/guide/examples#websocket-session).
 
 ## Related
 
@@ -135,3 +161,5 @@ Each integration accepts an optional codec object with `encode` and `decode` fun
 - [Twilic CLI](/guide/cli) — encode and decode from the terminal
 - [Cookbook — API Response with Repeated Structure](/guide/cookbook#api-response-with-repeated-structure)
 - [Examples — HTTP Round-Trip](/guide/examples#http-round-trip) — Express / Hono / Fastify + fetch / Axios
+- [Examples — WebSocket Session](/guide/examples#websocket-session) — `@twilic/websocket` live stream
+- [`@twilic/websocket` reference](/integrations/websocket)

@@ -7,7 +7,7 @@ Twilic has production-ready implementations in eighteen languages. The current s
 | Resource | Description |
 | --- | --- |
 | [API Reference](/reference/) | Complete function signatures for JS, Rust, Python, Go |
-| [Integrations](/integrations/) | HTTP packages for Hono, Express, Fastify, Fetch, Axios |
+| [Integrations](/integrations/) | HTTP and WebSocket packages for Hono, Express, Fastify, Fetch, Axios, WebSocket |
 | [Encoding Profiles](/guide/encoding-profiles) | Dynamic, Batch, Bound, Stateful |
 | [Quick Start](/guide/quick-start) | Install and first encode in every language |
 

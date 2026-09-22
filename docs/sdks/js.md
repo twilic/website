@@ -119,13 +119,14 @@ Decoded integers outside safe integer range return as `bigint`.
 
 ## Web framework integrations
 
-| Package                                    | Role               |
-| ------------------------------------------ | ------------------ |
-| [`@twilic/hono`](/integrations/hono)       | Hono middleware    |
-| [`@twilic/express`](/integrations/express) | Express middleware |
-| [`@twilic/fastify`](/integrations/fastify) | Fastify plugin     |
-| [`@twilic/fetch`](/integrations/fetch)     | Fetch client       |
-| [`@twilic/axios`](/integrations/axios)     | Axios client       |
+| Package                                        | Role               |
+| ---------------------------------------------- | ------------------ |
+| [`@twilic/hono`](/integrations/hono)           | Hono middleware    |
+| [`@twilic/express`](/integrations/express)     | Express middleware |
+| [`@twilic/fastify`](/integrations/fastify)     | Fastify plugin     |
+| [`@twilic/fetch`](/integrations/fetch)         | Fetch client       |
+| [`@twilic/axios`](/integrations/axios)         | Axios client       |
+| [`@twilic/websocket`](/integrations/websocket) | WebSocket frames   |
 
 See [Integrations overview](/integrations/) and [Web Integrations guide](/guide/web-integrations).
 

@@ -17,7 +17,7 @@ Utilities for working with Twilic outside of application code.
 | Resource | Description |
 | --- | --- |
 | [API Reference](/reference/) | SDK function signatures and types |
-| [Integrations](/integrations/) | Hono, Express, Fastify, Fetch, Axios |
+| [Integrations](/integrations/) | Hono, Express, Fastify, Fetch, Axios, WebSocket |
 | [Twilic AI](/ai/) | `@twilic/ai` and adapters |
 | [Troubleshooting](/guide/troubleshooting) | Common errors and fixes |
 | [Glossary](/guide/glossary) | Term definitions |

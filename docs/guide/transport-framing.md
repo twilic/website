@@ -49,14 +49,27 @@ client_max_body_size 1m;
 
 ## WebSocket
 
-One WebSocket message = one Twilic frame.
+One WebSocket message = one Twilic frame. Prefer [`@twilic/websocket`](/integrations/websocket) for encode/send and parse helpers.
 
 ```ts
+import { createSessionEncoder, init } from "@twilic/core";
+import { createTwilicWebSocket } from "@twilic/websocket";
+
+await init();
+
+const session = createSessionEncoder();
+const twilic = createTwilicWebSocket({
+  encode: (value) => session.encodePatch(value),
+  decode: () => {
+    throw new Error("patch decode requires a session decoder");
+  },
+});
+
 // Server
-ws.send(enc.encodePatch(metrics));
+twilic.send(ws, metrics);
 
 // Client
-ws.onmessage = (event) => {
+ws.onmessage = async (event) => {
   const bytes = new Uint8Array(event.data);
   applyPatch(bytes);
 };
@@ -138,5 +151,6 @@ For greenfield internal RPC with strict Protobuf governance, consider gRPC nativ
 ## Related
 
 - [Web Integrations](/integrations/)
+- [`@twilic/websocket`](/integrations/websocket)
 - [Stateful Streams](/guide/stateful-streams)
 - [Spec — Transport Guide](/spec/transport)

@@ -15,12 +15,13 @@ Complete API documentation for Twilic SDKs, integration packages, and tooling. U
 
 | Package | Description |
 | --- | --- |
-| [Overview](/integrations/) | All HTTP client and server packages |
+| [Overview](/integrations/) | All HTTP and WebSocket packages |
 | [`@twilic/hono`](/integrations/hono) | Hono middleware and response helpers |
 | [`@twilic/fetch`](/integrations/fetch) | `fetch` wrapper and response parsing |
 | [`@twilic/express`](/integrations/express) | Express middleware |
 | [`@twilic/fastify`](/integrations/fastify) | Fastify plugin and reply decorator |
 | [`@twilic/axios`](/integrations/axios) | Axios instance with interceptors |
+| [`@twilic/websocket`](/integrations/websocket) | WebSocket binary frame helpers |
 
 ### Twilic AI
 

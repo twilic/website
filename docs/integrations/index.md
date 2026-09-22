@@ -1,6 +1,6 @@
 # Web Integrations
 
-Official npm packages for sending and receiving Twilic payloads over HTTP. All packages share the same MIME type, codec interface, and `@twilic/core` dependency.
+Official npm packages for sending and receiving Twilic payloads over HTTP and WebSocket. All packages share the same codec interface and `@twilic/core` dependency.
 
 ## Content type
 
@@ -8,7 +8,7 @@ Official npm packages for sending and receiving Twilic payloads over HTTP. All p
 application/vnd.twilic
 ```
 
-Every package exports `TWILIC_CONTENT_TYPE`. Set this header on Twilic request and response bodies.
+Every package exports `TWILIC_CONTENT_TYPE`. Set this header on Twilic HTTP request and response bodies. WebSocket framing uses binary opcode instead of HTTP headers.
 
 ## Package overview
 
@@ -19,6 +19,7 @@ Every package exports `TWILIC_CONTENT_TYPE`. Set this header on Twilic request a
 | `@twilic/fastify` | Fastify plugin | [Fastify](/integrations/fastify) |
 | `@twilic/fetch` | `fetch` client | [Fetch](/integrations/fetch) |
 | `@twilic/axios` | Axios client | [Axios](/integrations/axios) |
+| `@twilic/websocket` | WebSocket frames | [WebSocket](/integrations/websocket) |
 
 ## Shared codec interface
 
@@ -31,7 +32,7 @@ interface TwilicCodec {
 }
 ```
 
-Use `createTwilicHono(codec)`, `createTwilicFetch(codec)`, etc. when you need batch encoding or a wrapped `@twilic/core/advanced` encoder.
+Use `createTwilicHono(codec)`, `createTwilicFetch(codec)`, `createTwilicWebSocket(codec)`, etc. when you need batch encoding, a session encoder, or a wrapped `@twilic/core/advanced` encoder.
 
 ## HTTP profile rules
 
@@ -42,7 +43,7 @@ Use `createTwilicHono(codec)`, `createTwilicFetch(codec)`, etc. when you need ba
 | Bound (schema)      | Yes        | Fixed message types                 |
 | Stateful (session)  | **No**     | Requires ordered persistent channel |
 
-Use stateless profiles for request/response. Reserve stateful encoding for WebSocket or streaming connections. See [FAQ — HTTP](/guide/faq#can-i-use-twilic-over-http).
+Use stateless profiles for request/response. Reserve stateful encoding for WebSocket or streaming connections — see [`@twilic/websocket`](/integrations/websocket). See [FAQ — HTTP](/guide/faq#can-i-use-twilic-over-http).
 
 ## Server setup pattern
 
@@ -89,8 +90,9 @@ The [examples repository](https://github.com/twilic/examples) includes:
 
 - [api-response](https://github.com/twilic/examples/tree/main/api-response) — Batch GET size comparison
 - [http-roundtrip](https://github.com/twilic/examples/tree/main/http-roundtrip) — Express / Hono / Fastify + fetch / Axios POST echo
+- [websocket-session](https://github.com/twilic/examples/tree/main/websocket-session) — Stateful stream with `@twilic/websocket`
 
-See [Examples — HTTP Round-Trip](/guide/examples#http-round-trip).
+See [Examples — HTTP Round-Trip](/guide/examples#http-round-trip) and [Examples — WebSocket Session](/guide/examples#websocket-session).
 
 ## Related
 

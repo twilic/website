@@ -29,21 +29,28 @@ SessionEncoder                     SessionDecoder (or decode full frames)
 ## JavaScript implementation
 
 ```ts
-import { init, createSessionEncoder } from "@twilic/core";
+import { init, createSessionEncoder, decode } from "@twilic/core";
+import { createTwilicWebSocket } from "@twilic/websocket";
 
 await init();
 
-const enc = createSessionEncoder({
-  enableStatePatch: true,
-  unknownReferencePolicy: "statelessRetry",
-});
-
 // Server WebSocket handler
 ws.on("connection", (socket) => {
+  const enc = createSessionEncoder({
+    enableStatePatch: true,
+    unknownReferencePolicy: "statelessRetry",
+  });
+  let tick = 0;
+
+  const twilic = createTwilicWebSocket({
+    encode: (value) =>
+      tick === 0 ? enc.encode(value) : enc.encodePatch(value),
+    decode,
+  });
+
   const interval = setInterval(() => {
     const metrics = collectMetrics();
-    const bytes = tick === 0 ? enc.encode(metrics) : enc.encodePatch(metrics);
-    socket.send(bytes);
+    twilic.send(socket, metrics);
     tick++;
   }, 50);
 
@@ -55,7 +62,7 @@ ws.on("connection", (socket) => {
 });
 ```
 
-For all encoding variants see [`AdvancedSessionEncoder`](/reference/javascript-advanced).
+For all encoding variants see [`AdvancedSessionEncoder`](/reference/javascript-advanced). Prefer [`@twilic/websocket`](/integrations/websocket) for binary frame send/parse helpers.
 
 ## Session options
 
@@ -147,6 +154,7 @@ pnpm example:websocket            # live server + client
 
 ## Related
 
+- [`@twilic/websocket`](/integrations/websocket)
 - [Stateful Decoding](/guide/stateful-decoding)
 - [Session Encoder reference](/reference/session-encoder)
 - [Real-Time Streaming article](/guide/articles/real-time-dashboards-and-streaming)

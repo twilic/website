@@ -270,6 +270,10 @@ export default withMermaid(
                   { text: "Axios", link: "/integrations/axios" },
                 ],
               },
+              {
+                text: "Realtime",
+                items: [{ text: "WebSocket", link: "/integrations/websocket" }],
+              },
             ],
           },
         ],

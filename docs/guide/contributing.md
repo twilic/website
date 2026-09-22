@@ -9,7 +9,7 @@ Thank you for helping improve Twilic. The project spans a specification, eightee
 | [`twilic/twilic`](https://github.com/twilic/twilic) | Canonical monorepo: specification, conformance, and all language runtimes |
 | [`twilic/twilic` → `runtimes/`](https://github.com/twilic/twilic/tree/main/runtimes) | Language SDKs (Rust, Go, JavaScript, Python, …) |
 | [`twilic/cli`](https://github.com/twilic/cli) | `@twilic/cli` command-line tool |
-| [`twilic/axios`](https://github.com/twilic/axios), [`express`](https://github.com/twilic/express), [`fastify`](https://github.com/twilic/fastify), [`fetch`](https://github.com/twilic/fetch), [`hono`](https://github.com/twilic/hono) | Web framework integrations |
+| [`twilic/axios`](https://github.com/twilic/axios), [`express`](https://github.com/twilic/express), [`fastify`](https://github.com/twilic/fastify), [`fetch`](https://github.com/twilic/fetch), [`hono`](https://github.com/twilic/hono), [`websocket`](https://github.com/twilic/websocket) | Web framework integrations |
 | [`twilic/benchmark`](https://github.com/twilic/benchmark) | Benchmark harness |
 | [`twilic/examples`](https://github.com/twilic/examples) | Runnable use-case examples (HTTP, WebSocket, telemetry, …) |
 | [`twilic/playground`](https://github.com/twilic/playground) | Browser size comparison app |

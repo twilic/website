@@ -52,30 +52,23 @@ client_max_body_size 1m;
 One WebSocket message = one Twilic frame. Prefer [`@twilic/websocket`](/integrations/websocket) for encode/send and parse helpers.
 
 ```ts
-import { createSessionEncoder, init } from "@twilic/core";
+import { init } from "@twilic/core";
 import { createTwilicWebSocket } from "@twilic/websocket";
 
 await init();
 
-const session = createSessionEncoder();
 const twilic = createTwilicWebSocket({
-  encode: (value) => session.encodePatch(value),
-  decode: () => {
-    throw new Error("patch decode requires a session decoder");
-  },
+  stateful: true,
 });
 
-// Server
-twilic.send(ws, metrics);
+twilic.attach(ws, (value) => {
+  console.log(value);
+});
 
-// Client
-ws.onmessage = async (event) => {
-  const bytes = new Uint8Array(event.data);
-  applyPatch(bytes);
-};
+twilic.send(ws, metrics);
 ```
 
-Use **Stateful** profile. Call `reset()` + full `encode()` after reconnect.
+`stateful: true` keeps an outbound session encoder and an inbound session decoder per connection. Reconnect starts a new pair of sessions; the next frame is a full message.
 
 Binary frame type (`opcode 0x2`) — not text frames.
 

@@ -45,12 +45,13 @@ All SDKs expose the same logical operations:
 | `encode_with_schema(value, schema)` | Bound profile encode | [Schema-Bound](/guide/schema-bound) |
 | `encode_batch(records)` | Same-shape batch | [Batch & Columnar](/guide/batch-and-columnar) |
 | `SessionEncoder` | Stateful stream encoder | [Session Encoder](/reference/session-encoder) |
+| `SessionDecoder` | Stateful stream decoder | [Session Decoder](/reference/session-decoder) |
 
 ## JavaScript entrypoints
 
 | Import | Use |
 | --- | --- |
-| `@twilic/core` | `init`, `encode`, `decode`, `createSessionEncoder` |
+| `@twilic/core` | `init`, `encode`, `decode`, `createSessionEncoder`, `createSessionDecoder` |
 | `@twilic/core/advanced` | `encodeBatch`, `encodeBoundStream`, `encodeBatchWithSchema`, transport-JSON |
 
 See [JavaScript Core API](/reference/javascript-core) and [Advanced API](/reference/javascript-advanced).

@@ -9,7 +9,9 @@ import {
   encodeBatch,
   encodeWithSchema,
   createSessionEncoder,
+  createSessionDecoder,
   AdvancedSessionEncoder,
+  AdvancedSessionDecoder,
 } from "@twilic/core/advanced";
 ```
 
@@ -127,6 +129,23 @@ function createSessionEncoder(options?: SessionOptions): AdvancedSessionEncoder;
 | `encodeMicroBatchCompactJson(json)` | Compact micro-batch from JSON |
 | `reset()` | Clear session state |
 
+## AdvancedSessionDecoder
+
+Session decoder with compact and transport-JSON decode paths. State is independent from any encoder.
+
+```ts
+function createSessionDecoder(options?: SessionOptions): AdvancedSessionDecoder;
+```
+
+### Methods
+
+| Method | Description |
+| --- | --- |
+| `decode(bytes)` | Application value for a full message, or the value reconstructed from `STATE_PATCH` |
+| `decodeToTransportJson(bytes)` | Same decode, returned as a transport JSON string |
+| `decodeToCompactJson(bytes)` | Same decode, returned as compact JSON |
+| `reset()` | Clear decoder state |
+
 ## When to use which API
 
 | Use case | API |
@@ -134,7 +153,8 @@ function createSessionEncoder(options?: SessionOptions): AdvancedSessionEncoder;
 | Single object, HTTP body | `encode()` from `@twilic/core` |
 | List of records, HTTP body | `encodeBatch()` |
 | Fixed struct, max density | `encodeWithSchema()` |
-| WebSocket tick (few fields change) | `createSessionEncoder()` + `encodePatch()` |
+| WebSocket tick (few fields change) | `createSessionEncoder()` + `encodePatch()`, or `createTwilicWebSocket({ stateful: true })` |
+| Reconstruct a patch stream | `createSessionDecoder()` |
 | Golden test fixtures | `toTransportJson()` / `fromTransportJson()` |
 | CLI roundtrip debugging | `decodeToTransportJson()` |
 
@@ -142,4 +162,5 @@ function createSessionEncoder(options?: SessionOptions): AdvancedSessionEncoder;
 
 - [Batch & Columnar guide](/guide/batch-and-columnar)
 - [Session Encoder reference](/reference/session-encoder)
+- [Session Decoder reference](/reference/session-decoder)
 - [Examples — API response](https://github.com/twilic/examples)

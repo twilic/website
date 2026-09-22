@@ -113,7 +113,7 @@ See also: [Web Integrations](/guide/web-integrations), [Integrations overview](/
 
 Stream live dashboard metrics over WebSocket with stateful Twilic compression via [`@twilic/websocket`](/integrations/websocket).
 
-**Profile:** Stateful — `createSessionEncoder()` with `encode()` for the first frame and `encodePatch()` when only a few fields change.
+**Profile:** Stateful — `@twilic/core` `createSessionEncoder()` / `createSessionDecoder()`, or `@twilic/websocket` `createTwilicWebSocket({ stateful: true })`.
 
 ### Run
 
@@ -136,8 +136,8 @@ pnpm example:websocket:client
 ### What it shows
 
 - **simulate.ts** — 20 ticks of dashboard metrics; compares JSON, full `encode()`, and `encodePatch()` sizes per tick
-- **server.ts** — `createTwilicWebSocket` with a per-connection session codec; first tick is full, later ticks use patches
-- **client.ts** — `parseTwilicMessage` decodes full frames and reports patch decode failures
+- **server.ts** — per-connection session encoder; first tick is full, later ticks use patches
+- **client.ts** — stateless `parseTwilicMessage`, so full frames decode and patch frames are reported as skipped until the example uses a session decoder
 
 ### When this fits
 
@@ -147,9 +147,9 @@ pnpm example:websocket:client
 
 ### Session recovery
 
-Call `session.reset()` after a disconnect so the next frame is a full stateless message, then resume patching. The demo keeps a session encoder **per connection**.
+Call `session.reset()` after a disconnect so the next frame is a full message, then resume patching. The demo keeps a session encoder **per connection**.
 
-::: info JS SDK note The current `@twilic/core` SDK exposes session **encode** APIs. Patch frame decoding on the client may require a matching session decoder in your language SDK. Use `simulate.ts` to evaluate payload savings; treat the WebSocket demo as a binary transport example with `@twilic/websocket`. :::
+::: info SDK `@twilic/core` exposes `createSessionDecoder()`, and `@twilic/websocket` can own both sessions with `createTwilicWebSocket({ stateful: true })`. This example client still uses stateless `parseTwilicMessage`, so it does not reconstruct patches yet. :::
 
 See also: [Cookbook — WebSocket Streaming](/guide/cookbook#websocket-streaming-live-dashboard), [`@twilic/websocket`](/integrations/websocket).
 

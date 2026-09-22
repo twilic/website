@@ -19,20 +19,53 @@ Patches are not self-contained. A patch frame references field IDs and base snap
 
 | Language | Full frame decode | Patch decode | Session decoder API |
 | --- | --- | --- | --- |
-| Rust | ✓ `decode()` | ✓ `SessionEncoder::decode_message()` | `TwilicCodec`, `SessionEncoder` |
-| Python | ✓ `decode()` | ✓ `decode_message()` | `TwilicCodec`, `SessionEncoder` |
-| Go | ✓ `Decode()` | ✓ `DecodeMessage()` | `TwilicCodec`, `SessionEncoder` |
-| Java | ✓ `decode()` | ✓ via `SessionEncoder` | `SessionEncoder` |
-| JavaScript | ✓ `decode()` | Limited — encode APIs primary | `createSessionEncoder()` |
+| Rust | ✓ `decode()` | ✓ `SessionDecoder::decode()` | `create_session_decoder()` |
+| JavaScript | ✓ `decode()` | ✓ `SessionDecoder.decode()` | `createSessionDecoder()` |
+| Python | ✓ `decode()` | ✓ via `TwilicCodec.decode_message()` | codec-level today |
+| Go | ✓ `Decode()` | ✓ via `TwilicCodec.DecodeMessage()` | codec-level today |
+| Java | ✓ `decode()` | ✓ via codec / session message decode | codec-level today |
 
-::: info JavaScript note `@twilic/core` currently exposes session **encode** APIs (`encode`, `encodePatch`, `encodeMicroBatch`). For WebSocket clients that need patch decode in JS, use [simulate mode](https://github.com/twilic/examples) to evaluate savings, or decode on a Rust/Go/Python backend service. :::
+Dedicated `createSessionDecoder()` is the recommended public API in Rust and JavaScript. Other runtimes can decode stateful frames through their existing `decode_message` / `DecodeMessage` paths until a matching factory is published.
+
+## JavaScript receiver example
+
+```ts
+import { createSessionDecoder, init } from "@twilic/core";
+import { createTwilicWebSocket } from "@twilic/websocket";
+
+await init();
+
+// Prefer the WebSocket helper when both peers use Twilic stateful mode:
+const twilic = createTwilicWebSocket({ stateful: true });
+twilic.attach(socket, (value) => {
+  renderDashboard(value);
+});
+
+// Or manage the decoder directly:
+const dec = createSessionDecoder({
+  unknownReferencePolicy: "statelessRetry",
+});
+
+for (const frame of incomingFrames) {
+  try {
+    const value = dec.decode(frame);
+    renderDashboard(value);
+  } catch (error) {
+    if (String(error).includes("stateless retry")) {
+      requestFullSnapshot();
+      continue;
+    }
+    console.error(error);
+  }
+}
+```
 
 ## Rust receiver example
 
 ```rust
-use twilic::{create_session_encoder, SessionOptions, Value};
+use twilic::{create_session_decoder, SessionOptions};
 
-let mut dec = create_session_encoder(SessionOptions::default());
+let mut dec = create_session_decoder(SessionOptions::default());
 
 for frame in incoming_frames {
     match dec.decode(&frame) {
@@ -64,12 +97,13 @@ let msg = codec.decode_message(&bytes)?;
 ```python
 import twilic
 
-dec = twilic.create_session_encoder()
+codec = twilic.TwilicCodec()
 
 for frame in incoming_frames:
     try:
-        value = dec.decode(frame)
-        render_dashboard(value)
+        message = codec.decode_message(frame)
+        # Reconstruct application values from Message / previous state as needed
+        render_dashboard(message)
     except twilic.ErrStatelessRetryRequired:
         request_full_snapshot()
 ```
@@ -77,10 +111,10 @@ for frame in incoming_frames:
 ## Go receiver example
 
 ```go
-dec := twilic.NewSessionEncoder(twilic.SessionOptions{})
+codec := twilic.TwilicCodecWithOptions(twilic.DefaultSessionOptions())
 
 for _, frame := range incomingFrames {
-    value, err := dec.Decode(frame)
+    msg, err := codec.DecodeMessage(frame)
     if err != nil {
         if twilic.IsStatelessRetryRequired(err) {
             requestFullSnapshot()
@@ -89,7 +123,7 @@ for _, frame := range incomingFrames {
         log.Printf("decode error: %v", err)
         continue
     }
-    renderDashboard(value)
+    renderDashboard(msg)
 }
 ```
 
@@ -105,10 +139,10 @@ When the decoder encounters a base ID, shape reference, or dictionary ID it does
 Configure on both producer and consumer for consistent behavior:
 
 ```ts
-createSessionEncoder({ unknownReferencePolicy: "statelessRetry" });
+createSessionDecoder({ unknownReferencePolicy: "statelessRetry" });
 ```
 
-See [Session Encoder](/reference/session-encoder).
+See [Session Decoder](/reference/session-decoder) and [Session Encoder](/reference/session-encoder).
 
 ## Recovery protocol
 
@@ -129,31 +163,26 @@ sequenceDiagram
 ### Client-side recovery
 
 ```ts
+const dec = createSessionDecoder();
 let awaitingBaseline = true;
 
 ws.onmessage = (event) => {
   const bytes = new Uint8Array(event.data);
 
-  if (awaitingBaseline) {
-    const value = decode(bytes); // stateless decode works on full frames
-    baseline = value;
-    awaitingBaseline = false;
-    render(value);
-    return;
-  }
-
   try {
-    const value = applySessionPatch(baseline, bytes); // language SDK
-    baseline = value;
+    const value = dec.decode(bytes);
+    awaitingBaseline = false;
     render(value);
   } catch {
     awaitingBaseline = true;
+    dec.reset();
     ws.send(JSON.stringify({ type: "request_snapshot" }));
   }
 };
 
 ws.onopen = () => {
   awaitingBaseline = true;
+  dec.reset();
 };
 ```
 
@@ -175,13 +204,13 @@ pnpm example:websocket            # live server
 pnpm example:websocket:client     # client logs frame sizes
 ```
 
-The simulate script compares JSON, full `encode()`, and `encodePatch()` per tick without requiring patch decode on the client.
+With `@twilic/websocket` `{ stateful: true }`, both peers can round-trip patches end to end. The simulate script remains useful for size comparison without a live socket.
 
 ## When to decode stateful vs stateless
 
 | Frame type | Decoder |
 | --- | --- |
-| First frame after connect | Stateless `decode()` — works in all SDKs |
+| First frame after connect | Session `decode()` or stateless `decode()` on a full frame |
 | Patch frame | Session decoder with accumulated state |
 | Batch in stream | Session `decode()` or stateless `decode()` depending on message kind |
 | HTTP response body | Always stateless `decode()` |
@@ -189,6 +218,7 @@ The simulate script compares JSON, full `encode()`, and `encodePatch()` per tick
 ## Related
 
 - [Stateful Streams](/guide/stateful-streams)
+- [Session Decoder](/reference/session-decoder)
 - [Session Encoder](/reference/session-encoder)
 - [Transport & Framing](/guide/transport-framing)
 - [Troubleshooting](/guide/troubleshooting)

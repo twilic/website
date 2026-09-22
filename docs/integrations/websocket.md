@@ -133,29 +133,32 @@ interface TwilicWebSocket<T = TwilicValue> {
 
 ## Stateful sessions
 
-Inject a session encoder as the codec when streaming patches:
+Enable the Twilic WebSocket Stateful Profile so each connection keeps an independent outbound encoder and inbound decoder:
 
 ```ts
-import { createSessionEncoder, decode, init } from "@twilic/core";
+import { init } from "@twilic/core";
 import { createTwilicWebSocket } from "@twilic/websocket";
 
 await init();
 
-const session = createSessionEncoder();
-let usePatch = false;
-
 const twilic = createTwilicWebSocket({
-  encode: (value) =>
-    usePatch ? session.encodePatch(value) : session.encode(value),
-  decode,
+  stateful: true,
+  session: { maxBaseSnapshots: 8 },
 });
 
-twilic.send(socket, metrics); // full on first tick, then patches
+twilic.attach(socket, (value) => {
+  console.log(value);
+});
+
+twilic.send(socket, { x: 100, y: 200, hp: 100 }); // full baseline
+twilic.send(socket, { x: 101, y: 200, hp: 100 }); // STATE_PATCH when beneficial
 ```
 
-Call `session.reset()` after reconnect so the next frame is a full message.
+Reconnect opens a new directional session. Previous base snapshots are not inherited. Stateful `parseMessage` requires `options.socket` so the correct inbound decoder is used.
 
-::: info JS SDK note `@twilic/core` currently exposes session **encode** APIs. Patch decode on the client may require a matching session decoder in your language SDK. See [Stateful Streams](/guide/stateful-streams) and the [websocket-session example](https://github.com/twilic/examples/tree/main/websocket-session). :::
+You can still inject a custom codec for advanced cases. `stateful: true` and a custom codec cannot be combined.
+
+See [Stateful Streams](/guide/stateful-streams), [Stateful Decoding](/guide/stateful-decoding), and the [websocket-session example](https://github.com/twilic/examples/tree/main/websocket-session).
 
 ## Message limits
 

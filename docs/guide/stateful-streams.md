@@ -29,40 +29,37 @@ SessionEncoder                     SessionDecoder (or decode full frames)
 ## JavaScript implementation
 
 ```ts
-import { init, createSessionEncoder, decode } from "@twilic/core";
+import { init } from "@twilic/core";
 import { createTwilicWebSocket } from "@twilic/websocket";
 
 await init();
 
-// Server WebSocket handler
+// Server WebSocket handler — one connection, independent encode/decode sessions
 ws.on("connection", (socket) => {
-  const enc = createSessionEncoder({
-    enableStatePatch: true,
-    unknownReferencePolicy: "statelessRetry",
-  });
-  let tick = 0;
-
   const twilic = createTwilicWebSocket({
-    encode: (value) =>
-      tick === 0 ? enc.encode(value) : enc.encodePatch(value),
-    decode,
+    stateful: true,
+    session: {
+      enableStatePatch: true,
+      unknownReferencePolicy: "statelessRetry",
+    },
+  });
+
+  twilic.attach(socket, (value) => {
+    // inbound patches reconstruct automatically
+    handleClientUpdate(value);
   });
 
   const interval = setInterval(() => {
-    const metrics = collectMetrics();
-    twilic.send(socket, metrics);
-    tick++;
+    twilic.send(socket, collectMetrics());
   }, 50);
 
   socket.on("close", () => {
     clearInterval(interval);
-    enc.reset();
-    tick = 0;
   });
 });
 ```
 
-For all encoding variants see [`AdvancedSessionEncoder`](/reference/javascript-advanced). Prefer [`@twilic/websocket`](/integrations/websocket) for binary frame send/parse helpers.
+For manual session control, use [`createSessionEncoder`](/reference/session-encoder) and [`createSessionDecoder`](/reference/session-decoder). Prefer [`@twilic/websocket`](/integrations/websocket) for binary frame send/parse helpers.
 
 ## Session options
 

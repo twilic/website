@@ -29,7 +29,7 @@ import { encodeBatch } from "@twilic/core/advanced";
 
 | Subpath | Content |
 | --- | --- |
-| `@twilic/core` | [Core API](/reference/javascript-core): `init`, `encode`, `decode`, `createSessionEncoder` |
+| `@twilic/core` | [Core API](/reference/javascript-core): `init`, `encode`, `decode`, `createSessionEncoder`, `createSessionDecoder` |
 | `@twilic/core/advanced` | [Advanced API](/reference/javascript-advanced): batch, schema, transport-JSON, direct encoding |
 
 There are no separate `@twilic/core/napi` or `@twilic/core/wasm` npm subpaths. Select backend via `init({ prefer })`.

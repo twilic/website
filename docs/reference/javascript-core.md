@@ -110,7 +110,33 @@ class SessionEncoder {
 | `encodeMicroBatch()` | Small batch optimized for streaming pipelines |
 | `reset()` | Clears session state; next `encode()` sends a full frame |
 
-::: warning HTTP APIs Do not use `SessionEncoder` on stateless HTTP request/response cycles. Use `encode()` / `encodeBatch()` from [`@twilic/core/advanced`](/reference/javascript-advanced) instead. :::
+## Session decoder
+
+For reconstructing stateful patches on the consumer side. See [Session Decoder](/reference/session-decoder).
+
+### `createSessionDecoder(options?)`
+
+```ts
+function createSessionDecoder(options?: SessionOptions): SessionDecoder;
+```
+
+Returns a `SessionDecoder` instance with persistent decoder state.
+
+### `SessionDecoder`
+
+```ts
+class SessionDecoder {
+  decode(bytes: Uint8Array): TwilicValue;
+  reset(): void;
+}
+```
+
+| Method     | Description                                                   |
+| ---------- | ------------------------------------------------------------- |
+| `decode()` | Full message value, or value reconstructed from `STATE_PATCH` |
+| `reset()`  | Clears decoder state; next frame must be a full message       |
+
+::: warning HTTP APIs Do not use `SessionEncoder` or `SessionDecoder` on stateless HTTP request/response cycles. Use `encode()` / `decode()` instead. :::
 
 ## Exported types
 

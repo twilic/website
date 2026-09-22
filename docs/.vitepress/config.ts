@@ -232,6 +232,10 @@ export default withMermaid(
                     link: "/reference/session-encoder",
                   },
                   {
+                    text: "Session Decoder",
+                    link: "/reference/session-decoder",
+                  },
+                  {
                     text: "Errors & Limits",
                     link: "/reference/errors-and-limits",
                   },

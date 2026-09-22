@@ -19,7 +19,7 @@ From crates.io (when published):
 
 ```toml
 [dependencies]
-twilic = "3.1"
+twilic = "3.2"
 ```
 
 ## Quick Start

@@ -9,7 +9,7 @@ The Rust runtime under `runtimes/rust` is the reference implementation. All othe
 
 ```toml
 [dependencies]
-twilic = "3.1"
+twilic = "3.2"
 ```
 
 ## High-level API

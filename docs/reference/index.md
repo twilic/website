@@ -8,7 +8,7 @@ Complete API documentation for Twilic SDKs, integration packages, and tooling. U
 
 | Package | Description |
 | --- | --- |
-| [`@twilic/core`](/reference/javascript-core) | Main entry: `init`, `encode`, `decode`, `createSessionEncoder` |
+| [`@twilic/core`](/reference/javascript-core) | Main entry: `init`, `encode`, `decode`, `createSessionEncoder`, `createSessionDecoder` |
 | [`@twilic/core/advanced`](/reference/javascript-advanced) | Batch, schema, transport-JSON, direct encoding, `AdvancedSessionEncoder` |
 
 ### Web integrations
@@ -51,6 +51,7 @@ Other language SDKs follow the same four-function surface (`encode`, `decode`, `
 | -------------------------- | ----------------------------------------------- |
 | Value types and Schema     | [Value & Schema](/reference/value-and-schema)   |
 | SessionEncoder and options | [Session Encoder](/reference/session-encoder)   |
+| SessionDecoder             | [Session Decoder](/reference/session-decoder)   |
 | Errors and decode limits   | [Errors & Limits](/reference/errors-and-limits) |
 
 ## Choosing an entrypoint
@@ -68,6 +69,7 @@ Schema-aware (Bound profile)?
 
 Long-lived stream with incremental updates?
   → createSessionEncoder() + encodePatch()
+  → createSessionDecoder() on the consumer, or createTwilicWebSocket({ stateful: true })
 
 HTTP API?
   → Integration package + stateless Dynamic or Batch only

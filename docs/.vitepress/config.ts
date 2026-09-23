@@ -97,7 +97,7 @@ export default withMermaid(
         },
       ],
       ["link", { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" }],
-      ["meta", { name: "theme-color", content: "#FA5D19" }],
+      ["meta", { name: "theme-color", content: "#4f46e5" }],
       ["meta", { property: "og:type", content: "website" }],
       ["meta", { property: "og:site_name", content: "Twilic" }],
       ["meta", { property: "og:image", content: `${SITE_ORIGIN}/og.png` }],

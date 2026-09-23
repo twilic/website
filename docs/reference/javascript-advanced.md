@@ -153,7 +153,7 @@ function createSessionDecoder(options?: SessionOptions): AdvancedSessionDecoder;
 | Single object, HTTP body | `encode()` from `@twilic/core` |
 | List of records, HTTP body | `encodeBatch()` |
 | Fixed struct, max density | `encodeWithSchema()` |
-| WebSocket tick (few fields change) | `createSessionEncoder()` + `encodePatch()`, or `createTwilicWebSocket({ stateful: true })` |
+| WebSocket tick (few fields change) | `createSessionEncoder()` + `encodePatch()`, or `createTwilicWebSocket(socket, { stateful: true })` |
 | Reconstruct a patch stream | `createSessionDecoder()` |
 | Golden test fixtures | `toTransportJson()` / `fromTransportJson()` |
 | CLI roundtrip debugging | `decodeToTransportJson()` |

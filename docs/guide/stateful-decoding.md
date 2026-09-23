@@ -36,8 +36,8 @@ import { createTwilicWebSocket } from "@twilic/websocket";
 await init();
 
 // Prefer the WebSocket helper when both peers use Twilic stateful mode:
-const twilic = createTwilicWebSocket({ stateful: true });
-twilic.attach(socket, (value) => {
+const twilic = createTwilicWebSocket(socket, { stateful: true });
+twilic.onMessage((value) => {
   renderDashboard(value);
 });
 

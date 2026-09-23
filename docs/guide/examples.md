@@ -113,7 +113,7 @@ See also: [Web Integrations](/guide/web-integrations), [Integrations overview](/
 
 Stream live dashboard metrics over WebSocket with stateful Twilic compression via [`@twilic/websocket`](/integrations/websocket).
 
-**Profile:** Stateful — `@twilic/core` `createSessionEncoder()` / `createSessionDecoder()`, or `@twilic/websocket` `createTwilicWebSocket({ stateful: true })`.
+**Profile:** Stateful — `@twilic/core` `createSessionEncoder()` / `createSessionDecoder()`, or `@twilic/websocket` `createTwilicWebSocket(socket, { stateful: true })`.
 
 ### Run
 
@@ -137,7 +137,7 @@ pnpm example:websocket:client
 
 - **simulate.ts** — 20 ticks of dashboard metrics; compares JSON, full `encode()`, and `encodePatch()` sizes per tick
 - **server.ts** — per-connection session encoder; first tick is full, later ticks use patches
-- **client.ts** — stateless `parseTwilicMessage`, so full frames decode and patch frames are reported as skipped until the example uses a session decoder
+- **client.ts** — `onMessage()` reconstructs every tick, including patch frames
 
 ### When this fits
 
@@ -149,7 +149,7 @@ pnpm example:websocket:client
 
 Call `session.reset()` after a disconnect so the next frame is a full message, then resume patching. The demo keeps a session encoder **per connection**.
 
-::: info SDK `@twilic/core` exposes `createSessionDecoder()`, and `@twilic/websocket` can own both sessions with `createTwilicWebSocket({ stateful: true })`. This example client still uses stateless `parseTwilicMessage`, so it does not reconstruct patches yet. :::
+::: info SDK `@twilic/core` exposes `createSessionDecoder()`, and `@twilic/websocket` owns both sessions with `createTwilicWebSocket(socket, { stateful: true })`. :::
 
 See also: [Cookbook — WebSocket Streaming](/guide/cookbook#websocket-streaming-live-dashboard), [`@twilic/websocket`](/integrations/websocket).
 

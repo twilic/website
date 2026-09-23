@@ -16,19 +16,17 @@ pnpm add @twilic/websocket @twilic/core
 
 ```ts
 import { init } from "@twilic/core";
-import { attachTwilicWebSocket, twilicSend } from "@twilic/websocket";
+import { createTwilicWebSocket } from "@twilic/websocket";
 
 await init(); // browser: init({ prefer: "wasm" })
 
-const socket = new WebSocket("ws://localhost:8788");
+const twilic = createTwilicWebSocket(new WebSocket("ws://localhost:8788"));
 
-attachTwilicWebSocket(socket, (value) => {
+twilic.onMessage((value) => {
   console.log(value);
 });
 
-socket.addEventListener("open", () => {
-  twilicSend(socket, { id: 1n, name: "alice" });
-});
+twilic.send({ id: 1n, name: "alice" });
 ```
 
 One WebSocket message = one Twilic frame. Send **binary** frames only (`opcode 0x2`). Text frames are rejected by default.
@@ -73,7 +71,7 @@ Attach a decoded-value listener. Returns a detach function.
 
 ```ts
 function attachTwilicWebSocket<T = TwilicValue>(
-  socket: TwilicEventSocket,
+  socket: TwilicSocket,
   listener: (value: T) => void,
   options?: TwilicAttachOptions,
 ): () => void;
@@ -81,15 +79,18 @@ function attachTwilicWebSocket<T = TwilicValue>(
 
 Uses `socket.on("message")` when available (`ws`), otherwise `addEventListener`. Sets `binaryType = "arraybuffer"` when the property exists. Decode errors go to `options.onError` when provided; they are not passed to `listener`.
 
-#### `createTwilicWebSocket(codec?)`
+#### `createTwilicWebSocket(socket, options?)`
 
-Factory for an injectable codec (session encoders, tests).
+Bind one browser `WebSocket` or [`ws`](https://github.com/websockets/ws) socket. Stateful mode keeps that connection's encoder and decoder on the returned object.
 
 ```ts
 function createTwilicWebSocket<T = TwilicValue>(
-  codec?: TwilicCodec,
+  socket: TwilicSocket,
+  options?: TwilicWebSocketOptions,
 ): TwilicWebSocket<T>;
 ```
+
+`send(value)` returns the encoded bytes. `onMessage(listener)` decodes each inbound frame once and returns an unsubscribe function. Closing the socket ends the session.
 
 ### Types
 
@@ -109,17 +110,22 @@ interface TwilicAttachOptions extends TwilicMessageOptions {
   onError?: (error: unknown) => void;
 }
 
+interface TwilicWebSocketOptions {
+  stateful?: boolean;
+  session?: SessionOptions;
+  codec?: TwilicCodec;
+  requireBinary?: boolean;
+  limit?: number;
+  onError?: (error: unknown) => void;
+}
+
 interface TwilicWebSocket<T = TwilicValue> {
-  send: (socket: TwilicSocket, value: TwilicValue) => void;
+  send: (value: TwilicValue) => Uint8Array;
+  onMessage: (listener: (value: T) => void) => () => void;
   parseMessage: (
     data: TwilicMessageData,
     options?: TwilicMessageOptions,
   ) => Promise<T>;
-  attach: (
-    socket: TwilicEventSocket,
-    listener: (value: T) => void,
-    options?: TwilicAttachOptions,
-  ) => () => void;
 }
 ```
 
@@ -141,22 +147,22 @@ import { createTwilicWebSocket } from "@twilic/websocket";
 
 await init();
 
-const twilic = createTwilicWebSocket({
+const twilic = createTwilicWebSocket(socket, {
   stateful: true,
   session: { maxBaseSnapshots: 8 },
 });
 
-twilic.attach(socket, (value) => {
+twilic.onMessage((value) => {
   console.log(value);
 });
 
-twilic.send(socket, { x: 100, y: 200, hp: 100 }); // full baseline
-twilic.send(socket, { x: 101, y: 200, hp: 100 }); // STATE_PATCH when beneficial
+twilic.send({ x: 100, y: 200, hp: 100 }); // full baseline
+twilic.send({ x: 101, y: 200, hp: 100 }); // STATE_PATCH when beneficial
 ```
 
-Reconnect opens a new directional session. Previous base snapshots are not inherited. Stateful `parseMessage` requires `options.socket` so the correct inbound decoder is used.
+Closing the socket ends the session. A reconnect is a new `createTwilicWebSocket()` call, and its first `send()` is a full frame. Previous base snapshots are not inherited.
 
-You can still inject a custom codec for advanced cases. `stateful: true` and a custom codec cannot be combined.
+A custom `codec` is for stateless connections. `stateful: true` and a custom codec cannot be combined.
 
 See [Stateful Streams](/guide/stateful-streams), [Stateful Decoding](/guide/stateful-decoding), and the [websocket-session example](https://github.com/twilic/examples/tree/main/websocket-session).
 

@@ -52,7 +52,7 @@ Control messages such as `RESET_STATE` invalidate decoder state and are not retu
 
 ## WebSocket helper
 
-Prefer [`createTwilicWebSocket({ stateful: true })`](/integrations/websocket) when you want per-connection encoder and decoder sessions without managing them by hand.
+Prefer [`createTwilicWebSocket(socket, { stateful: true })`](/integrations/websocket) when you want that connection's encoder and decoder without managing them by hand.
 
 ## Related
 

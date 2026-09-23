@@ -57,15 +57,15 @@ import { createTwilicWebSocket } from "@twilic/websocket";
 
 await init();
 
-const twilic = createTwilicWebSocket({
+const twilic = createTwilicWebSocket(ws, {
   stateful: true,
 });
 
-twilic.attach(ws, (value) => {
+twilic.onMessage((value) => {
   console.log(value);
 });
 
-twilic.send(ws, metrics);
+twilic.send(metrics);
 ```
 
 `stateful: true` keeps an outbound session encoder and an inbound session decoder per connection. Reconnect starts a new pair of sessions; the next frame is a full message.

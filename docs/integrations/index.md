@@ -32,7 +32,7 @@ interface TwilicCodec {
 }
 ```
 
-Use `createTwilicHono(codec)`, `createTwilicFetch(codec)`, `createTwilicWebSocket(codec)`, etc. when you need batch encoding, a session encoder, or a wrapped `@twilic/core/advanced` encoder.
+Use `createTwilicHono(codec)`, `createTwilicFetch(codec)`, or `createTwilicWebSocket(socket, { codec })` when you need batch encoding, a session encoder, or a wrapped `@twilic/core/advanced` encoder.
 
 ## HTTP profile rules
 

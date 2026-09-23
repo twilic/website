@@ -69,7 +69,7 @@ Schema-aware (Bound profile)?
 
 Long-lived stream with incremental updates?
   → createSessionEncoder() + encodePatch()
-  → createSessionDecoder() on the consumer, or createTwilicWebSocket({ stateful: true })
+  → createSessionDecoder() on the consumer, or createTwilicWebSocket(socket, { stateful: true })
 
 HTTP API?
   → Integration package + stateless Dynamic or Batch only

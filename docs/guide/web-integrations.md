@@ -128,7 +128,7 @@ On Node.js, `@twilic/core` selects the N-API backend by default and `init()` is 
 
 ## Custom codec
 
-Each integration accepts an optional codec object with `encode` and `decode` functions. Use `createTwilicExpress`, `createTwilicFastify`, `createTwilicHono`, `createTwilicAxios`, `createTwilicFetch`, or `createTwilicWebSocket` when you need a custom `@twilic/core` configuration.
+Each integration accepts an optional codec object with `encode` and `decode` functions. Use `createTwilicExpress`, `createTwilicFastify`, `createTwilicHono`, `createTwilicAxios`, `createTwilicFetch`, or `createTwilicWebSocket(socket, { codec })` when you need a custom `@twilic/core` configuration.
 
 ## WebSocket
 
@@ -138,22 +138,20 @@ pnpm add @twilic/websocket @twilic/core
 
 ```ts
 import { init } from "@twilic/core";
-import { attachTwilicWebSocket, twilicSend } from "@twilic/websocket";
+import { createTwilicWebSocket } from "@twilic/websocket";
 
 await init();
 
-const socket = new WebSocket("ws://localhost:8788");
+const twilic = createTwilicWebSocket(new WebSocket("ws://localhost:8788"));
 
-attachTwilicWebSocket(socket, (value) => {
+twilic.onMessage((value) => {
   console.log(value);
 });
 
-socket.addEventListener("open", () => {
-  twilicSend(socket, { id: 1n, name: "alice" });
-});
+twilic.send({ id: 1n, name: "alice" });
 ```
 
-One WebSocket message equals one Twilic frame. Prefer binary frames. For stateful patches, inject a session encoder via `createTwilicWebSocket(codec)`. See [`@twilic/websocket`](/integrations/websocket) and [Examples — WebSocket Session](/guide/examples#websocket-session).
+One WebSocket message equals one Twilic frame. Prefer binary frames. For stateful patches, bind the socket with `createTwilicWebSocket(socket, { stateful: true })`. See [`@twilic/websocket`](/integrations/websocket) and [Examples — WebSocket Session](/guide/examples#websocket-session).
 
 ## Related
 

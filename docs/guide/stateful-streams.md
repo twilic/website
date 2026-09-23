@@ -36,7 +36,7 @@ await init();
 
 // Server WebSocket handler — one connection, independent encode/decode sessions
 ws.on("connection", (socket) => {
-  const twilic = createTwilicWebSocket({
+  const twilic = createTwilicWebSocket(socket, {
     stateful: true,
     session: {
       enableStatePatch: true,
@@ -44,13 +44,13 @@ ws.on("connection", (socket) => {
     },
   });
 
-  twilic.attach(socket, (value) => {
+  twilic.onMessage((value) => {
     // inbound patches reconstruct automatically
     handleClientUpdate(value);
   });
 
   const interval = setInterval(() => {
-    twilic.send(socket, collectMetrics());
+    twilic.send(collectMetrics());
   }, 50);
 
   socket.on("close", () => {

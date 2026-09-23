@@ -20,7 +20,7 @@ bun add -g @twilic/cli @twilic/core @twilic/ai
 Or run without installing:
 
 ```bash
-pnpx @twilic/cli encode --help
+bunx @twilic/cli encode --help
 ```
 
 Requires `@twilic/core` as a runtime dependency for the encode/decode backend. `@twilic/ai` is required only for `twilic ai …` subcommands.

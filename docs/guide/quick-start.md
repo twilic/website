@@ -114,8 +114,6 @@ assert decoded == value
 Install:
 
 ```bash
-npm install @twilic/core
-# or
 bun add @twilic/core
 ```
 

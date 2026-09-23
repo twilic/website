@@ -199,9 +199,9 @@ ws.send(enc.encode(currentMetrics)); // full baseline
 The [examples repository](https://github.com/twilic/examples) includes:
 
 ```bash
-pnpm example:websocket:simulate   # size comparison (recommended first)
-pnpm example:websocket            # live server
-pnpm example:websocket:client     # client logs frame sizes
+bun run example:websocket:simulate   # size comparison (recommended first)
+bun run example:websocket            # live server
+bun run example:websocket:client     # client logs frame sizes
 ```
 
 With `@twilic/websocket` `{ stateful: true }`, both peers can round-trip patches end to end. The simulate script remains useful for size comparison without a live socket.

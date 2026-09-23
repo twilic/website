@@ -9,7 +9,7 @@ Twilic request parsing and response sending for [Express](https://expressjs.com)
 ## Install
 
 ```bash
-pnpm add @twilic/express express @twilic/core
+bun add @twilic/express express @twilic/core
 ```
 
 ## Quick start

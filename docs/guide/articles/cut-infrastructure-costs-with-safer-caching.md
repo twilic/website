@@ -90,8 +90,8 @@ Benchmark **your** payloads:
 ```bash
 git clone https://github.com/twilic/examples.git
 cd examples
-pnpm install
-pnpm example:cache-payload
+bun install
+bun run example:cache-payload
 ```
 
 Compare byte counts on objects sampled from production — not synthetic micro-benchmarks.

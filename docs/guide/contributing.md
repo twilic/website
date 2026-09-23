@@ -27,7 +27,7 @@ Quick start:
 3. Inside the container, run `./scripts/setup-twilic-workspace.sh`.
 4. Open the generated `twilic.code-workspace`.
 
-The container includes Node.js 24, pnpm, Python, Rust, Go, Java, and other toolchains used across Twilic repositories.
+The container includes Node.js 24, Bun, Python, Rust, Go, Java, and other toolchains used across Twilic repositories.
 
 ## Interoperability and conformance
 
@@ -52,16 +52,16 @@ See [FAQ — Interoperability](/guide/faq#interoperability), [v3 Reference Profi
 Website source lives in [`twilic/website`](https://github.com/twilic/website).
 
 ```bash
-pnpm install
-pnpm dev        # http://localhost:5173
-pnpm format     # format markdown, TypeScript, and CSS
-pnpm lint       # markdownlint
+bun install
+bun run dev        # http://localhost:5173
+bun run format     # format markdown, TypeScript, and CSS
+bun run lint       # markdownlint
 ```
 
 Before opening a pull request:
 
-1. Run `pnpm dev` and verify affected pages.
-2. Run `pnpm format` and `pnpm lint`.
+1. Run `bun run dev` and verify affected pages.
+2. Run `bun run format` and `bun run lint`.
 3. Fill in all sections of the PR template.
 
 General contribution guidelines (commit messages, issue templates) are described in each repository's `CONTRIBUTING.md`. Website content is released under [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/).

@@ -52,7 +52,7 @@ cd twilic/runtimes/python && ./scripts/check-interop.sh
 cd twilic/runtimes/rust && cargo test
 
 # JavaScript
-cd twilic/runtimes/javascript && pnpm test
+cd twilic/runtimes/javascript && bun run test
 ```
 
 ## Profile-specific interop

@@ -39,7 +39,7 @@ Pick one read-heavy internal endpoint returning arrays (user list, order history
 - Protobuf serialized size
 - Twilic Dynamic + Batch size on the same payload
 
-Use [Playground](/guide/playground) or `pnpm example:api-response` in [examples](https://github.com/twilic/examples).
+Use [Playground](/guide/playground) or `bun run example:api-response` in [examples](https://github.com/twilic/examples).
 
 ### Phase 1: Dual content type
 

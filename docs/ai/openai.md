@@ -10,7 +10,7 @@ Normalize OpenAI Responses API events into Twilic AI canonical events and sessio
 ## Install
 
 ```bash
-pnpm add @twilic/ai-openai @twilic/ai @twilic/core
+bun add @twilic/ai-openai @twilic/ai @twilic/core
 ```
 
 ## Quick start

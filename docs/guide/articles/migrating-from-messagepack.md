@@ -22,12 +22,12 @@ Run a benchmark on **production-shaped data** before committing:
 ```bash
 git clone https://github.com/twilic/examples.git
 cd examples
-pnpm install
+bun install
 # Pick the closest example:
-pnpm example:api-response      # list APIs
-pnpm example:telemetry         # event batches
-pnpm example:websocket:simulate # streaming patches
-pnpm example:cache-payload     # cache objects
+bun run example:api-response      # list APIs
+bun run example:telemetry         # event batches
+bun run example:websocket:simulate # streaming patches
+bun run example:cache-payload     # cache objects
 ```
 
 See also the [Benchmark](/benchmark) page for throughput numbers.

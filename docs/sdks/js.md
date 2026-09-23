@@ -15,7 +15,7 @@ Both backends are built from the [Rust reference implementation](/reference/rust
 ## Install
 
 ```bash
-pnpm add @twilic/core
+bun add @twilic/core
 ```
 
 For batch, schema, and transport-JSON APIs:
@@ -142,8 +142,8 @@ See [Integrations overview](/integrations/) and [Web Integrations guide](/guide/
 ```bash
 git clone https://github.com/twilic/twilic.git
 cd twilic/runtimes/javascript
-pnpm install
-pnpm build
+bun install
+bun run build
 ```
 
 Build steps: N-API addon → WASM package → TypeScript output.

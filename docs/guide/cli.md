@@ -8,13 +8,13 @@ Command-line tool for encoding JSON to Twilic, decoding Twilic to JSON, benchmar
 ## Install
 
 ```bash
-pnpm add -g @twilic/cli @twilic/core
+bun add -g @twilic/cli @twilic/core
 ```
 
 For AI session commands, also install the optional peer:
 
 ```bash
-pnpm add -g @twilic/cli @twilic/core @twilic/ai
+bun add -g @twilic/cli @twilic/core @twilic/ai
 ```
 
 Or run without installing:

@@ -41,7 +41,7 @@ The [playground](https://github.com/twilic/playground) and [`@twilic/core`](http
 
 ```bash
 # Copies twilic/runtimes/javascript/wasm/pkg → your project's wasm/pkg
-pnpm sync-wasm
+bun run sync-wasm
 ```
 
 Run before `dev` and `build`. The playground uses `scripts/sync-twilic-wasm.mjs`.
@@ -97,8 +97,8 @@ See `playground/src/shims/` for browser-safe backend substitutions that exclude 
 ## Cloudflare Workers + Hono
 
 ```bash
-pnpm add hono @twilic/hono @twilic/core
-pnpm add -D wrangler
+bun add hono @twilic/hono @twilic/core
+bun add -D wrangler
 ```
 
 `wrangler.toml`:
@@ -160,7 +160,7 @@ Measure bundle size with `@twilic/core` CI tooling (`twilic/runtimes/javascript/
 The playground deploys to GitHub Pages with `GITHUB_PAGES=true` at build time for correct asset base paths. Same pattern applies to any static Twilic SPA:
 
 ```bash
-GITHUB_PAGES=true pnpm build
+GITHUB_PAGES=true bun run build
 ```
 
 ## Common pitfalls
@@ -177,10 +177,10 @@ GITHUB_PAGES=true pnpm build
 
 ```bash
 # Terminal 1 — build @twilic/core WASM first
-cd twilic/runtimes/javascript && pnpm build:wasm && pnpm build:ts
+cd twilic/runtimes/javascript && bun run build:wasm && bun run build:ts
 
 # Terminal 2 — your edge app
-cd your-app && pnpm dev
+cd your-app && bun run dev
 ```
 
 ## Related

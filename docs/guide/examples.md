@@ -7,7 +7,7 @@ Use these examples to evaluate Twilic before adopting it, or as starting points 
 ## Prerequisites
 
 - Node.js 24+
-- [pnpm](https://pnpm.io/) (recommended)
+- [Bun](https://bun.sh/) (recommended)
 
 ## Setup
 
@@ -16,20 +16,20 @@ Clone the repository and install dependencies:
 ```bash
 git clone https://github.com/twilic/examples.git
 cd examples
-pnpm install
+bun install
 ```
 
 ## Overview
 
 | Example | Profile | Command |
 | --- | --- | --- |
-| [API response](#api-response) | Stateless Batch | `pnpm example:api-response` |
-| [HTTP round-trip](#http-round-trip) | Stateless Dynamic | `pnpm example:http-roundtrip` |
-| [WebSocket session](#websocket-session) | Stateful | `pnpm example:websocket:simulate` |
-| [Batch records](#batch-records) | Batch | `pnpm example:batch-records` |
-| [Telemetry](#telemetry) | Batch (`col_batch`) | `pnpm example:telemetry` |
-| [Logs](#logs) | Dynamic + Batch | `pnpm example:logs` |
-| [Cache payload](#cache-payload) | Dynamic (stateless) | `pnpm example:cache-payload` |
+| [API response](#api-response) | Stateless Batch | `bun run example:api-response` |
+| [HTTP round-trip](#http-round-trip) | Stateless Dynamic | `bun run example:http-roundtrip` |
+| [WebSocket session](#websocket-session) | Stateful | `bun run example:websocket:simulate` |
+| [Batch records](#batch-records) | Batch | `bun run example:batch-records` |
+| [Telemetry](#telemetry) | Batch (`col_batch`) | `bun run example:telemetry` |
+| [Logs](#logs) | Dynamic + Batch | `bun run example:logs` |
+| [Cache payload](#cache-payload) | Dynamic (stateless) | `bun run example:cache-payload` |
 
 ## API Response
 
@@ -41,10 +41,10 @@ Return paginated user lists as compact Twilic batch payloads over HTTP.
 
 ```bash
 # terminal 1
-pnpm example:api-response
+bun run example:api-response
 
 # terminal 2
-pnpm example:api-response:client
+bun run example:api-response:client
 ```
 
 ### Endpoints
@@ -80,13 +80,13 @@ POST Twilic bodies with the official HTTP adapters — Express, Hono, or Fastify
 
 ```bash
 # terminal 1 — pick one server
-pnpm example:http-roundtrip
-pnpm example:http-roundtrip:hono
-pnpm example:http-roundtrip:fastify
+bun run example:http-roundtrip
+bun run example:http-roundtrip:hono
+bun run example:http-roundtrip:fastify
 
 # terminal 2 — pick one client
-pnpm example:http-roundtrip:client
-pnpm example:http-roundtrip:axios
+bun run example:http-roundtrip:client
+bun run example:http-roundtrip:axios
 ```
 
 ### Endpoint
@@ -120,17 +120,17 @@ Stream live dashboard metrics over WebSocket with stateful Twilic compression vi
 Simulation (size comparison, recommended first):
 
 ```bash
-pnpm example:websocket:simulate
+bun run example:websocket:simulate
 ```
 
 Live WebSocket demo:
 
 ```bash
 # terminal 1
-pnpm example:websocket
+bun run example:websocket
 
 # terminal 2
-pnpm example:websocket:client
+bun run example:websocket:client
 ```
 
 ### What it shows
@@ -162,7 +162,7 @@ Send many homogeneous records in one payload using Twilic batch encoding.
 ### Run
 
 ```bash
-pnpm example:batch-records
+bun run example:batch-records
 ```
 
 ### What it shows
@@ -187,7 +187,7 @@ Batch high-frequency telemetry events with column-oriented compression.
 ### Run
 
 ```bash
-pnpm example:telemetry
+bun run example:telemetry
 ```
 
 ### What it shows
@@ -216,7 +216,7 @@ Structured log shipping with string and shape interning.
 ### Run
 
 ```bash
-pnpm example:logs
+bun run example:logs
 ```
 
 ### What it shows
@@ -247,7 +247,7 @@ Store compact binary session blobs in a key-value cache.
 ### Run
 
 ```bash
-pnpm example:cache-payload
+bun run example:cache-payload
 ```
 
 ### What it shows

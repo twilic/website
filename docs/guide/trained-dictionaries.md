@@ -125,9 +125,9 @@ Column dictionary is stateless within the batch. Trained dictionary persists acr
 
 1. Run [Playground](/guide/playground) schema-first view on your record shape
 2. Compare stateless `encode()` vs session `encodeMicroBatch()` on log fixtures
-3. Use `pnpm example:logs` in [examples](https://github.com/twilic/examples) for batch vs micro-batch size tables
+3. Use `bun run example:logs` in [examples](https://github.com/twilic/examples) for batch vs micro-batch size tables
 
-For patch + dictionary combined savings, run `pnpm example:websocket:simulate`.
+For patch + dictionary combined savings, run `bun run example:websocket:simulate`.
 
 ## Related
 

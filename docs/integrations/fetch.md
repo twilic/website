@@ -9,7 +9,7 @@ Twilic helpers for the Fetch API — encode request bodies and decode responses 
 ## Install
 
 ```bash
-pnpm add @twilic/fetch @twilic/core
+bun add @twilic/fetch @twilic/core
 ```
 
 ## Quick start

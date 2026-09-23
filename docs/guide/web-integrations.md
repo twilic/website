@@ -30,7 +30,7 @@ All packages depend on [`@twilic/core`](/sdks/js). Install the integration packa
 ## Express
 
 ```bash
-pnpm add @twilic/express express @twilic/core
+bun add @twilic/express express @twilic/core
 ```
 
 ```ts
@@ -49,7 +49,7 @@ Do not mount `express.json()` before Twilic routes on the same path, or the requ
 ## Fastify
 
 ```bash
-pnpm add @twilic/fastify fastify @twilic/core
+bun add @twilic/fastify fastify @twilic/core
 ```
 
 ```ts
@@ -71,7 +71,7 @@ app.get("/ping", (_request, reply) => reply.twilic({ pong: true }));
 ## Hono
 
 ```bash
-pnpm add @twilic/hono hono @twilic/core
+bun add @twilic/hono hono @twilic/core
 ```
 
 ```ts
@@ -89,7 +89,7 @@ app.post("/users", twilicParser(), async (c) => {
 ## Axios
 
 ```bash
-pnpm add @twilic/axios axios @twilic/core
+bun add @twilic/axios axios @twilic/core
 ```
 
 ```ts
@@ -108,7 +108,7 @@ Set `twilicResponse: false` on a request when you expect a non-Twilic response b
 ## Fetch
 
 ```bash
-pnpm add @twilic/fetch @twilic/core
+bun add @twilic/fetch @twilic/core
 ```
 
 ```ts
@@ -133,7 +133,7 @@ Each integration accepts an optional codec object with `encode` and `decode` fun
 ## WebSocket
 
 ```bash
-pnpm add @twilic/websocket @twilic/core
+bun add @twilic/websocket @twilic/core
 ```
 
 ```ts

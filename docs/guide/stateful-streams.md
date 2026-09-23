@@ -144,9 +144,9 @@ See [Transport & Framing](/guide/transport-framing).
 ```bash
 git clone https://github.com/twilic/examples.git
 cd examples
-pnpm install
-pnpm example:websocket:simulate   # size comparison
-pnpm example:websocket            # live server + client
+bun install
+bun run example:websocket:simulate   # size comparison
+bun run example:websocket            # live server + client
 ```
 
 ## Related

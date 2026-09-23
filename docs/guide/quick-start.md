@@ -116,7 +116,7 @@ Install:
 ```bash
 npm install @twilic/core
 # or
-pnpm add @twilic/core
+bun add @twilic/core
 ```
 
 Encode and decode a value:

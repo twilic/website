@@ -10,7 +10,7 @@ Vercel AI SDK chat transport and recorder helpers that capture runs as Twilic AI
 ## Install
 
 ```bash
-pnpm add @twilic/ai-sdk @twilic/ai @twilic/core ai
+bun add @twilic/ai-sdk @twilic/ai @twilic/core ai
 ```
 
 ## Quick start

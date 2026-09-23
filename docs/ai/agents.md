@@ -10,7 +10,7 @@ Map OpenAI Agents SDK traces and spans onto Twilic AI events.
 ## Install
 
 ```bash
-pnpm add @twilic/ai-agents @twilic/ai @twilic/core
+bun add @twilic/ai-agents @twilic/ai @twilic/core
 ```
 
 ## Quick start

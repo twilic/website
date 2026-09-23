@@ -9,7 +9,7 @@ Axios interceptors for Twilic request encoding and response decoding.
 ## Install
 
 ```bash
-pnpm add @twilic/axios axios @twilic/core
+bun add @twilic/axios axios @twilic/core
 ```
 
 ## Quick start

@@ -9,7 +9,7 @@ Twilic plugin, parser, and reply helpers for [Fastify](https://fastify.dev).
 ## Install
 
 ```bash
-pnpm add @twilic/fastify fastify @twilic/core
+bun add @twilic/fastify fastify @twilic/core
 ```
 
 ## Quick start

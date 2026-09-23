@@ -132,11 +132,11 @@ Shared fixtures in [examples/shared/fixtures.ts](https://github.com/twilic/examp
 ```bash
 git clone https://github.com/twilic/benchmark.git
 cd benchmark
-pnpm install
-pnpm bench                              # standard suite
-pnpm bench -- --mode max                # all encode variants
-pnpm bench -- --twilic-vs-msgpack-only  # hide JSON rows
-pnpm bench -- --backend wasm            # WASM backend
+bun install
+bun run bench                              # standard suite
+bun run bench -- --mode max                # all encode variants
+bun run bench -- --twilic-vs-msgpack-only  # hide JSON rows
+bun run bench -- --backend wasm            # WASM backend
 ```
 
 ## Related

@@ -20,19 +20,19 @@ Twilic AI turns streaming LLM and agent traffic into compact, replayable `.twai`
 ## Install
 
 ```bash
-pnpm add @twilic/ai @twilic/core
+bun add @twilic/ai @twilic/core
 ```
 
 Optional adapters:
 
 ```bash
-pnpm add @twilic/ai-openai @twilic/ai-sdk @twilic/ai-agents
+bun add @twilic/ai-openai @twilic/ai-sdk @twilic/ai-agents
 ```
 
 For CLI session tooling:
 
 ```bash
-pnpm add -g @twilic/cli @twilic/core @twilic/ai
+bun add -g @twilic/cli @twilic/core @twilic/ai
 ```
 
 ## Quick start

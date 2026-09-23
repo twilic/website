@@ -10,7 +10,7 @@ For batch encoding, schema-aware encoding, and transport-JSON helpers, use [`@tw
 ## Install
 
 ```bash
-pnpm add @twilic/core
+bun add @twilic/core
 ```
 
 ## Initialization

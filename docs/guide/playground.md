@@ -31,13 +31,13 @@ your-workspace/
 
 ```bash
 cd ../twilic/runtimes/javascript
-pnpm install
-pnpm build:wasm
-pnpm build:ts
+bun install
+bun run build:wasm
+bun run build:ts
 
 cd ../playground
-pnpm install
-pnpm dev
+bun install
+bun run dev
 ```
 
 Opens at `http://localhost:5173`.

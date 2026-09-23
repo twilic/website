@@ -11,19 +11,19 @@ For interactive size comparisons in the browser, see the [Playground](/guide/pla
 ```bash
 git clone https://github.com/twilic/benchmark
 cd benchmark
-pnpm install
-pnpm --dir ../twilic/runtimes/javascript build   # if local @twilic/core artifacts are stale
-pnpm bench -- --backend napi --time-ms 1500 --warmup-ms 500 --json-out results/pinned-snapshot.json
+bun install
+bun --cwd ../twilic/runtimes/javascript run build   # if local @twilic/core artifacts are stale
+bun run bench -- --backend napi --time-ms 1500 --warmup-ms 500 --json-out results/pinned-snapshot.json
 ```
 
 Options:
 
 ```bash
-pnpm bench -- --backend napi         # Node.js N-API (default)
-pnpm bench -- --backend wasm         # WebAssembly
-pnpm bench -- --mode max             # maximum benchmark suite
-pnpm bench -- --twilic-vs-msgpack-only  # hide JSON rows
-pnpm bench -- --time-ms 3000 --warmup-ms 1000  # longer windows
+bun run bench -- --backend napi         # Node.js N-API (default)
+bun run bench -- --backend wasm         # WebAssembly
+bun run bench -- --mode max             # maximum benchmark suite
+bun run bench -- --twilic-vs-msgpack-only  # hide JSON rows
+bun run bench -- --time-ms 3000 --warmup-ms 1000  # longer windows
 ```
 
 ## What Is Measured
@@ -91,7 +91,7 @@ On a hot object stream where a few fields change per tick, `encodePatch` sends o
 ## Regenerating the pinned snapshot
 
 ```bash
-pnpm bench -- --backend napi --time-ms 1500 --warmup-ms 500 \
+bun run bench -- --backend napi --time-ms 1500 --warmup-ms 500 \
   --json-out results/pinned-snapshot.json
 ```
 

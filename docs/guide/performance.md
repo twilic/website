@@ -33,8 +33,8 @@ Measure on your hardware and payload:
 ```bash
 git clone https://github.com/twilic/benchmark.git
 cd benchmark
-pnpm install
-pnpm bench
+bun install
+bun run bench
 ```
 
 | Workload              | Starting batch size |

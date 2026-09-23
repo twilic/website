@@ -5,18 +5,18 @@ Source for the [Twilic](https://github.com/twilic) documentation website, built 
 ## Requirements
 
 - Node.js 24+
-- pnpm 10.33+
+- Bun 1.4.2
 
 ## Setup
 
 ```bash
-pnpm install
+bun install
 ```
 
 ## Development
 
 ```bash
-pnpm dev
+bun run dev
 ```
 
 Opens a local dev server at `http://localhost:5173` with hot reload.
@@ -24,7 +24,7 @@ Opens a local dev server at `http://localhost:5173` with hot reload.
 ## Build
 
 ```bash
-pnpm build
+bun run build
 ```
 
 Outputs to `docs/.vitepress/dist/`.
@@ -32,7 +32,7 @@ Outputs to `docs/.vitepress/dist/`.
 ## Preview
 
 ```bash
-pnpm preview
+bun run preview
 ```
 
 Serves the production build locally for final review before deploy.
@@ -40,9 +40,9 @@ Serves the production build locally for final review before deploy.
 ## Formatting and lint
 
 ```bash
-pnpm format          # format all .md, .ts, .css, .json files
-pnpm format:check    # check formatting without writing (used in CI)
-pnpm lint            # markdownlint on docs/**/*.md
+bun run format          # format all .md, .ts, .css, .json files
+bun run format:check    # check formatting without writing (used in CI)
+bun run lint            # markdownlint on docs/**/*.md
 ```
 
 ## Project layout
@@ -111,8 +111,8 @@ See [CONTRIBUTING.md](https://github.com/twilic/twilic/blob/main/CONTRIBUTING.md
 
 For website-specific changes:
 
-1. Run `pnpm dev` and verify the affected pages look correct.
-2. Run `pnpm format:check` and `pnpm lint` before opening a PR.
+1. Run `bun run dev` and verify the affected pages look correct.
+2. Run `bun run format:check` and `bun run lint` before opening a PR.
 3. Use the PR template — all required sections and checklist items must be filled.
 
 ## License

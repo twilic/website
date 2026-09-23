@@ -9,7 +9,7 @@ Twilic middleware and response helpers for [Hono](https://hono.dev).
 ## Install
 
 ```bash
-pnpm add @twilic/hono hono @twilic/core
+bun add @twilic/hono hono @twilic/core
 ```
 
 ## Quick start

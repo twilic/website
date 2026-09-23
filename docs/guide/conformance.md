@@ -59,7 +59,7 @@ cd twilic/runtimes/python && ./scripts/check-interop.sh
 cd twilic/runtimes/go && go test ./...
 
 # JavaScript
-cd twilic/runtimes/javascript && pnpm test
+cd twilic/runtimes/javascript && bun run test
 
 # C
 cd twilic/runtimes/c && ./scripts/check-interop.sh
@@ -95,7 +95,7 @@ Conforming encoders must produce deterministic bytes for identical input under t
 Run benchmark fixtures to verify cross-SDK size parity:
 
 ```bash
-cd benchmark && pnpm bench -- --twilic-vs-msgpack-only
+cd benchmark && bun run bench -- --twilic-vs-msgpack-only
 ```
 
 Encoded byte counts should match across SDKs for the same fixture (modulo optional features disabled).
@@ -131,7 +131,7 @@ for (const value of fixtures) {
 If using patches:
 
 ```bash
-pnpm example:websocket:simulate  # size validation
+bun run example:websocket:simulate  # size validation
 # Add integration test: 20 ticks, disconnect, reconnect, verify recovery
 ```
 

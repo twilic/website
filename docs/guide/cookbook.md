@@ -286,7 +286,7 @@ async function loadSession(userId: number) {
 
 **Do not:** share a `SessionEncoder` across unrelated cache keys — stateful compression is for ordered streams, not KV entries.
 
-Run the example: `pnpm example:cache-payload` in [twilic/examples](https://github.com/twilic/examples).
+Run the example: `bun run example:cache-payload` in [twilic/examples](https://github.com/twilic/examples).
 
 ## Structured Logs & Micro-Batch
 
@@ -319,7 +319,7 @@ const micro = chunk(events, 50).map((chunk) => session.encodeMicroBatch(chunk));
 
 **When this fits:** log agents that flush on an interval, bursty application logging, pipelines where the same strings appear across many events.
 
-Run the example: `pnpm example:logs` in [twilic/examples](https://github.com/twilic/examples).
+Run the example: `bun run example:logs` in [twilic/examples](https://github.com/twilic/examples).
 
 ## Graceful Degradation: Stateless Fallback
 

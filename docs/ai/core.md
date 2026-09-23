@@ -9,7 +9,7 @@ Core library for recording, encoding, replaying, and inspecting Twilic AI sessio
 ## Install
 
 ```bash
-pnpm add @twilic/ai @twilic/core
+bun add @twilic/ai @twilic/core
 ```
 
 ## Quick start

@@ -9,7 +9,7 @@ Twilic helpers for binary WebSocket frames — one message equals one Twilic val
 ## Install
 
 ```bash
-pnpm add @twilic/websocket @twilic/core
+bun add @twilic/websocket @twilic/core
 ```
 
 ## Quick start

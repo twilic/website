@@ -18,12 +18,12 @@ Closes #
 
 ## Testing
 
-<!-- Describe how you verified your changes. e.g. ran `pnpm dev` and checked the affected pages -->
+<!-- Describe how you verified your changes. e.g. ran `bun run dev` and checked the affected pages -->
 
 ## Checklist
 
-- [ ] `pnpm format:check` passes
-- [ ] `pnpm lint` passes
-- [ ] `pnpm build` succeeds
+- [ ] `bun run format:check` passes
+- [ ] `bun run lint` passes
+- [ ] `bun run build` succeeds
 - [ ] No broken links introduced
 - [ ] No breaking changes (or breaking changes are documented above)

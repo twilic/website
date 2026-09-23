@@ -55,7 +55,7 @@ website/
       theme/
         index.ts          # theme entry (slots, global components)
         custom.css        # brand colors, CSS variable overrides
-        HomeFeatures.vue  # home page feature cards (Lucide icons)
+        HomeFeatures.vue  # home page feature cards (Tabler icons)
         HeroCode.vue      # hero code preview card
     guide/
       introduction.md

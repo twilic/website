@@ -1,39 +1,46 @@
 <script setup lang="ts">
-import { Layers, Package, Zap, Table2, History, Code2 } from "@lucide/vue";
+import {
+  IconStack2,
+  IconPackage,
+  IconBolt,
+  IconTable,
+  IconHistory,
+  IconCode,
+} from "@tabler/icons-vue";
 
 const features = [
   {
-    icon: Layers,
+    icon: IconStack2,
     title: "Woven from repetition",
     details:
       "Named after Old English <em>twilic</em> — the root of <em>twill</em>. Repeated keys, shapes, and strings are woven together, not sent again and again.",
   },
   {
-    icon: Package,
+    icon: IconPackage,
     title: "Schema-less or schema-aware",
     details:
       "Dynamic profile works like MessagePack with no schema required. Bound profile uses a shared schema to eliminate field names and type tags entirely.",
   },
   {
-    icon: Zap,
+    icon: IconBolt,
     title: "Deferred optimization",
     details:
       "First transmission may be self-describing. Compact forms activate automatically as repetition is observed — no manual tuning needed.",
   },
   {
-    icon: Table2,
+    icon: IconTable,
     title: "Batch & columnar encoding",
     details:
       "Row-wise and columnar batch profiles with per-column codecs — delta, FOR, RLE, XOR float, dictionary — for decisive wins on tabular data.",
   },
   {
-    icon: History,
+    icon: IconHistory,
     title: "Stateful session compression",
     details:
       "Optional stateful mode supports base snapshots, state patches, template batches, and trained dictionaries over long-lived streams.",
   },
   {
-    icon: Code2,
+    icon: IconCode,
     title: "Eighteen language SDKs",
     details:
       "Official implementations in Rust, Go, Python, JavaScript/TypeScript, Java, Scala, Ruby, R, Zig, PHP, Kotlin, Dart, Elixir, Lua, C, C++, C#, and Swift.",
@@ -53,7 +60,7 @@ const features = [
           <article class="VPFeature">
             <div class="box">
               <div class="icon">
-                <component :is="feature.icon" :size="24" :stroke-width="1.75" />
+                <component :is="feature.icon" :size="24" stroke="1.75" />
               </div>
               <h2 class="title" v-html="feature.title" />
               <p class="details" v-html="feature.details" />

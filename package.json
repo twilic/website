@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "html-minifier-terser": "7.2.0",
-    "markdownlint-cli2": "0.23.3",
+    "markdownlint-cli2": "0.24.0",
     "prettier": "3.9.8",
     "vitepress": "1.6.4",
     "vitepress-plugin-llms": "1.14.0"
